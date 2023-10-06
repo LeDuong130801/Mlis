@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Mlis</string>
+    <string name="dangnhapbangtaikhoancuaban">Đăng nhập bằng tài khoản của bạn</string>
+    <string name="quenmatkhau">Quên mật khẩu?</string>
+    <string name="dangnhap">Đăng nhập</string>
+    <string name="tennguoidunghoacemail">Tên người dùng hoặc Email</string>
+    <string name="matkhau">Mật khẩu</string>
+    <string name="banchuacotaikhoan">Bạn chưa có tài khoản?</string>
+    <string name="dangky">Đăng ký</string>
+    <string name="tennguoidung">Tên người dùng</string>
+    <string name="email">Email</string>
+    <string name="xacnhanmatkhau">Xác nhận mật khẩu</string>
+    <string name="ngaysinh">Ngày sinh</string>
+    <string name="gioitinh">Giới tính</string>
+    <string name="dacotaikhoan">Đã có tài khoản?</string>
+    <string name="aha">aha</string>
+    <string name="trolai">Trở lại</string>
+    <string name="nam">Nam</string>
+    <string name="nu">Nữ</string>
+    <string name="khac">Khác</string>
+    <string name="vuilongchongioitinh">Vui lòng chọn giới tính</string>
+    <string name="danhsachdaluu">Danh sách đã lưu</string>
+    <string name="caidat">Cài đặt</string>
+    <string name="thoat">Thoát</string>
+    <string name="search">Search</string>
+    <string name="trangchu">Trang chủ</string>
+    <string name="phatnhac">Phát nhạc</string>
+    <string name="dungnhac">Dừng nhạc</string>
+    <string name="tentruyen">Tên truyện</string>
+    <string name="tap1">Tập 1</string>
+</resources>

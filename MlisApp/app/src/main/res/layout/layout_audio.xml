@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="@dimen/_80sdp"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="@dimen/_72sdp"
+        android:layout_height="@dimen/_72sdp"
+        android:layout_margin="@dimen/_4sdp"
+        />
+    <TextView
+        android:id="@+id/tvTenTruyen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_10sdp"
+        android:text="@string/tentruyen"
+        android:maxLines="1"
+        android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/tvBoSung"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="@string/tap1"
+        android:textSize="@dimen/_8ssp"
+        android:textColor="@color/gray"/>
+
+</LinearLayout>

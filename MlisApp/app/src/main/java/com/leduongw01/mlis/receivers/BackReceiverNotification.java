@@ -8,13 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.leduongw01.mlis.services.ForegroundAudioService;
+
 public class BackReceiverNotification extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        currentSeek = 0;
-        mediaPlayer.pause();
-        mediaPlayer.seekTo(0);
-        mediaPlayer.start();
-        playing = true;
+        ForegroundAudioService.resetOrBackMediaPlayer();
     }
 }

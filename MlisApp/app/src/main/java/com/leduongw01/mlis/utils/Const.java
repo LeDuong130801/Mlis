@@ -8,5 +8,6 @@ public class Const {
     public static Integer TITTLE = 2;
     public static Integer IMAGE = 1;
     public static Integer EXIT = 3;
+    public static String databaseName="MlisDatabase";
 
 }

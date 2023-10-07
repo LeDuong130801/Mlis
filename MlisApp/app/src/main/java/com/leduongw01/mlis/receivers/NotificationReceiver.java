@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.leduongw01.mlis.R;
+import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.MyComponent;
 
 public class NotificationReceiver extends BroadcastReceiver {
@@ -20,28 +21,15 @@ public class NotificationReceiver extends BroadcastReceiver {
         Integer id = b.getInt("a");
         switch (id) {
             case 4:{
-                mediaPlayer.stop();
-                mediaPlayer.seekTo(0);
-                mediaPlayer.start();
+                ForegroundAudioService.resetOrBackMediaPlayer();
                 break;
             }
             case 5:{
-                if (playing){
-                    mediaPlayer.stop();
-                    currentSeek = mediaPlayer.getCurrentPosition();
-                    playing = false;
-//                    binding.ivControllNofication.setImageDrawable(getDrawable(R.drawable.ic_baseline_play_arrow_24));
-                }
-                else{
-                    mediaPlayer.seekTo(currentSeek);
-                    mediaPlayer.start();
-                    playing = true;
-//                    binding.ivControllNofication.setImageDrawable(getDrawable(R.drawable.pause_svgrepo_com));
-                }
+                ForegroundAudioService.pauseOrResumeMediaPlayer();
                 break;
             }
             case 6:{
-                MyComponent.ToastShort(context, "next");
+                ForegroundAudioService.nextMediaPlayer();
                 break;
             }
             default:{

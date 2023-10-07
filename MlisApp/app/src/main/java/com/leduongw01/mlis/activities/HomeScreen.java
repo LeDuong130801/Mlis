@@ -59,7 +59,6 @@ public class HomeScreen extends AppCompatActivity {
             startActivity(intent);
         });
         Menu menu = binding.navHomeScreen.getMenu();
-        menu.get
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

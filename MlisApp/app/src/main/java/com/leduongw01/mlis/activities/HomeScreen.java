@@ -7,6 +7,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.leduongw01.mlis.R;
+import com.leduongw01.mlis.adapter.PodcastHAdapter;
 import com.leduongw01.mlis.databinding.ActivityHomeScreenBinding;
 
 public class HomeScreen extends AppCompatActivity {
@@ -26,6 +28,11 @@ public class HomeScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
         ktDrawer();
+        capNhatRecycleview();
+    }
+    private void capNhatRecycleview(){
+        binding.rcvMostPopular.setAdapter(new PodcastHAdapter());
+        binding.rcvMostPopular.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
     private void ktDrawer(){
         binding.drawerHomeScreen.addDrawerListener(new DrawerLayout.DrawerListener() {

@@ -4,6 +4,7 @@
     android:layout_width="@dimen/_80sdp"
     android:layout_height="wrap_content">
     <ImageView
+        android:id="@+id/ivTruyen"
         android:layout_width="@dimen/_72sdp"
         android:layout_height="@dimen/_56sdp"
         android:layout_margin="@dimen/_4sdp"

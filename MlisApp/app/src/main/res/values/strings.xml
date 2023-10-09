@@ -28,4 +28,8 @@
     <string name="dungnhac">Dừng nhạc</string>
     <string name="tentruyen">Tên truyện</string>
     <string name="tap1">Tập 1</string>
+    <string name="phobien">Phổ biến</string>
+    <string name="ngheganday">Nghe gần đây</string>
+    <string name="thongtin">Thông tin</string>
+    <string name="moicapnhat">Mới cập nhật</string>
 </resources>

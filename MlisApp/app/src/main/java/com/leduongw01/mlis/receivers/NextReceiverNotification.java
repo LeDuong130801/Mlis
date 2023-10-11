@@ -10,6 +10,6 @@ import com.leduongw01.mlis.utils.MyComponent;
 public class NextReceiverNotification extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        ForegroundAudioService.nextMediaPlayer();
+        ForegroundAudioService.getInstance().nextAudio();
     }
 }

@@ -1,5 +1,7 @@
 package com.leduongw01.mlis.services;
 
+import static com.leduongw01.mlis.utils.DefaultConfig.WaitTime;
+
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,105 +10,185 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.media.session.MediaSession;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.media.session.MediaButtonReceiver;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.activities.LoginActivity;
+import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.receivers.BackReceiverNotification;
 import com.leduongw01.mlis.receivers.NextReceiverNotification;
-import com.leduongw01.mlis.receivers.NotificationReceiver;
 import com.leduongw01.mlis.receivers.PauseResumeReceiverNotification;
 import com.leduongw01.mlis.utils.Const;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class ForegroundAudioService extends Service {
-    public static int currentSeek = 0;
-    public static boolean playing = false;
-    public static MediaPlayer mediaPlayer;
-    private static ArrayList listAudio;
-    private static int currentAudio;
-    String ACTION_CLICK = "actionclick";
-    String EXTRA_CLICK = "a";
+    private static ForegroundAudioService instance = new ForegroundAudioService();
+    private static int currentSeek = 0;
+    private static boolean playing = false;
+    private static MediaPlayer mediaPlayer = new MediaPlayer();
+    private static final ArrayList<Podcast> podcastQueue = new ArrayList<>();
+    private static int currentAudio = 0;
+    public static Podcast podcastTemp = new Podcast();
     IBinder localBinder = new LocalBinder();
     public static RemoteViews notificationLayout;
     TimeThread timeThread = new TimeThread();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return localBinder;
     }
 
+    public static ForegroundAudioService getInstance() {
+        return instance;
+    }
+
+    public Podcast getCurrentAudio() {
+        return podcastQueue.get(currentAudio);
+    }
+
+    public Integer getDuration() {
+        return mediaPlayer.getDuration();
+    }
+
+    public int getCurrentSeek() {
+        return currentSeek;
+    }
+
+    public ArrayList<Podcast> getPodcastQueue(){
+        return podcastQueue;
+    }
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    public void nextAudio() {
+        if (currentAudio<podcastQueue.size()){
+            currentAudio++;
+            currentSeek = 0;
+            loadMediaPlayerFromUrl(podcastQueue.get(currentAudio).getUrl());
+        }
+    }
+    public void backAudio() {
+        if (currentAudio>0){
+            currentAudio--;
+            currentSeek = 0;
+            loadMediaPlayerFromUrl(podcastQueue.get(currentAudio).getUrl());
+        }
+    }
+
+    public void loadMediaPlayerByPosition(Integer position) {
+        String url = podcastQueue.get(position).getUrl();
+//        customNotification();
+        loadMediaPlayerFromUrl(url);
+    }
+
+    public void startPodcast(Podcast podcast){
+        podcastQueue.clear();
+        podcastQueue.add(podcast);
+        loadMediaPlayerByPosition(0);
+        mediaPlayer.start();
+    }
+    public void addPodcastToQueue(Podcast podcast){
+        podcastQueue.add(podcast);
+    }
+    public void loadNextPodcast(String url){
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                try {
+                    CustomMediaPlayer mediaPlayer1 = new CustomMediaPlayer();
+                    mediaPlayer1.setDataSource(url);
+                    mediaPlayer1.prepare();
+                    mediaPlayer.setNextMediaPlayer(mediaPlayer1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void loadMediaPlayerFromUrl(String url) {
+        if (url != null && !url.equals("")) {
+            mediaPlayer = new CustomMediaPlayer();
+            try {
+                mediaPlayer.setDataSource(url);
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                Log.e(Const.ERROR, "Tai nhac that bai");
+                e.printStackTrace();
+            }
+        }
+        else{
+            mediaPlayer = new CustomMediaPlayer();
+            mediaPlayer = CustomMediaPlayer.create(this, R.raw.bgbgbg);
+        }
+    }
+
     @SuppressLint("RemoteViewLayout")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        NotificationChannel serviceChannel = new NotificationChannel(
-//                "hoho",
-//                "Thanh dieu huong truyen",
-//                NotificationManager.IMPORTANCE_DEFAULT
-//        );
-//        NotificationManager manager = getSystemService(NotificationManager.class);
-//        manager.createNotificationChannel(serviceChannel);
-//        customNotification();
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer = MediaPlayer.create(this, R.raw.bgbgbg);
+        currentAudio = intent.getIntExtra("position", 0);
+        int startNow = intent.getIntExtra("startNow", 0);
+        if(startNow==1){
+            String url = intent.getStringExtra("url");
+            loadMediaPlayerFromUrl(url);
+        }
+        podcastQueue.add(podcastTemp);
+        loadMediaPlayerByPosition(currentAudio);
         mediaPlayer.start();
         timeThread.start();
         return START_NOT_STICKY;
     }
-    private PendingIntent onButtonNotificationClick(Context context, Integer id){
+
+    private PendingIntent onButtonNotificationClick(Context context, Integer id) {
         Intent intent = new Intent();
-        if (Objects.equals(id, Const.NEXT)){
+        if (Objects.equals(id, Const.NEXT)) {
             intent = new Intent(this, NextReceiverNotification.class);
-        }
-        else if(Objects.equals(id, Const.BACK)){
+        } else if (Objects.equals(id, Const.BACK)) {
             intent = new Intent(this, BackReceiverNotification.class);
-        }
-        else if(Objects.equals(id, Const.PAUSE_RESUME)){
+        } else if (Objects.equals(id, Const.PAUSE_RESUME)) {
             intent = new Intent(this, PauseResumeReceiverNotification.class);
-        }
-        else if(Objects.equals(id, Const.IMAGE)){
+        } else if (Objects.equals(id, Const.IMAGE)) {
             return PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0);
         }
         return PendingIntent.getBroadcast(context, 200, intent, 0);
     }
+
     @SuppressLint("RemoteViewLayout")
-    void customNotification(){
-        Intent notificationIntent = new Intent(this, LoginActivity.class);
+    void customNotification() {
+//        Intent notificationIntent = new Intent(this, LoginActivity.class);
+        Context context = getApplicationContext();
+        if (context!= null){
+            int a = 0;
+        }
         NotificationChannel serviceChannel = new NotificationChannel(
-                "hoho",
+                "MlisMediaPlayerF",
                 "Mlis MediaPlayer",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_NONE
         );
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(serviceChannel);
-        if(mediaPlayer.isPlaying()){
+        if (mediaPlayer.isPlaying()) {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio);
-        }
-        else {
+        } else {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio_stop);
         }
         notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Const.BACK));
         notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Const.PAUSE_RESUME));
         notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Const.NEXT));
         notificationLayout.setOnClickPendingIntent(R.id.ivAudio, onButtonNotificationClick(getApplicationContext(), Const.IMAGE));
-        Log.d("dddd", mediaPlayer.getDuration()+"");
-        Notification notification = new NotificationCompat.Builder(this, "hoho")
+        Notification notification = new NotificationCompat.Builder(this, "MlisMediaPlayerF")
                 .setSmallIcon(R.drawable.outline_music_note_24)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                 .setCustomContentView(notificationLayout)
@@ -115,40 +197,30 @@ public class ForegroundAudioService extends Service {
                 .build();
         startForeground(1, notification);
     }
-    public static void pauseOrResumeMediaPlayer(){
-        if(mediaPlayer.isPlaying()){
+
+    public void pauseOrResumeMediaPlayer() {
+        if (mediaPlayer.isPlaying()) {
             currentSeek = mediaPlayer.getCurrentPosition();
             mediaPlayer.pause();
-        }
-        else {
+        } else {
             mediaPlayer.seekTo(currentSeek);
             mediaPlayer.start();
         }
     }
-    public static void resetOrBackMediaPlayer(){
-        if (mediaPlayer.isPlaying()){
+
+    public void resetMediaPlayer() {
+        if (mediaPlayer.isPlaying()) {
             currentSeek = 0;
-            mediaPlayer.pause();
             mediaPlayer.seekTo(0);
             mediaPlayer.start();
-        }
-        else{
-//            mediaPlayer.setNextMediaPlayer();
+        } else {
             currentSeek = 0;
-
         }
     }
-    public static void nextMediaPlayer(){
-//        mediaPlayer.setNextMediaPlayer();
-    }
-
 
     public class LocalBinder extends Binder {
         ForegroundAudioService getService() {
             return ForegroundAudioService.this;
-        }
-        public void reloadNotification(){
-
         }
     }
 
@@ -159,35 +231,55 @@ public class ForegroundAudioService extends Service {
     }
 
     int time = 0;
-    public class TimeThread implements Runnable{
+
+    public class TimeThread implements Runnable {
         Thread thread;
+
         @Override
         public void run() {
             try {
-                while (time<6000){
-                    Thread.sleep(1);
-                    if(playing!=mediaPlayer.isPlaying()){
+                while (time < WaitTime) {
+                    Thread.sleep(1000);
+                    if (playing != mediaPlayer.isPlaying()) {
                         customNotification();
                         playing = mediaPlayer.isPlaying();
                     }
-                    if (!playing){
+                    if (!playing) {
                         time++;
+                    } else {
+                        time = 0;
                     }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(time>=6000){
+            if (time >= WaitTime) {
                 time = 0;
                 stopForeground(STOP_FOREGROUND_REMOVE);
                 thread = null;
             }
         }
-        void start(){
-            if(thread == null){
+
+        void start() {
+            if (thread == null) {
                 thread = new Thread(this);
                 thread.start();
             }
+        }
+    }
+
+    static class CustomMediaPlayer extends MediaPlayer {
+        String dataSource;
+
+        @Override
+        public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
+            // TODO Auto-generated method stub
+            super.setDataSource(path);
+            dataSource = path;
+        }
+
+        public String getDataSource() {
+            return dataSource;
         }
     }
 }

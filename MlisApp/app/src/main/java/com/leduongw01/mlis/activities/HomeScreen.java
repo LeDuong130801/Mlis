@@ -1,15 +1,20 @@
 package com.leduongw01.mlis.activities;
 
+
+import static com.leduongw01.mlis.services.ForegroundAudioService.podcastTemp;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,22 +24,39 @@ import android.view.View;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.adapter.PodcastHAdapter;
 import com.leduongw01.mlis.databinding.ActivityHomeScreenBinding;
+import com.leduongw01.mlis.listener.RecyclerViewClickListener;
+import com.leduongw01.mlis.models.Podcast;
+import com.leduongw01.mlis.services.ForegroundAudioService;
+import com.leduongw01.mlis.utils.Const;
+
+import java.util.ArrayList;
 
 public class HomeScreen extends AppCompatActivity {
 
     ActivityHomeScreenBinding binding;
+    ArrayList<Podcast> mostPopularPodcastList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
         ktDrawer();
-        capNhatRecycleview();
+        FakeData();
+        capNhatRecycleView();
     }
-    private void capNhatRecycleview(){
-        binding.rcvMostPopular.setAdapter(new PodcastHAdapter());
+
+    private void capNhatRecycleView() {
+        binding.rcvMostPopular.setAdapter(new PodcastHAdapter(getApplicationContext(), mostPopularPodcastList, (v, position) -> {
+            Intent serviceIntent = new Intent(this, ForegroundAudioService.class);
+            serviceIntent.putExtra("startNow", 1);
+            serviceIntent.putExtra("url", mostPopularPodcastList.get(position).getUrl());
+            podcastTemp = mostPopularPodcastList.get(position);
+            ContextCompat.startForegroundService(this, serviceIntent);
+        }));
         binding.rcvMostPopular.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
-    private void ktDrawer(){
+
+    private void ktDrawer() {
         binding.drawerHomeScreen.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -67,6 +89,7 @@ public class HomeScreen extends AppCompatActivity {
         });
         Menu menu = binding.navHomeScreen.getMenu();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -79,6 +102,7 @@ public class HomeScreen extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -110,4 +134,12 @@ public class HomeScreen extends AppCompatActivity {
         return true;
     }
 
+    private void FakeData() {
+        mostPopularPodcastList = new ArrayList<>();
+        mostPopularPodcastList.add(new Podcast("1", "M1", "soundhelix", Const.M1, "https://cdn0.fahasa.com/media/catalog/product/m/u/mua-he-khong-ten---bia-mem---qua-tang-kem-1.jpg", ""));
+        mostPopularPodcastList.add(new Podcast("1", "M2", "soundhelix", Const.M2, "https://cdn0.fahasa.com/media/catalog/product/m/u/mua-he-khong-ten---bia-cung---qua-tang-kem-1.jpg", ""));
+        mostPopularPodcastList.add(new Podcast("1", "M3", "soundhelix", Const.M3, "https://cdn0.fahasa.com/media/catalog/product/m/a/mashle_bia_tap-11-1.jpg", ""));
+        mostPopularPodcastList.add(new Podcast("1", "M4", "soundhelix", Const.M4, "", ""));
+        mostPopularPodcastList.add(new Podcast("1", "M5", "soundhelix", Const.M5, "https://cdn0.fahasa.com/media/catalog/product/k/a/kaguya-sama-cuoc-chien-to-t_nh_bia_tap-24-1.jpg", ""));
+    }
 }

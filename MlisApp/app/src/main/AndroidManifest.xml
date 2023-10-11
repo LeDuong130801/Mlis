@@ -52,8 +52,7 @@
             android:name=".services.ForegroundAudioService"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback" />
-        <receiver android:name=".receivers.NotificationReceiver"
-            android:exported="true"/>
+
         <receiver android:name=".receivers.NextReceiverNotification"
             android:exported="true"/>
         <receiver android:name=".receivers.BackReceiverNotification"

@@ -13,5 +13,8 @@ public class Const {
     public static Integer IMAGE = 1;
     public static Integer EXIT = 3;
     public static String databaseName="MlisDatabase";
+    public static String ERROR = "do";
+    public static String SHOW = "xanh";
+    public static String WARNING = "Vang";
 
 }

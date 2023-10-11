@@ -1,41 +1,48 @@
 package com.leduongw01.mlis.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.leduongw01.mlis.R;
+import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.Podcast;
+import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Const;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.PodcastViewHolder>{
 
-    ArrayList<Podcast> podcastArrayList = new ArrayList<>();
-    public PodcastHAdapter(){
-        FakeData();
+    ArrayList<Podcast> podcastArrayList;
+    Context context;
+    private static RecyclerViewClickListener clickListener;
+
+    public PodcastHAdapter(Context context,ArrayList<Podcast> podcastArrayList,RecyclerViewClickListener clickListener){
+        this.context = context;
+        PodcastHAdapter.clickListener = clickListener;
+        this.podcastArrayList = podcastArrayList;
     }
     @NonNull
     @Override
     public PodcastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_audio, parent, false);
-        return new PodcastViewHolder(view);
+        return new PodcastViewHolder(view, context);
     }
 
     @Override
@@ -51,10 +58,11 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
         return podcastArrayList.size();
     }
 
-    public static class PodcastViewHolder extends RecyclerView.ViewHolder{
+    public static class PodcastViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private final TextView tvTenTruyen;
         private final TextView tvBoSung;
         private final ImageView ivTruyen;
+        private final LinearLayout linearLayout;
 //        private final String idTruyen;
 
         public TextView getTvTenTruyen() {
@@ -69,22 +77,21 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
             return ivTruyen;
         }
 
-        public PodcastViewHolder(@NonNull View itemView) {
+        public PodcastViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
+            itemView.setOnClickListener(this);
             tvTenTruyen = itemView.findViewById(R.id.tvTenTruyen);
             tvBoSung = itemView.findViewById(R.id.tvBoSung);
             ivTruyen = itemView.findViewById(R.id.ivTruyen);
+            linearLayout = itemView.findViewById(R.id.layoutAudio);
+        }
+
+        @Override
+        public void onClick(View view) {
+            clickListener.recyclerViewListClicked(view, getLayoutPosition());
         }
     }
-    private void FakeData(){
-        podcastArrayList = new ArrayList<>();
-        podcastArrayList.add(new Podcast("1", "M1", "soundhelix", Const.M1, "https://cdn0.fahasa.com/media/catalog/product/m/u/mua-he-khong-ten---bia-mem---qua-tang-kem-1.jpg", ""));
-        podcastArrayList.add(new Podcast("1", "M2", "soundhelix", Const.M2, "https://cdn0.fahasa.com/media/catalog/product/m/u/mua-he-khong-ten---bia-cung---qua-tang-kem-1.jpg", ""));
-        podcastArrayList.add(new Podcast("1", "M3", "soundhelix", Const.M3, "https://cdn0.fahasa.com/media/catalog/product/m/a/mashle_bia_tap-11-1.jpg", ""));
-        podcastArrayList.add(new Podcast("1", "M4", "soundhelix", Const.M4, "", ""));
-        podcastArrayList.add(new Podcast("1", "M5", "soundhelix", Const.M5, "https://cdn0.fahasa.com/media/catalog/product/k/a/kaguya-sama-cuoc-chien-to-t_nh_bia_tap-24-1.jpg", ""));
-    }
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private  class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {

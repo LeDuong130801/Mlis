@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="@dimen/_80sdp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/layoutAudio">
     <ImageView
         android:id="@+id/ivTruyen"
         android:layout_width="@dimen/_72sdp"
@@ -16,7 +17,8 @@
         android:textSize="@dimen/_10sdp"
         android:text="@string/tentruyen"
         android:maxLines="1"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:layout_marginHorizontal="@dimen/_2sdp"/>
     <TextView
         android:id="@+id/tvBoSung"
         android:layout_width="wrap_content"
@@ -24,6 +26,7 @@
         android:maxLines="1"
         android:text="@string/tap1"
         android:textSize="@dimen/_8ssp"
-        android:textColor="@color/gray"/>
+        android:textColor="@color/gray"
+        android:layout_marginHorizontal="@dimen/_2sdp"/>
 
 </LinearLayout>

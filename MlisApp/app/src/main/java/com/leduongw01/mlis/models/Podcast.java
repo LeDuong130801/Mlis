@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 public class Podcast {
     String id;
     String name;
@@ -13,6 +12,10 @@ public class Podcast {
     String url;
     String urlImage;
     String uri;
+
+    public Podcast() {
+
+    }
 
     public String getId() {
         return id;

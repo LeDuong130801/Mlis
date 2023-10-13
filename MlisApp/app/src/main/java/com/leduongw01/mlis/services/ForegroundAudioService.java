@@ -35,8 +35,9 @@ public class ForegroundAudioService extends Service {
     private static ForegroundAudioService instance = new ForegroundAudioService();
     private static int currentSeek = 0;
     private static boolean playing = false;
+    public static boolean waiting = true;
     private static MediaPlayer mediaPlayer = new MediaPlayer();
-    private static final ArrayList<Podcast> podcastQueue = new ArrayList<>();
+    private static ArrayList<Podcast> podcastQueue = new ArrayList<>();
     private static int currentAudio = 0;
     public static Podcast podcastTemp = new Podcast();
     IBinder localBinder = new LocalBinder();
@@ -62,7 +63,13 @@ public class ForegroundAudioService extends Service {
     }
 
     public int getCurrentSeek() {
-        return currentSeek;
+        return mediaPlayer.getCurrentPosition();
+    }
+    public void setCurrentSeek(int seek){
+        mediaPlayer.stop();
+        mediaPlayer.seekTo(seek);
+        currentSeek = seek;
+        mediaPlayer.start();
     }
 
     public ArrayList<Podcast> getPodcastQueue(){
@@ -70,6 +77,10 @@ public class ForegroundAudioService extends Service {
     }
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
+    }
+    public void stopMediaPlayer(){
+        timeThread = new TimeThread();
+        mediaPlayer.release();
     }
 
     public void nextAudio() {
@@ -89,6 +100,7 @@ public class ForegroundAudioService extends Service {
 
     public void loadMediaPlayerByPosition(Integer position) {
         String url = podcastQueue.get(position).getUrl();
+        currentAudio = position;
 //        customNotification();
         loadMediaPlayerFromUrl(url);
     }
@@ -99,8 +111,16 @@ public class ForegroundAudioService extends Service {
         loadMediaPlayerByPosition(0);
         mediaPlayer.start();
     }
-    public void addPodcastToQueue(Podcast podcast){
+    public void startPodcastByList(ArrayList<Podcast> podcastArrayList){
+        podcastQueue = podcastArrayList;
+        loadMediaPlayerByPosition(0);
+        mediaPlayer.start();
+    }
+    public void initQueueWithStartPodcast(Podcast podcast){
+        podcastQueue.clear();
         podcastQueue.add(podcast);
+        loadMediaPlayerByPosition(0);
+        mediaPlayer.start();
     }
     public void loadNextPodcast(String url){
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -109,7 +129,9 @@ public class ForegroundAudioService extends Service {
                 try {
                     CustomMediaPlayer mediaPlayer1 = new CustomMediaPlayer();
                     mediaPlayer1.setDataSource(url);
+                    waiting = true;
                     mediaPlayer1.prepare();
+                    waiting = false;
                     mediaPlayer.setNextMediaPlayer(mediaPlayer1);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -122,8 +144,11 @@ public class ForegroundAudioService extends Service {
         if (url != null && !url.equals("")) {
             mediaPlayer = new CustomMediaPlayer();
             try {
+                waiting = true;
                 mediaPlayer.setDataSource(url);
                 mediaPlayer.prepare();
+                currentSeek = 0;
+                waiting = false;
             } catch (IOException e) {
                 Log.e(Const.ERROR, "Tai nhac that bai");
                 e.printStackTrace();
@@ -138,19 +163,16 @@ public class ForegroundAudioService extends Service {
     @SuppressLint("RemoteViewLayout")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        currentAudio = intent.getIntExtra("position", 0);
-        int startNow = intent.getIntExtra("startNow", 0);
-        if(startNow==1){
-            String url = intent.getStringExtra("url");
-            loadMediaPlayerFromUrl(url);
-        }
-        podcastQueue.add(podcastTemp);
-        loadMediaPlayerByPosition(currentAudio);
-        mediaPlayer.start();
+        if(timeThread==null)
         timeThread.start();
+        customNotification();
+        fillData();
         return START_NOT_STICKY;
     }
 
+    private void fillData(){
+
+    }
     private PendingIntent onButtonNotificationClick(Context context, Integer id) {
         Intent intent = new Intent();
         if (Objects.equals(id, Const.NEXT)) {
@@ -168,10 +190,10 @@ public class ForegroundAudioService extends Service {
     @SuppressLint("RemoteViewLayout")
     void customNotification() {
 //        Intent notificationIntent = new Intent(this, LoginActivity.class);
-        Context context = getApplicationContext();
-        if (context!= null){
-            int a = 0;
-        }
+//        Context context = getApplicationContext();
+//        if (context!= null){
+//            int a = 0;
+//        }
         NotificationChannel serviceChannel = new NotificationChannel(
                 "MlisMediaPlayerF",
                 "Mlis MediaPlayer",
@@ -184,6 +206,7 @@ public class ForegroundAudioService extends Service {
         } else {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio_stop);
         }
+        notificationLayout.setTextViewText(R.id.tvTenTruyen, podcastTemp.getName());
         notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Const.BACK));
         notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Const.PAUSE_RESUME));
         notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Const.NEXT));
@@ -202,9 +225,29 @@ public class ForegroundAudioService extends Service {
         if (mediaPlayer.isPlaying()) {
             currentSeek = mediaPlayer.getCurrentPosition();
             mediaPlayer.pause();
+            playing = false;
         } else {
             mediaPlayer.seekTo(currentSeek);
             mediaPlayer.start();
+            playing = true;
+        }
+    }
+    public void skipNext10s() {
+        currentSeek = mediaPlayer.getCurrentPosition();
+        if(mediaPlayer.getCurrentPosition()+10000< mediaPlayer.getDuration()){
+            mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()+10000);
+        }
+        else{
+            mediaPlayer.seekTo(mediaPlayer.getDuration());
+        }
+    }
+    public void forwardprevious10s() {
+        currentSeek = mediaPlayer.getCurrentPosition();
+        if(mediaPlayer.getCurrentPosition()-10000> 0){
+            mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()-10000);
+        }
+        else{
+            mediaPlayer.seekTo(0);
         }
     }
 
@@ -227,6 +270,7 @@ public class ForegroundAudioService extends Service {
     @Override
     public void onDestroy() {
         stopForeground(STOP_FOREGROUND_REMOVE);
+
         super.onDestroy();
     }
 

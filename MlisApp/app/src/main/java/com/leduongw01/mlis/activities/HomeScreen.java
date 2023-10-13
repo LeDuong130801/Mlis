@@ -47,11 +47,18 @@ public class HomeScreen extends AppCompatActivity {
 
     private void capNhatRecycleView() {
         binding.rcvMostPopular.setAdapter(new PodcastHAdapter(getApplicationContext(), mostPopularPodcastList, (v, position) -> {
-            Intent serviceIntent = new Intent(this, ForegroundAudioService.class);
-            serviceIntent.putExtra("startNow", 1);
-            serviceIntent.putExtra("url", mostPopularPodcastList.get(position).getUrl());
+//            Intent serviceIntent = new Intent(this, ForegroundAudioService.class);
+//            serviceIntent.putExtra("startNow", 1);
+//            serviceIntent.putExtra("url", mostPopularPodcastList.get(position).getUrl());
+//            podcastTemp = mostPopularPodcastList.get(position);
+//            ContextCompat.startForegroundService(this, serviceIntent);
+            Intent playerIntent = new Intent(this, PlayerActivity.class);
+            playerIntent.putExtra("startNow", 1);
             podcastTemp = mostPopularPodcastList.get(position);
-            ContextCompat.startForegroundService(this, serviceIntent);
+            if (ForegroundAudioService.getInstance().getMediaPlayer().isPlaying()){
+                ForegroundAudioService.getInstance().stopMediaPlayer();
+            }
+            startActivity(playerIntent);
         }));
         binding.rcvMostPopular.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }

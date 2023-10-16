@@ -23,6 +23,7 @@ public class PlayerActivity extends AppCompatActivity {
     ActivityPlayerBinding binding;
     Runnable runnable;
     Handler handler;
+    boolean playing = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +67,12 @@ public class PlayerActivity extends AppCompatActivity {
             public void run() {
                 binding.seekBarMediaPlayer.setProgress(ForegroundAudioService.getInstance().getMediaPlayer().getCurrentPosition());
                 binding.tvCurrentSeek.setText(NumberTimeToString(ForegroundAudioService.getInstance().getMediaPlayer().getCurrentPosition()));
+                if(ForegroundAudioService.getInstance().getPlaying()){
+                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
+                }
+                else{
+                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_play_arrow_24);
+                }
                 handler.postDelayed(runnable, 1000);
             }
         };
@@ -84,12 +91,12 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ForegroundAudioService.getInstance().pauseOrResumeMediaPlayer();
-                if(ForegroundAudioService.getInstance().getMediaPlayer().isPlaying()){
-                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
-                }
-                else{
-                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_play_arrow_24);
-                }
+//                if(ForegroundAudioService.getInstance().getMediaPlayer().isPlaying()){
+//                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
+//                }
+//                else{
+//                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_play_arrow_24);
+//                }
                 Intent intent = new Intent(getApplicationContext(), ForegroundAudioService.class);
                 startService(intent);
             }

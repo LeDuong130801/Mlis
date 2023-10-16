@@ -61,6 +61,7 @@ public class ForegroundAudioService extends Service {
     public Integer getDuration() {
         return mediaPlayer.getDuration();
     }
+    public boolean getPlaying(){ return playing;}
 
     public int getCurrentSeek() {
         return mediaPlayer.getCurrentPosition();
@@ -79,7 +80,7 @@ public class ForegroundAudioService extends Service {
         return mediaPlayer;
     }
     public void stopMediaPlayer(){
-        timeThread = new TimeThread();
+//        timeThread = new TimeThread();
         mediaPlayer.release();
     }
 
@@ -160,10 +161,10 @@ public class ForegroundAudioService extends Service {
         }
     }
 
-    @SuppressLint("RemoteViewLayout")
+    @SuppressLint({"RemoteViewLayout"})
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(timeThread==null)
+//        timeThread = new TimeThread();
         timeThread.start();
         customNotification();
         fillData();
@@ -225,11 +226,11 @@ public class ForegroundAudioService extends Service {
         if (mediaPlayer.isPlaying()) {
             currentSeek = mediaPlayer.getCurrentPosition();
             mediaPlayer.pause();
-            playing = false;
+//            playing = false;
         } else {
             mediaPlayer.seekTo(currentSeek);
             mediaPlayer.start();
-            playing = true;
+//            playing = true;
         }
     }
     public void skipNext10s() {

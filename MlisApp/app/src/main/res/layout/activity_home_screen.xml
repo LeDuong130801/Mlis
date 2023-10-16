@@ -139,7 +139,6 @@
                     android:layout_margin="@dimen/_4sdp"
                     android:src="@drawable/back_svgrepo_com"
                     android:background="@drawable/circle_shape"
-                    android:backgroundTint="@color/light_green"
                     android:rotation="180"
                     />
             </LinearLayout>

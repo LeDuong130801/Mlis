@@ -21,6 +21,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.activities.LoginActivity;
+import com.leduongw01.mlis.activities.PlayerActivity;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.receivers.BackReceiverNotification;
 import com.leduongw01.mlis.receivers.NextReceiverNotification;
@@ -39,10 +40,19 @@ public class ForegroundAudioService extends Service {
     private static MediaPlayer mediaPlayer = new MediaPlayer();
     private static ArrayList<Podcast> podcastQueue = new ArrayList<>();
     private static int currentAudio = 0;
+    private static int timer = -1;
     public static Podcast podcastTemp = new Podcast();
     IBinder localBinder = new LocalBinder();
     public static RemoteViews notificationLayout;
     TimeThread timeThread = new TimeThread();
+
+    public static int getTimer() {
+        return timer;
+    }
+
+    public static void setTimer(int timer) {
+        ForegroundAudioService.timer = timer;
+    }
 
     @Nullable
     @Override
@@ -66,22 +76,23 @@ public class ForegroundAudioService extends Service {
     public int getCurrentSeek() {
         return mediaPlayer.getCurrentPosition();
     }
+//    public void setCurrentSeek(int seek) {
+//        return currentSeek = currentSeek = seek;
+//    }
     public void setCurrentSeek(int seek){
-        mediaPlayer.stop();
         mediaPlayer.seekTo(seek);
         currentSeek = seek;
-        mediaPlayer.start();
     }
 
     public ArrayList<Podcast> getPodcastQueue(){
         return podcastQueue;
     }
     public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
+        return ForegroundAudioService.mediaPlayer;
     }
     public void stopMediaPlayer(){
 //        timeThread = new TimeThread();
-        mediaPlayer.release();
+        ForegroundAudioService.mediaPlayer.release();
     }
 
     public void nextAudio() {
@@ -183,7 +194,7 @@ public class ForegroundAudioService extends Service {
         } else if (Objects.equals(id, Const.PAUSE_RESUME)) {
             intent = new Intent(this, PauseResumeReceiverNotification.class);
         } else if (Objects.equals(id, Const.IMAGE)) {
-            return PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0);
+            return PendingIntent.getActivity(this, 0, new Intent(this, PlayerActivity.class), 0);
         }
         return PendingIntent.getBroadcast(context, 200, intent, 0);
     }
@@ -253,13 +264,8 @@ public class ForegroundAudioService extends Service {
     }
 
     public void resetMediaPlayer() {
-        if (mediaPlayer.isPlaying()) {
-            currentSeek = 0;
-            mediaPlayer.seekTo(0);
-            mediaPlayer.start();
-        } else {
-            currentSeek = 0;
-        }
+        currentSeek = 0;
+        mediaPlayer.seekTo(0);
     }
 
     public class LocalBinder extends Binder {

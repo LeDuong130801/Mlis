@@ -1,5 +1,5 @@
 package com.leduongw01.mlis.utils;
 
 public class DefaultConfig {
-    public static  Integer WaitTime = 10;
+    public static  Integer WaitTime = 15;
 }

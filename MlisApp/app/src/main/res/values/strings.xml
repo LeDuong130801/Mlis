@@ -33,4 +33,8 @@
     <string name="thongtin">Thông tin</string>
     <string name="moicapnhat">Mới cập nhật</string>
     <string name="boSung">Bổ sung</string>
+    <string name="hengio">Hẹn giờ</string>
+    <string name="_30phut">30 phút</string>
+    <string name="ok">OK</string>
+    <string name="amluong">Âm lượng</string>
 </resources>

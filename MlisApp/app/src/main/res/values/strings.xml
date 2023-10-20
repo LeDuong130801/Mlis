@@ -37,4 +37,8 @@
     <string name="_30phut">30 phút</string>
     <string name="ok">OK</string>
     <string name="amluong">Âm lượng</string>
+    <string name="xemThongTinTruyen">Thông tin truyện</string>
+    <string name="themVaoDanhSach">Thêm vào danh sách</string>
+    <string name="baoloi">Báo lỗi</string>
+    <string name="danhsachyeuthích">Danh sách yêu thích</string>
 </resources>

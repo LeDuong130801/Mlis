@@ -25,10 +25,6 @@ public class TimerDialog extends Dialog {
         super(context);
     }
 
-    public TimerDialog(@NonNull Context context, int themeResId) {
-        super(context, themeResId);
-    }
-
     protected TimerDialog(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
     }
@@ -43,14 +39,29 @@ public class TimerDialog extends Dialog {
         timertext = findViewById(R.id.timertext);
         seekTimer = findViewById(R.id.seekTimer);
         if (ForegroundAudioService.getTimer()!=-1){
-            seekTimer.setProgress(ForegroundAudioService.getTimer());
-            timertext.setText(ForegroundAudioService.getTimer()+" phút");
+            if (ForegroundAudioService.getTimer() > 60) {
+                timertext.setText(ForegroundAudioService.getTimer() / 60 + " phút");
+                seekTimer.setProgress(ForegroundAudioService.getTimer()/60);
+            } else {
+                seekTimer.setProgress(1);
+                timertext.setText("<1 phút");
+            }
+        }
+        else{
+            seekTimer.setProgress(0);
+            timertext.setText("Không hẹn giờ");
         }
         seekTimer.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (b)
-                timertext.setText(i+" phút");
+                if (b){
+                    if(i!=0){
+                        timertext.setText(i+" phút");
+                    }
+                    else{
+                        timertext.setText("Không hẹn giờ");
+                    }
+                }
             }
 
             @Override
@@ -66,7 +77,7 @@ public class TimerDialog extends Dialog {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ForegroundAudioService.setTimer(seekTimer.getProgress());
+                ForegroundAudioService.setTimer(seekTimer.getProgress()*60);
                 cancel();
             }
         });

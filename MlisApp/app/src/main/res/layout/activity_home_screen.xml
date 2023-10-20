@@ -114,33 +114,29 @@
                     android:layout_height="@dimen/_32sdp"
                     android:src="@drawable/qiqi"/>
                 <TextView
+                    android:id="@+id/tvTenTruyen"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/tentruyen"
                     android:textSize="@dimen/_14ssp"
                     android:layout_margin="@dimen/_2sdp"/>
-                <de.hdodenhof.circleimageview.CircleImageView
+                <ImageButton
                     android:id="@+id/icBack"
                     android:layout_width="@dimen/_32sdp"
                     android:layout_height="@dimen/_32sdp"
+                    android:src="@drawable/back_svgrepo_com"
+                    android:scaleType="fitCenter"
                     android:layout_margin="@dimen/_4sdp"
-                    android:src="@drawable/back_svgrepo_com"/>
-                <de.hdodenhof.circleimageview.CircleImageView
+                    android:background="@android:color/transparent"/>
+                <ImageButton
                     android:id="@+id/icPauseResume"
                     android:layout_width="@dimen/_32sdp"
                     android:layout_height="@dimen/_32sdp"
+                    android:scaleType="fitCenter"
                     android:layout_margin="@dimen/_4sdp"
-                    android:src="@drawable/ic_baseline_play_arrow_24"/>
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/icNext"
-                    android:layout_width="@dimen/_32sdp"
-                    android:layout_height="@dimen/_32sdp"
-                    android:layout_margin="@dimen/_4sdp"
-                    android:src="@drawable/back_svgrepo_com"
-                    android:background="@drawable/circle_shape"
-                    android:rotation="180"
-                    />
+                    android:src="@drawable/ic_baseline_play_arrow_24"
+                    android:background="@android:color/transparent"/>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
         <com.google.android.material.navigation.NavigationView

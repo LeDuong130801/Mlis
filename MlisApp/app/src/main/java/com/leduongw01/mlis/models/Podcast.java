@@ -14,7 +14,7 @@ public class Podcast {
     String uri;
 
     public Podcast() {
-
+        name = "";
     }
 
     public String getId() {

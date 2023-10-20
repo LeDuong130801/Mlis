@@ -20,4 +20,5 @@
     <color name="gray">#6c757d</color>
     <color name="background_dark">#2B2B2B</color>
     <color name="background_light">#CCC8C8</color>
+    <color name="tranparent">@android:color/transparent</color>
 </resources>

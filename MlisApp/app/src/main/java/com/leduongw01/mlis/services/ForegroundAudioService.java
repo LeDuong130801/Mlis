@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -42,6 +43,7 @@ public class ForegroundAudioService extends Service {
     private static int currentAudio = 0;
     private static int timer = -1;
     public static Podcast podcastTemp = new Podcast();
+    public static Podcast currentPodcast = new Podcast();
     IBinder localBinder = new LocalBinder();
     public static RemoteViews notificationLayout;
     TimeThread timeThread = new TimeThread();
@@ -113,6 +115,7 @@ public class ForegroundAudioService extends Service {
     public void loadMediaPlayerByPosition(Integer position) {
         String url = podcastQueue.get(position).getUrl();
         currentAudio = position;
+        currentPodcast = podcastQueue.get(position);
 //        customNotification();
         loadMediaPlayerFromUrl(url);
     }
@@ -131,6 +134,7 @@ public class ForegroundAudioService extends Service {
     public void initQueueWithStartPodcast(Podcast podcast){
         podcastQueue.clear();
         podcastQueue.add(podcast);
+        currentPodcast = podcast;
         loadMediaPlayerByPosition(0);
         mediaPlayer.start();
     }
@@ -218,7 +222,7 @@ public class ForegroundAudioService extends Service {
         } else {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio_stop);
         }
-        notificationLayout.setTextViewText(R.id.tvTenTruyen, podcastTemp.getName());
+        notificationLayout.setTextViewText(R.id.tvTenTruyen, currentPodcast.getName());
         notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Const.BACK));
         notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Const.PAUSE_RESUME));
         notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Const.NEXT));
@@ -244,22 +248,30 @@ public class ForegroundAudioService extends Service {
 //            playing = true;
         }
     }
+    public void pauseMediaPlayer() {
+        currentSeek = mediaPlayer.getCurrentPosition();
+        mediaPlayer.pause();
+    }
     public void skipNext10s() {
         currentSeek = mediaPlayer.getCurrentPosition();
         if(mediaPlayer.getCurrentPosition()+10000< mediaPlayer.getDuration()){
             mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()+10000);
+            currentSeek = mediaPlayer.getCurrentPosition();
         }
         else{
             mediaPlayer.seekTo(mediaPlayer.getDuration());
+            currentSeek = mediaPlayer.getDuration();
         }
     }
     public void forwardprevious10s() {
         currentSeek = mediaPlayer.getCurrentPosition();
         if(mediaPlayer.getCurrentPosition()-10000> 0){
             mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()-10000);
+            currentSeek = mediaPlayer.getCurrentPosition();
         }
         else{
             mediaPlayer.seekTo(0);
+            currentSeek = 0;
         }
     }
 
@@ -277,7 +289,6 @@ public class ForegroundAudioService extends Service {
     @Override
     public void onDestroy() {
         stopForeground(STOP_FOREGROUND_REMOVE);
-
         super.onDestroy();
     }
 
@@ -285,7 +296,6 @@ public class ForegroundAudioService extends Service {
 
     public class TimeThread implements Runnable {
         Thread thread;
-
         @Override
         public void run() {
             try {
@@ -295,10 +305,18 @@ public class ForegroundAudioService extends Service {
                         customNotification();
                         playing = mediaPlayer.isPlaying();
                     }
-                    if (!playing) {
-                        time++;
-                    } else {
+                    //hẹn giờ tắt
+                    if (timer==0){
+                        pauseMediaPlayer();
+                        timer = -1;
+                    }
+                    else if(timer!=-1){
+                        timer--;
+                    }
+                    if (playing) {
                         time = 0;
+                    } else {
+                        time++;
                     }
                 }
             } catch (InterruptedException e) {

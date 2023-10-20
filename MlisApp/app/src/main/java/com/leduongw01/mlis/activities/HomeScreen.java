@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,17 +31,23 @@ import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Const;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class HomeScreen extends AppCompatActivity {
 
     ActivityHomeScreenBinding binding;
     ArrayList<Podcast> mostPopularPodcastList;
-
+    String currentPodcastName = "";
+    boolean hide = true;
+    Handler handler;
+    Runnable runnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
         ktDrawer();
+        ktHandler();
+        ktSuKien();
         FakeData();
         capNhatRecycleView();
     }
@@ -95,6 +102,52 @@ public class HomeScreen extends AppCompatActivity {
             startActivity(intent);
         });
         Menu menu = binding.navHomeScreen.getMenu();
+    }
+    void ktHandler(){
+        binding.llplaying.setVisibility(View.GONE);
+        hide = true;
+        currentPodcastName = "";
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if(!ForegroundAudioService.currentPodcast.getName().isEmpty()
+                ){
+                    if(!Objects.equals(ForegroundAudioService.currentPodcast.getName(), currentPodcastName)){
+                        binding.tvTenTruyen.setText(ForegroundAudioService.currentPodcast.getName());
+                        currentPodcastName = ForegroundAudioService.currentPodcast.getName();
+                        hide = false;
+                        binding.llplaying.setVisibility(View.VISIBLE);
+                    }
+                }
+                else if(!hide){
+                    hide = true;
+                    binding.llplaying.setVisibility(View.GONE);
+                }
+                if(ForegroundAudioService.getInstance().getPlaying()){
+                    binding.icPauseResume.setImageResource(R.drawable.baseline_pause_24);
+                }
+                else{
+                    binding.icPauseResume.setImageResource(R.drawable.baseline_play_arrow_24);
+                }
+                handler.postDelayed(runnable, 1000);
+            }
+        };
+        handler.postDelayed(runnable, 1000);
+    }
+    void ktSuKien(){
+        binding.icBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ForegroundAudioService.getInstance().forwardprevious10s();
+            }
+        });
+        binding.icPauseResume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ForegroundAudioService.getInstance().pauseOrResumeMediaPlayer();
+            }
+        });
     }
 
     @Override

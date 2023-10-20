@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,7 +73,6 @@ public class PlayerActivity extends AppCompatActivity {
             public void run() {
                 binding.seekBarMediaPlayer.setProgress(ForegroundAudioService.getInstance().getMediaPlayer().getCurrentPosition());
                 binding.tvCurrentSeek.setText(NumberTimeToString(ForegroundAudioService.getInstance().getMediaPlayer().getCurrentPosition()));
-                ForegroundAudioService.getInstance().getMediaPlayer();
                 if(ForegroundAudioService.getInstance().getPlaying()!= playing) {
                     if (ForegroundAudioService.getInstance().getPlaying()) {
                         binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
@@ -124,7 +124,8 @@ public class PlayerActivity extends AppCompatActivity {
         binding.systemSound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                SoundControllDialog t = new SoundControllDialog(PlayerActivity.this);
+                t.show();
             }
         });
         binding.timerPlayer.setOnClickListener(new View.OnClickListener() {

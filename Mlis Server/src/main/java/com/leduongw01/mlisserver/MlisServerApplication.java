@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @Slf4j
 public class MlisServerApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(MlisServerApplication.class, args);
         log.info("Server đang chạy");

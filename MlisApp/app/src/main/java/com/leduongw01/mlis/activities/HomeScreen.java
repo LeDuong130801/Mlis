@@ -41,6 +41,7 @@ public class HomeScreen extends AppCompatActivity {
     boolean hide = true;
     Handler handler;
     Runnable runnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +63,7 @@ public class HomeScreen extends AppCompatActivity {
             Intent playerIntent = new Intent(this, PlayerActivity.class);
             playerIntent.putExtra("startNow", 1);
             podcastTemp = mostPopularPodcastList.get(position);
-            if (ForegroundAudioService.getInstance().getMediaPlayer().isPlaying()){
+            if (ForegroundAudioService.getInstance().getMediaPlayer().isPlaying()) {
                 ForegroundAudioService.getInstance().stopMediaPlayer();
             }
             startActivity(playerIntent);
@@ -74,7 +75,6 @@ public class HomeScreen extends AppCompatActivity {
         binding.drawerHomeScreen.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
             }
 
             @Override
@@ -83,12 +83,10 @@ public class HomeScreen extends AppCompatActivity {
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
-
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
-
             }
         });
         ActionBar actionbar = getSupportActionBar();
@@ -103,7 +101,8 @@ public class HomeScreen extends AppCompatActivity {
         });
         Menu menu = binding.navHomeScreen.getMenu();
     }
-    void ktHandler(){
+
+    void ktHandler() {
         binding.llplaying.setVisibility(View.GONE);
         hide = true;
         currentPodcastName = "";
@@ -111,23 +110,21 @@ public class HomeScreen extends AppCompatActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
-                if(!ForegroundAudioService.currentPodcast.getName().isEmpty()
-                ){
-                    if(!Objects.equals(ForegroundAudioService.currentPodcast.getName(), currentPodcastName)){
+                if (!ForegroundAudioService.currentPodcast.getName().isEmpty()
+                ) {
+                    if (!Objects.equals(ForegroundAudioService.currentPodcast.getName(), currentPodcastName)) {
                         binding.tvTenTruyen.setText(ForegroundAudioService.currentPodcast.getName());
                         currentPodcastName = ForegroundAudioService.currentPodcast.getName();
                         hide = false;
                         binding.llplaying.setVisibility(View.VISIBLE);
                     }
-                }
-                else if(!hide){
+                } else if (!hide) {
                     hide = true;
                     binding.llplaying.setVisibility(View.GONE);
                 }
-                if(ForegroundAudioService.getInstance().getPlaying()){
+                if (ForegroundAudioService.getInstance().getPlaying()) {
                     binding.icPauseResume.setImageResource(R.drawable.baseline_pause_24);
-                }
-                else{
+                } else {
                     binding.icPauseResume.setImageResource(R.drawable.baseline_play_arrow_24);
                 }
                 handler.postDelayed(runnable, 1000);
@@ -135,7 +132,8 @@ public class HomeScreen extends AppCompatActivity {
         };
         handler.postDelayed(runnable, 1000);
     }
-    void ktSuKien(){
+
+    void ktSuKien() {
         binding.icBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -31,11 +31,13 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
     ArrayList<Podcast> podcastArrayList;
     Context context;
     private static RecyclerViewClickListener clickListener;
+    static boolean canceled = false;
 
     public PodcastHAdapter(Context context,ArrayList<Podcast> podcastArrayList,RecyclerViewClickListener clickListener){
         this.context = context;
         PodcastHAdapter.clickListener = clickListener;
         this.podcastArrayList = podcastArrayList;
+        canceled = false;
     }
     @NonNull
     @Override
@@ -47,9 +49,12 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
 
     @Override
     public void onBindViewHolder(@NonNull PodcastViewHolder holder, final int position) {
-        holder.getTvTenTruyen().setText(podcastArrayList.get(position).getName());
-        holder.getTvBoSung().setText(podcastArrayList.get(position).getAuthor());
-        new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImage());
+        if(!canceled){
+            holder.getTvTenTruyen().setText(podcastArrayList.get(position).getName());
+            holder.getTvBoSung().setText(podcastArrayList.get(position).getAuthor());
+            holder.downloadImageTask = new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImage());
+        }
+//        new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImage());
 //        holder.getIvTruyen().setImageBitmap();
     }
 
@@ -63,6 +68,7 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
         private final TextView tvBoSung;
         private final ImageView ivTruyen;
         private final LinearLayout linearLayout;
+        AsyncTask downloadImageTask;
 //        private final String idTruyen;
 
         public TextView getTvTenTruyen() {
@@ -89,9 +95,10 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
         @Override
         public void onClick(View view) {
             clickListener.recyclerViewListClicked(view, getLayoutPosition());
+            canceled = true;
         }
     }
-    private  class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
@@ -101,11 +108,12 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
+            if(!canceled)
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
+                Log.e("error background service", e.getMessage());
                 e.printStackTrace();
             }
             return mIcon11;
@@ -113,6 +121,11 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
+        }
+
+        @Override
+        protected void onCancelled(Bitmap bitmap) {
+            super.onCancelled(bitmap);
         }
     }
 }

@@ -41,4 +41,5 @@
     <string name="themVaoDanhSach">Thêm vào danh sách</string>
     <string name="baoloi">Báo lỗi</string>
     <string name="danhsachyeuthích">Danh sách yêu thích</string>
+    <string name="ipdefault">192.168.1.21</string>
 </resources>

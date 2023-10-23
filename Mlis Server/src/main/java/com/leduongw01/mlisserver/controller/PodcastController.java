@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -35,6 +36,12 @@ public class PodcastController {
         podcastService.addPodcast(podcast);
         return ResponseEntity.ok().body(fileName);
     }
+    @PostMapping("/addpodcasttofirebase")
+    public String addPodcastToFirebase(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException, ExecutionException, InterruptedException {
+        Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);
+        return podcastService.savePodcastF(podcast);
+    }
+
     public ResponseEntity<Podcast> getPodcastById(String id){
         return ResponseEntity.ok().body(podcastService.getPodcastById(id));
     }

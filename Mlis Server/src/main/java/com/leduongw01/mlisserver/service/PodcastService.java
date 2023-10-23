@@ -1,15 +1,22 @@
 package com.leduongw01.mlisserver.service;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.cloud.FirestoreClient;
 import com.leduongw01.mlisserver.model.Podcast;
 import com.leduongw01.mlisserver.repository.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class PodcastService {
     Podcast nullPodcast = new Podcast("-1");
+    String podcastCollection = "Podcast";
     @Autowired
     PodcastRepository podcastRepository;
     public Boolean exisPodcastById(String id){
@@ -26,6 +33,16 @@ public class PodcastService {
     public void addPodcast(Podcast podcast){
         podcastRepository.insert(podcast);
     }
+    public String savePodcastF(Podcast podcast) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        ApiFuture<WriteResult> c = db.collection(podcastCollection).document(podcast.getName()).set(podcast);
+        return c.get().getUpdateTime().toString();
+    }
+//    public String savePodcastFile(MultipartFile file) throws ExecutionException, InterruptedException {
+//        StorageReference db = FirestoreClient.getFirestore();
+//        ApiFuture<WriteResult> c = db.collection(podcastCollection).document(podcast.getName()).set(podcast);
+//        return c.get().getUpdateTime().toString();
+//    }
 //    public ArrayList<Podcast> getAllByCreateBy(String author){
 //        return podcastRepository.getAllByCreateBy(author);
 //    }

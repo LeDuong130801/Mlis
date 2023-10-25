@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping("/api/podcast")
 public class PodcastController {
     @Autowired
@@ -29,19 +32,30 @@ public class PodcastController {
     MediaStoragedService mediaStoragedService;
 
     @PostMapping("/uploadpodcast")
-    public ResponseEntity<String> uploadFile(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException {
+    public ResponseEntity<String> uploadFile(@RequestParam(name = "file", required = false) MultipartFile file,@RequestParam(name = "image", required = false) MultipartFile image, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException {
         Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);
+        Date d = new Date();
+        podcast.setCreateOn(d.getTime()+"");
         String fileName = mediaStoragedService.storeFile(podcast, file);
-        podcast.setUrl("storage\\media\\"+fileName);
+        podcast.setUrl("storage\\file\\"+fileName);
+        String imageName = mediaStoragedService.storeImage(podcast, image);
+        podcast.setUrlImg("storage\\file\\"+imageName);
         podcastService.addPodcast(podcast);
         return ResponseEntity.ok().body(fileName);
+    }
+    @GetMapping("/getpodbyauthor")
+    public ArrayList<Podcast> getAllByAuthor(@RequestParam(name = "author") String author){
+        return podcastService.getAllByAuthor(author);
     }
     @PostMapping("/addpodcasttofirebase")
     public String addPodcastToFirebase(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException, ExecutionException, InterruptedException {
         Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);
         return podcastService.savePodcastF(podcast);
     }
-
+    @GetMapping("/getpodcastwithsl")
+    public ArrayList<Podcast> getAllPodcastWithSl(@RequestParam(value = "page") Integer page, @RequestParam("quantity") Integer quantity){
+        return podcastService.getPodcastBySl(page, quantity);
+    }
     public ResponseEntity<Podcast> getPodcastById(String id){
         return ResponseEntity.ok().body(podcastService.getPodcastById(id));
     }

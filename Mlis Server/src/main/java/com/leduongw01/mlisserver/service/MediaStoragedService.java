@@ -41,25 +41,37 @@ public class MediaStoragedService {
     }
 
     public String storeFile(Podcast podcast, MultipartFile file) {
-
         Random r = new Random();
-
         String fileName =
-                podcast.getName()+ podcast.getCreateBy()+podcast.getCreateOn()+"." + getFileExtension(file.getOriginalFilename());
-
+                r.nextLong()+podcast.getName()+ podcast.getCreateBy()+podcast.getCreateOn()+file.getName()+"." + getFileExtension(file.getOriginalFilename());
         try {
             // Check if the filename contains invalid characters
             if (fileName.contains("..")) {
                 throw new RuntimeException(
-                        "Sorry! Filename contains invalid path sequence " + fileName);
+                        "Duoi file khong xac dinh " + fileName);
             }
-
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
             return fileName;
         } catch (IOException ex) {
-            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+            throw new RuntimeException("Luu file that bai", ex);
+        }
+    }
+    public String storeImage(Podcast podcast, MultipartFile image) {
+        Random r = new Random();
+        String fileName =
+                r.nextLong()+podcast.getName()+ podcast.getCreateBy()+podcast.getCreateOn()+image.getName()+"." + getFileExtension(image.getOriginalFilename());
+        try {
+            // Check if the filename contains invalid characters
+            if (fileName.contains("..")) {
+                throw new RuntimeException(
+                        "Duoi anh khong xac dinh " + fileName);
+            }
+            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+            Files.copy(image.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException ex) {
+            throw new RuntimeException("Luu anh that bai", ex);
         }
     }
 }

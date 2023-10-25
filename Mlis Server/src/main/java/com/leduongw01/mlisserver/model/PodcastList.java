@@ -19,5 +19,6 @@ public class PodcastList {
     String createOn;
     String createBy;
     ArrayList<String> podListId;
+    String userId;
     String status;
 }

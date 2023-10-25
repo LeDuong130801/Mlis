@@ -9,4 +9,6 @@ public interface PodcastRepository extends MongoRepository<Podcast, String> {
     public Podcast getPodcastBy_id(String id);
     public ArrayList<Podcast> getAllByCreateBy(String createBy);
     public boolean existsPodcastBy_id(String id);
+    ArrayList<Podcast> getAllByAuthor(String author);
+    ArrayList<Podcast> getAllByStatus(String s);
 }

@@ -1,6 +1,7 @@
 package com.leduongw01.mlisserver.service;
-
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-@Service
 public class FirebaseInit {
-    @PostConstruct
     public void init(){
         FileInputStream serviceAccount =
                 null;

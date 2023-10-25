@@ -30,6 +30,9 @@ public class PodcastService {
     public ArrayList<Podcast> getAllByCreateBy(String author){
         return podcastRepository.getAllByCreateBy(author);
     }
+    public ArrayList<Podcast> getAllByAuthor(String author){
+        return podcastRepository.getAllByAuthor(author);
+    }
     public void addPodcast(Podcast podcast){
         podcastRepository.insert(podcast);
     }
@@ -37,6 +40,17 @@ public class PodcastService {
         Firestore db = FirestoreClient.getFirestore();
         ApiFuture<WriteResult> c = db.collection(podcastCollection).document(podcast.getName()).set(podcast);
         return c.get().getUpdateTime().toString();
+    }
+    public ArrayList<Podcast> getPodcastBySl(Integer page, Integer quantity){
+        ArrayList<Podcast> all = podcastRepository.getAllByStatus("1");
+        ArrayList<Podcast> out;
+        if(page*quantity<all.size()){
+            out = (ArrayList<Podcast>) all.subList((page-1)*quantity, page*quantity);
+        }
+        else{
+            out = (ArrayList<Podcast>) all.subList((page-1)*quantity, all.size());
+        }
+        return out;
     }
 //    public String savePodcastFile(MultipartFile file) throws ExecutionException, InterruptedException {
 //        StorageReference db = FirestoreClient.getFirestore();

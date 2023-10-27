@@ -52,7 +52,7 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
         if(!canceled){
             holder.getTvTenTruyen().setText(podcastArrayList.get(position).getName());
             holder.getTvBoSung().setText(podcastArrayList.get(position).getAuthor());
-            holder.downloadImageTask = new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImage());
+            holder.downloadImageTask = new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImg());
         }
 //        new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImage());
 //        holder.getIvTruyen().setImageBitmap();

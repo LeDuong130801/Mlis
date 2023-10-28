@@ -23,12 +23,17 @@ import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Const;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.PodcastViewHolder>{
 
     ArrayList<Podcast> podcastArrayList;
+    ArrayList<Bitmap> bitmapArrayList;
     Context context;
     private static RecyclerViewClickListener clickListener;
     static boolean canceled = false;
@@ -37,8 +42,14 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
         this.context = context;
         PodcastHAdapter.clickListener = clickListener;
         this.podcastArrayList = podcastArrayList;
+        bitmapArrayList = new ArrayList<>();
+        for(int i=0;i<podcastArrayList.size();i++){
+            bitmapArrayList.add(null);
+            new DownloadImageTask(null, i).execute(podcastArrayList.get(i).getUrlImg());
+        }
         canceled = false;
     }
+
     @NonNull
     @Override
     public PodcastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,10 +60,14 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
 
     @Override
     public void onBindViewHolder(@NonNull PodcastViewHolder holder, final int position) {
-        if(!canceled){
+        if(!canceled) {
             holder.getTvTenTruyen().setText(podcastArrayList.get(position).getName());
             holder.getTvBoSung().setText(podcastArrayList.get(position).getAuthor());
-            holder.downloadImageTask = new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImg());
+            if (bitmapArrayList.get(position) == null)
+                holder.downloadImageTask = new DownloadImageTask(holder.getIvTruyen(), position).execute(podcastArrayList.get(position).getUrlImg());
+            else{
+                holder.ivTruyen.setImageBitmap(bitmapArrayList.get(position));
+            }
         }
 //        new DownloadImageTask(holder.getIvTruyen()).execute(podcastArrayList.get(position).getUrlImage());
 //        holder.getIvTruyen().setImageBitmap();
@@ -90,6 +105,7 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
             tvBoSung = itemView.findViewById(R.id.tvBoSung);
             ivTruyen = itemView.findViewById(R.id.ivTruyen);
             linearLayout = itemView.findViewById(R.id.layoutAudio);
+            linearLayout.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -100,27 +116,41 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
     }
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
+        int position;
+        public DownloadImageTask(ImageView bmImage, int position) {
             this.bmImage = bmImage;
+            this.position = position;
         }
 
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
+            Bitmap decoded = null;
             if(!canceled)
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
+                mIcon11.compress(Bitmap.CompressFormat.PNG, 25, out);
+                decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
             } catch (Exception e) {
                 Log.e("error background service", e.getMessage());
                 e.printStackTrace();
             }
-            return mIcon11;
+            return decoded;
         }
 
         protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+            try {
+                if (bmImage!=null)
+                bmImage.setImageBitmap(result);
+                if(bitmapArrayList.get(position)==null)
+                bitmapArrayList.set(position, result);
+            }
+            catch (Exception e){
+                Log.e("error: ", e.getMessage());
+                e.printStackTrace();
+            }
         }
 
         @Override

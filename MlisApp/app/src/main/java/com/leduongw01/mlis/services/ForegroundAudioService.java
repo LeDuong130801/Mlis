@@ -10,7 +10,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -28,8 +31,12 @@ import com.leduongw01.mlis.receivers.BackReceiverNotification;
 import com.leduongw01.mlis.receivers.NextReceiverNotification;
 import com.leduongw01.mlis.receivers.PauseResumeReceiverNotification;
 import com.leduongw01.mlis.utils.Const;
+import com.leduongw01.mlis.utils.MyComponent;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -44,6 +51,7 @@ public class ForegroundAudioService extends Service {
     private static int timer = -1;
     public static Podcast podcastTemp = new Podcast();
     public static Podcast currentPodcast = new Podcast();
+    public static Bitmap imagePod = null;
     IBinder localBinder = new LocalBinder();
     public static RemoteViews notificationLayout;
     TimeThread timeThread = new TimeThread();
@@ -94,7 +102,8 @@ public class ForegroundAudioService extends Service {
     }
     public void stopMediaPlayer(){
 //        timeThread = new TimeThread();
-        ForegroundAudioService.mediaPlayer.release();
+        mediaPlayer.release();
+        timeThread = null;
     }
 
     public void nextAudio() {
@@ -116,6 +125,7 @@ public class ForegroundAudioService extends Service {
         String url = podcastQueue.get(position).getUrl();
         currentAudio = position;
         currentPodcast = podcastQueue.get(position);
+        new DownloadImageAsyncTask().execute(currentPodcast.getUrlImg());
 //        customNotification();
         loadMediaPlayerFromUrl(url);
     }
@@ -223,6 +233,7 @@ public class ForegroundAudioService extends Service {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio_stop);
         }
         notificationLayout.setTextViewText(R.id.tvTenTruyen, currentPodcast.getName());
+        notificationLayout.setImageViewBitmap(R.id.ivAudio , imagePod);
         notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Const.BACK));
         notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Const.PAUSE_RESUME));
         notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Const.NEXT));
@@ -349,6 +360,35 @@ public class ForegroundAudioService extends Service {
 
         public String getDataSource() {
             return dataSource;
+        }
+    }
+    class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
+
+        public DownloadImageAsyncTask(){}
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            Bitmap decoded = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+                mIcon11.compress(Bitmap.CompressFormat.PNG, 25, out);
+                decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+                imagePod = decoded;
+            } catch (Exception e) {
+                Log.e("error background service", e.getMessage());
+                e.printStackTrace();
+            }
+            return decoded;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+        }
+
+        @Override
+        protected void onCancelled(Bitmap bitmap) {
+            super.onCancelled(bitmap);
         }
     }
 }

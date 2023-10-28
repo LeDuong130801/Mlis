@@ -5,6 +5,7 @@ package com.leduongw01.mlis;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Application;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,15 +44,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MyComponent.ToastShort(this, "main");
 //        Intent serviceIntent = new Intent(this, ForegroundAudioService.class);
 //        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
 //        ContextCompat.startForegroundService(this, serviceIntent);
         Intent home = new Intent(this, HomeScreen.class);
-        try {
-            getKeyApi();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            getKeyApi();
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
         startActivity(home);
     }
 

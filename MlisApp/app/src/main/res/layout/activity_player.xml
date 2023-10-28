@@ -40,6 +40,7 @@
             app:layout_constraintBottom_toTopOf="@id/tvTenTruyen"
             android:gravity="center">
             <ImageView
+                android:id="@+id/ivPlayer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/pikachubackground"

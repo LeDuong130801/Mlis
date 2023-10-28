@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="@dimen/_80sdp"
     android:layout_height="wrap_content"
-    android:id="@+id/layoutAudio">
+    android:id="@+id/layoutAudio"
+    android:visibility="gone">
     <ImageView
         android:id="@+id/ivTruyen"
         android:layout_width="@dimen/_72sdp"

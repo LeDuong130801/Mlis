@@ -1,5 +1,6 @@
 package com.leduongw01.mlis.activities;
 
+import static com.leduongw01.mlis.services.ForegroundAudioService.imagePod;
 import static com.leduongw01.mlis.services.ForegroundAudioService.podcastTemp;
 import static com.leduongw01.mlis.services.ForegroundAudioService.waiting;
 
@@ -10,6 +11,8 @@ import androidx.databinding.DataBindingUtil;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -22,6 +25,11 @@ import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.databinding.ActivityPlayerBinding;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.Objects;
 
 public class PlayerActivity extends AppCompatActivity {
@@ -136,15 +144,24 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
     }
-    void fillData(){
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(PlayerActivity.this, HomeScreen.class);
+        startActivity(i);
+    }
+
+    void fillData() {
         binding.tvTenTruyen.setText(podcastTemp.getName());
         binding.tvBoSung.setText(podcastTemp.getAuthor());
         runnable.run();
+        binding.ivPlayer.setImageBitmap(imagePod);
     }
     String NumberTimeToString(int number){
         number/=1000;
         if(number/3600!=0){
-            return insert0(number/3600)+":"+insert0(number/60)+":"+insert0(number%60);
+            return insert0(number/3600)+":"+insert0((number%3600)/60)+":"+insert0(number%60);
         }
         else{
             return insert0(number/60)+":"+insert0(number%60);

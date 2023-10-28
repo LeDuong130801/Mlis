@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.adapter.PodcastHAdapter;
@@ -30,6 +31,7 @@ import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Const;
+import com.leduongw01.mlis.utils.MyComponent;
 
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -114,7 +116,7 @@ public class HomeScreen extends AppCompatActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
-                if (!ForegroundAudioService.currentPodcast.getName().isEmpty()
+                if (!(ForegroundAudioService.currentPodcast == null)
                 ) {
                     if (!Objects.equals(ForegroundAudioService.currentPodcast.getName(), currentPodcastName)) {
                         binding.tvTenTruyen.setText(ForegroundAudioService.currentPodcast.getName());

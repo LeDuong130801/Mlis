@@ -15,7 +15,6 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -24,14 +23,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.leduongw01.mlis.R;
-import com.leduongw01.mlis.activities.LoginActivity;
 import com.leduongw01.mlis.activities.PlayerActivity;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.receivers.BackReceiverNotification;
 import com.leduongw01.mlis.receivers.NextReceiverNotification;
 import com.leduongw01.mlis.receivers.PauseResumeReceiverNotification;
-import com.leduongw01.mlis.utils.Const;
-import com.leduongw01.mlis.utils.MyComponent;
+import com.leduongw01.mlis.utils.Constant;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -176,7 +173,7 @@ public class ForegroundAudioService extends Service {
                 currentSeek = 0;
                 waiting = false;
             } catch (IOException e) {
-                Log.e(Const.ERROR, "Tai nhac that bai");
+                Log.e(Constant.ERROR, "Tai nhac that bai");
                 e.printStackTrace();
             }
         }
@@ -201,13 +198,13 @@ public class ForegroundAudioService extends Service {
     }
     private PendingIntent onButtonNotificationClick(Context context, Integer id) {
         Intent intent = new Intent();
-        if (Objects.equals(id, Const.NEXT)) {
+        if (Objects.equals(id, Constant.NEXT)) {
             intent = new Intent(this, NextReceiverNotification.class);
-        } else if (Objects.equals(id, Const.BACK)) {
+        } else if (Objects.equals(id, Constant.BACK)) {
             intent = new Intent(this, BackReceiverNotification.class);
-        } else if (Objects.equals(id, Const.PAUSE_RESUME)) {
+        } else if (Objects.equals(id, Constant.PAUSE_RESUME)) {
             intent = new Intent(this, PauseResumeReceiverNotification.class);
-        } else if (Objects.equals(id, Const.IMAGE)) {
+        } else if (Objects.equals(id, Constant.IMAGE)) {
             return PendingIntent.getActivity(this, 0, new Intent(this, PlayerActivity.class), 0);
         }
         return PendingIntent.getBroadcast(context, 200, intent, 0);
@@ -234,16 +231,17 @@ public class ForegroundAudioService extends Service {
         }
         notificationLayout.setTextViewText(R.id.tvTenTruyen, currentPodcast.getName());
         notificationLayout.setImageViewBitmap(R.id.ivAudio , imagePod);
-        notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Const.BACK));
-        notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Const.PAUSE_RESUME));
-        notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Const.NEXT));
-        notificationLayout.setOnClickPendingIntent(R.id.ivAudio, onButtonNotificationClick(getApplicationContext(), Const.IMAGE));
+        notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Constant.BACK));
+        notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Constant.PAUSE_RESUME));
+        notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Constant.NEXT));
+        notificationLayout.setOnClickPendingIntent(R.id.ivAudio, onButtonNotificationClick(getApplicationContext(), Constant.IMAGE));
         Notification notification = new NotificationCompat.Builder(this, "MlisMediaPlayerF")
                 .setSmallIcon(R.drawable.outline_music_note_24)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                 .setCustomContentView(notificationLayout)
                 .setCustomBigContentView(notificationLayout)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSilent(true)
                 .build();
         startForeground(1, notification);
     }
@@ -335,6 +333,9 @@ public class ForegroundAudioService extends Service {
             }
             if (time >= WaitTime) {
                 time = 0;
+                currentPodcast = new Podcast();
+                currentSeek = 0;
+                currentAudio = 0;
                 stopForeground(STOP_FOREGROUND_REMOVE);
                 thread = null;
             }

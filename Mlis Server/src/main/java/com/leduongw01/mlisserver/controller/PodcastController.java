@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -47,13 +48,14 @@ public class PodcastController {
     public ArrayList<Podcast> getAllByAuthor(@RequestParam(name = "author") String author){
         return podcastService.getAllByAuthor(author);
     }
-    @PostMapping("/addpodcasttofirebase")
-    public String addPodcastToFirebase(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException, ExecutionException, InterruptedException {
-        Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);
-        return podcastService.savePodcastF(podcast);
-    }
+//    @PostMapping("/addpodcasttofirebase")
+////    public String addPodcastToFirebase(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException, ExecutionException, InterruptedException {
+////        Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);
+////        return podcastService.savePodcastF(podcast);
+////    }
     @GetMapping("/getpodcastwithsl")
-    public ArrayList<Podcast> getAllPodcastWithSl(@RequestParam(value = "page") Integer page, @RequestParam("quantity") Integer quantity){
+    public List<Podcast> getAllPodcastWithSl(@RequestParam(value = "page") Integer page, @RequestParam("quantity") Integer quantity){
+        log.info("sl"+page);
         return podcastService.getPodcastBySl(page, quantity);
     }
     public ResponseEntity<Podcast> getPodcastById(String id){

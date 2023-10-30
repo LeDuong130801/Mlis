@@ -1,7 +1,6 @@
 package com.leduongw01.mlis.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -14,20 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.Podcast;
-import com.leduongw01.mlis.services.ForegroundAudioService;
-import com.leduongw01.mlis.utils.Const;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.PodcastViewHolder>{

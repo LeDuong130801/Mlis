@@ -18,6 +18,15 @@ public class Podcast {
     private String status;
 
     public Podcast() {
+        this._id = "";
+        this.name = "";
+        this.inf = "";
+        this.createOn = "";
+        this.createBy = "";
+        this.author = "";
+        this.category = "";
+        this.url = "";
+        this.urlImg = "";
         status = "0";
     }
 

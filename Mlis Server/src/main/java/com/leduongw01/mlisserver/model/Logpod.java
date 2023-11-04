@@ -1,5 +1,6 @@
 package com.leduongw01.mlisserver.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StringValue {
-    String non;
-    String body;
+public class Logpod {
+    String _id;
+    String type;
+    String objectId;
+    String content;
+    String createOn;
 }

@@ -13,11 +13,10 @@ import lombok.Setter;
 public class Podcast {
     private String _id;
     private String name;
-    private String inf;
+    private String detail;
     private String createOn;
     private String createBy;
     private String author;
-    private String category;
     private String url;
     private String urlImg;
     private String status;

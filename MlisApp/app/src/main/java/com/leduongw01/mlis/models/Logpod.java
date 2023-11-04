@@ -8,6 +8,11 @@ public class Logpod {
     String createOn;
 
     public Logpod() {
+        _id = "0";
+        type = "N"
+        objectId = "N";
+        content = "Trống"
+        createOn = "0";
     }
 
     public Logpod(String _id, String type, String objectId, String content, String createOn) {

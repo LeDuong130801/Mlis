@@ -1,33 +1,29 @@
 package com.leduongw01.mlis.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-public class Podcast {
+public class Playlist {
     private String _id;
     private String name;
-    private String detail;
+    private String author;
+    private String category;
     private String createOn;
     private String updateOn;
-    private String url;
+    private String detail;
     private String urlImg;
-    private String playlistId;
     private String status;
 
-    public Podcast() {
+    public Playlist() {
     }
 
-    public Podcast(String _id, String name, String detail, String createOn, String updateOn, String url, String urlImg, String playlistId, String status) {
+    public Playlist(String _id, String name, String author, String category, String createOn, String updateOn, String detail, String urlImg, String status) {
         this._id = _id;
         this.name = name;
-        this.detail = detail;
+        this.author = author;
+        this.category = category;
         this.createOn = createOn;
         this.updateOn = updateOn;
-        this.url = url;
+        this.detail = detail;
         this.urlImg = urlImg;
-        this.playlistId = playlistId;
         this.status = status;
     }
 
@@ -47,12 +43,20 @@ public class Podcast {
         this.name = name;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getCreateOn() {
@@ -71,12 +75,12 @@ public class Podcast {
         this.updateOn = updateOn;
     }
 
-    public String getUrl() {
-        return url;
+    public String getDetail() {
+        return detail;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
     public String getUrlImg() {
@@ -85,14 +89,6 @@ public class Podcast {
 
     public void setUrlImg(String urlImg) {
         this.urlImg = urlImg;
-    }
-
-    public String getPlaylistId() {
-        return playlistId;
-    }
-
-    public void setPlaylistId(String playlistId) {
-        this.playlistId = playlistId;
     }
 
     public String getStatus() {

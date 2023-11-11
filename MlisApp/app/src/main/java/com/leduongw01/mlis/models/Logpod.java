@@ -9,9 +9,9 @@ public class Logpod {
 
     public Logpod() {
         _id = "0";
-        type = "N"
+        type = "N";
         objectId = "N";
-        content = "Trống"
+        content = "Trống";
         createOn = "0";
     }
 

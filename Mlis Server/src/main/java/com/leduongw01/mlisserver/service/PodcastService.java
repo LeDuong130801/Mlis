@@ -4,9 +4,7 @@ import com.leduongw01.mlisserver.model.Podcast;
 import com.leduongw01.mlisserver.repository.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -16,7 +14,7 @@ public class PodcastService {
     String podcastCollection = "Podcast";
     @Autowired
     PodcastRepository podcastRepository;
-    public Boolean exisPodcastById(String id){
+    public Boolean existPodcastById(String id){
         return podcastRepository.existsPodcastBy_id(id);
     }
     public Podcast getPodcastById(String id){
@@ -24,10 +22,10 @@ public class PodcastService {
         return podcastRepository.getPodcastBy_id(id);
         else return new Podcast("-1");
     }
-    public ArrayList<Podcast> getAllByCreateBy(String author){
+    public List<Podcast> getAllByCreateBy(String author){
         return podcastRepository.getAllByCreateBy(author);
     }
-    public ArrayList<Podcast> getAllByAuthor(String author){
+    public List<Podcast> getAllByAuthor(String author){
         return podcastRepository.getAllByAuthor(author);
     }
     public void addPodcast(Podcast podcast){
@@ -39,7 +37,7 @@ public class PodcastService {
 //        return c.get().getUpdateTime().toString();
 //    }
     public List<Podcast> getPodcastBySl(Integer page, Integer quantity){
-        ArrayList<Podcast> all = podcastRepository.getAllByStatus("1");
+        List<Podcast> all = podcastRepository.getAllByStatus("1");
         List<Podcast> out;
         if(page*quantity<all.size()){
             out = all.subList((page-1)*quantity, page*quantity);

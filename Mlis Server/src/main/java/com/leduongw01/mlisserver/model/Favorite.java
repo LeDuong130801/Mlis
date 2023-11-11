@@ -12,12 +12,11 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PodcastList {
+public class Favorite {
     @Id
     String _id;
     String name;
     String createOn;
-    String createBy;
     ArrayList<String> podListId;
     String userId;
     String status;

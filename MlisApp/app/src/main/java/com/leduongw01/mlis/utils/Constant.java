@@ -15,7 +15,7 @@ public class Constant {
     public static String databaseName="MlisDatabase";
     public static String ERROR = "do";
     public static String SHOW = "xanh";
-    public static String WARNING = "Vang";
+    public static String WARNING = "vang";
     //type Logpod
     public static String CREATE = "create";
     public static String UPDATE = "update";

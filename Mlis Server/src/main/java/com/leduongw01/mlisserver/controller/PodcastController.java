@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -45,7 +44,7 @@ public class PodcastController {
         return ResponseEntity.ok().body(fileName);
     }
     @GetMapping("/getpodbyauthor")
-    public ArrayList<Podcast> getAllByAuthor(@RequestParam(name = "author") String author){
+    public List<Podcast> getAllByAuthor(@RequestParam(name = "author") String author){
         return podcastService.getAllByAuthor(author);
     }
 //    @PostMapping("/addpodcasttofirebase")

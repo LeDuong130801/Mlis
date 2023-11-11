@@ -14,6 +14,6 @@ public class Logpod {
     String _id;
     String type;
     String objectId;
-    String content;
+    String detail;
     String createOn;
 }

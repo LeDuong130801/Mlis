@@ -15,8 +15,7 @@ public class Podcast {
     private String name;
     private String detail;
     private String createOn;
-    private String createBy;
-    private String author;
+    private String updateOn;
     private String url;
     private String urlImg;
     private String status;

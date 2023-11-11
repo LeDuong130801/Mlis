@@ -6,10 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import com.leduongw01.mlis.utils.Constant;
 
 public class MlisMySqlDBHelper{
+    private static SQLiteDatabase instance = SQLiteDatabase.openOrCreateDatabase(Constant.databaseName, null);
+    public static SQLiteDatabase getInstance(){
+        return instance;
+    }
     public static Cursor getAllSavedPodcastByStatus(String status){
-        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(Constant.databaseName, null);
         String sql = "select * from podcast where status = \""+status+"\"";
-        return database.rawQuery(sql, null);
+        return getInstance().rawQuery(sql, null);
     }
     public static void generatorBD(){
         SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(Constant.databaseName, null);

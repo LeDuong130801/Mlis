@@ -56,7 +56,6 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
     public void onBindViewHolder(@NonNull PodcastViewHolder holder, final int position) {
         if(!canceled) {
             holder.getTvTenTruyen().setText(podcastArrayList.get(position).getName());
-            holder.getTvBoSung().setText(podcastArrayList.get(position).getAuthor());
             if (bitmapArrayList.get(position) == null)
                 holder.downloadImageTask = new DownloadImageTask(holder.getIvTruyen(), position).execute(podcastArrayList.get(position).getUrlImg());
             else{

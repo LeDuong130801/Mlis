@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +19,6 @@ public class Playlist {
     String createOn;
     String updateOn;
     String detail;
-    List<Podcast> podcastList;
     String urlImg;
     String status;
 }

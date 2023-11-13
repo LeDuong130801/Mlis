@@ -23,16 +23,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.PodcastViewHolder>{
 
-    ArrayList<Podcast> podcastArrayList;
+    List<Podcast> podcastArrayList;
     ArrayList<Bitmap> bitmapArrayList;
     Context context;
     private static RecyclerViewClickListener clickListener;
     static boolean canceled = false;
 
-    public PodcastHAdapter(Context context,ArrayList<Podcast> podcastArrayList,RecyclerViewClickListener clickListener){
+    public PodcastHAdapter(Context context,List<Podcast> podcastArrayList,RecyclerViewClickListener clickListener){
         this.context = context;
         PodcastHAdapter.clickListener = clickListener;
         this.podcastArrayList = podcastArrayList;
@@ -124,7 +125,7 @@ public class PodcastHAdapter extends RecyclerView.Adapter<PodcastHAdapter.Podcas
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
-                mIcon11.compress(Bitmap.CompressFormat.PNG, 25, out);
+                mIcon11.compress(Bitmap.CompressFormat.PNG, 50, out);
                 decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
             } catch (Exception e) {
                 Log.e("error background service", e.getMessage());

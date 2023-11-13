@@ -5,6 +5,7 @@ import com.leduongw01.mlisserver.repository.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +30,8 @@ public class PodcastService {
         return podcastRepository.getAllByAuthor(author);
     }
     public void addPodcast(Podcast podcast){
+        podcast.setCreateOn((new Date()).getTime()+"");
+        podcast.setUpdateOn((new Date()).getTime()+"");
         podcastRepository.insert(podcast);
     }
 //    public String savePodcastF(Podcast podcast) throws ExecutionException, InterruptedException {

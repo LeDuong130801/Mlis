@@ -5,6 +5,7 @@ import com.leduongw01.mlisserver.repository.FavoriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,6 +39,7 @@ public class FavoriteService {
         return false;
     }
     public Favorite createFavorite(Favorite favorite){
+        favorite.setCreateOn((new Date()).getTime()+"");
         return favoriteRepository.insert(favorite);
     }
     public Favorite getFavorite(String id){

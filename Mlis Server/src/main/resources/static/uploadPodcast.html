@@ -174,11 +174,9 @@
         formData.append("image", fileImage);
         let podcast = {
             name: name? name : "Không tên",
-            inf: inf? inf:"Không có thông tin",
+            detail: inf? inf:"Không có thông tin",
             createOn: "noset",
-            createBy: "localhost",
-            author: author? author:"Không biết tác giả",
-            category: category? category: "trống",
+            updateOn: "0",
             url: fileName,
             urlImg: fileImageName,
             status: "1"

@@ -59,7 +59,7 @@ public class PlaylistService {
         return playlistRepository.getAllByStatus(status);
     }
     public List<Playlist> getAllPlayistByStatusAndPage(String status, Integer page, Integer quantity){
-        List<Playlist> playlists = playlistRepository.getAllByStatus("1");
+        List<Playlist> playlists = playlistRepository.getAllByStatus(status);
         return playlists.subList((page-1)*quantity, page*quantity);
     }
     public List<Playlist> getAllPlayistByAuthorAndStatus(String author, String status){

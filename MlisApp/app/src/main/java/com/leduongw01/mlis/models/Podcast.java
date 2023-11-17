@@ -16,7 +16,15 @@ public class Podcast {
     private String playlistId;
     private String status;
 
-    public Podcast() {
+    public Podcast() {this._id = "";
+        this.name = "";
+        this.detail = "";
+        this.createOn = "";
+        this.updateOn = "";
+        this.url = "";
+        this.urlImg = "";
+        this.playlistId = "";
+        this.status = "";
     }
 
     public Podcast(String _id, String name, String detail, String createOn, String updateOn, String url, String urlImg, String playlistId, String status) {

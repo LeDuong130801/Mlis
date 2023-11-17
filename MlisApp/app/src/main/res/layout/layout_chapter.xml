@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/_6sdp">
+    <TextView
+        android:id="@+id/chapName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tentruyen"
+        android:textSize="@dimen/_12ssp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:id="@+id/lastUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_10ssp"
+        />
+
+</LinearLayout>

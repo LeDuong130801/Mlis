@@ -11,12 +11,18 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/networksecurityconfig"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Mlis"
-        tools:targetApi="31"
-        android:networkSecurityConfig="@xml/networksecurityconfig">
-
+        tools:targetApi="31">
+        <activity
+            android:name=".activities.PlaylistDetailActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".activities.PlayerActivity"
             android:exported="false">
@@ -26,8 +32,7 @@
         </activity>
         <activity
             android:name=".activities.HomeScreen"
-            android:exported="false"
-            android:noHistory="true">
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

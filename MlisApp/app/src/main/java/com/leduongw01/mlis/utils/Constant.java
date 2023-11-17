@@ -16,6 +16,8 @@ public class Constant {
     public static String ERROR = "do";
     public static String SHOW = "xanh";
     public static String WARNING = "vang";
+    public static String PODCAST = "podcast";
+    public static String PLAYLIST = "playlist";
     //type Logpod
     public static String CREATE = "create";
     public static String UPDATE = "update";

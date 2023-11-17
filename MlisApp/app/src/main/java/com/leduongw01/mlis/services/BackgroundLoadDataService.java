@@ -5,16 +5,19 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.leduongw01.mlis.R;
+import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.MapImage;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.models.StringValue;
+import com.leduongw01.mlis.utils.Constant;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,43 +26,95 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BackgroundLoadDataService extends Service {
-    static List<Podcast> allPodcast = new ArrayList<Podcast>();
-    static List<Playlist> allPlaylist = new ArrayList<Playlist>();
-    static List<MapImage> podcastBitmap = new ArrayList<MapImage>();
     static BackgroundLoadDataService instance = new BackgroundLoadDataService();
-    private static final String PODCAST = "podcast";
-    private static final String PLAYLIST = "playlist";
 
-    private BackgroundLoadDataService() {
-
-    }
-
+    public static List<Podcast> allPodcast;
+    public static List<Playlist> allPlaylist;
+    public static List<MapImage> podcastBitmap;
     public static BackgroundLoadDataService getInstance() {
         return instance;
     }
+    //getter static
+    public static List<Podcast> getAllPodcast() {
+        return allPodcast;
+    }
+    public static List<Playlist> getAllPlaylist() {
+        return allPlaylist;
+    }
+    public static List<MapImage> getPodcastBitmap() {
+        return podcastBitmap;
+    }
+
+    public static List<Podcast> getPodcastInPlaylist(Playlist playlist){
+        List<Podcast> t = new ArrayList<Podcast>();
+        for (Podcast podcast : getAllPodcast()){
+            if (podcast.getPlaylistId().equals(playlist.get_id())){
+                t.add(podcast);
+            }
+        }
+        return t;
+    }
+    public static List<Podcast> getPodcastInPlaylist(String playlistId){
+        List<Podcast> t = new ArrayList<Podcast>();
+        for (Podcast podcast : getAllPodcast()){
+            if (podcast.getPlaylistId().equals(playlistId)){
+                t.add(podcast);
+            }
+        }
+        return t;
+    }
+    public static List<Podcast> getPodcastInFavorite(String favoriteId){
+        return null;
+    }
+
+    public static void no(){
+    }
+    private BackgroundLoadDataService() {
+        downloadTask();
+    }
+
 
     public void downloadTask() {
         fakeData();
-        for (Podcast podcast : allPodcast){
-            podcastBitmap.add(new MapImage(podcast.get_id()+PODCAST, null));
-            new DownloadTask(podcast.get_id()+PODCAST).execute(podcast.getUrlImg());
+        for (Podcast podcast : getAllPodcast()){
+            getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
+            new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
         }
-        for (Playlist playlist : allPlaylist){
-            podcastBitmap.add(new MapImage(playlist.get_id()+PLAYLIST, null));
-            new DownloadTask(playlist.get_id()+PLAYLIST).execute(playlist.getUrlImg());
+        for (Playlist playlist : getAllPlaylist()){
+            getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
+            new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
         }
     }
     public Bitmap getBitmapById(String id, String model){
-        for (int i = 0; i< podcastBitmap.size();i++){
-            if (podcastBitmap.get(i).id.equals(id+model.toLowerCase())){
-                return podcastBitmap.get(i).bitmap;
+        for (int i = 0; i< getPodcastBitmap().size();i++){
+            if (getPodcastBitmap().get(i).id.equals(id+model.toLowerCase())){
+                return getPodcastBitmap().get(i).bitmap;
             }
         }
         return BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
     }
-
+    public MapImage getMapImageById(String id, String model) {
+        for (int i = 0; i < getPodcastBitmap().size(); i++) {
+            if (getPodcastBitmap().get(i).id.equals(id + model.toLowerCase())) {
+                return getPodcastBitmap().get(i);
+            }
+        }
+        return null;
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
+    }
     public void fakeData() {
-        allPodcast.clear();
+        if (getAllPodcast()== null){
+            allPodcast = new ArrayList<>();
+        }
+        if(allPlaylist == null){
+            allPlaylist = new ArrayList<>();
+        }
+        if(podcastBitmap == null){
+            podcastBitmap = new ArrayList<>();
+        }
         allPodcast.add(
                 new Podcast(
                         "3",
@@ -95,7 +150,6 @@ public class BackgroundLoadDataService extends Service {
                         "6",
                         "1"
                 ));
-        allPlaylist.clear();
         allPlaylist.add(new Playlist(
                 "1",
                 "Thoát khỏi vòng lặp bận rộn",
@@ -118,6 +172,7 @@ public class BackgroundLoadDataService extends Service {
                 "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fvov.jpg?alt=media&token=75f2b920-c604-4c3d-9061-fe4c64d99b96",
                 "1"
         ));
+        getAllPlaylist();
     }
 
     @Nullable
@@ -148,10 +203,10 @@ public class BackgroundLoadDataService extends Service {
                 MapImage mapImage = new MapImage();
                 mapImage.id = id;
                 mapImage.bitmap = decoded;
-                for (int i=0;i<podcastBitmap.size();i++){
-                    if(podcastBitmap.get(i).id.equals(id)){
-                        podcastBitmap.get(i).bitmap = decoded;
-                        podcastBitmap.get(i).hasRes = true;
+                for (int i=0;i<getPodcastBitmap().size();i++){
+                    if(getPodcastBitmap().get(i).id.equals(id)){
+                        getPodcastBitmap().get(i).bitmap = decoded;
+                        getPodcastBitmap().get(i).hasRes = true;
                         return mapImage;
                     }
                 }
@@ -160,14 +215,19 @@ public class BackgroundLoadDataService extends Service {
             MapImage mapImage = new MapImage();
             mapImage.id = id;
             mapImage.bitmap = decoded;
-            for (int i=0;i<podcastBitmap.size();i++){
-                if(podcastBitmap.get(i).id.equals(id)){
-                    podcastBitmap.get(i).bitmap = decoded;
-                    podcastBitmap.get(i).hasRes = true;
+            for (int i=0;i<getPodcastBitmap().size();i++){
+                if(getPodcastBitmap().get(i).id.equals(id)){
+                    getPodcastBitmap().get(i).bitmap = decoded;
+                    getPodcastBitmap().get(i).hasRes = true;
                     return mapImage;
                 }
             }
             return mapImage;
+        }
+
+        @Override
+        protected void onPostExecute(MapImage mapImage) {
+            super.onPostExecute(mapImage);
         }
     }
 

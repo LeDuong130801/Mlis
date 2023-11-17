@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -24,6 +25,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.activities.PlayerActivity;
+import com.leduongw01.mlis.models.Favorite;
+import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.receivers.BackReceiverNotification;
 import com.leduongw01.mlis.receivers.NextReceiverNotification;
@@ -35,30 +38,33 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ForegroundAudioService extends Service {
-    private static ForegroundAudioService instance = new ForegroundAudioService();
-    private static int currentSeek = 0;
-    private static boolean playing = false;
-    public static boolean waiting = true;
-    private static MediaPlayer mediaPlayer = new MediaPlayer();
-    private static ArrayList<Podcast> podcastQueue = new ArrayList<>();
-    private static int currentAudio = 0;
-    private static int timer = -1;
-    public static Podcast podcastTemp = new Podcast();
-    public static Podcast currentPodcast = new Podcast();
-    public static Bitmap imagePod = null;
+    private static final ForegroundAudioService instance = new ForegroundAudioService();
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private int timer = -1;
+    private int currentSeek = 0;
+    private int currentAudio = 0;
+    private Podcast currentPodcast = new Podcast();
+    private Playlist currentPlaylist = new Playlist();
+    private Favorite currentFavorite = new Favorite();
+    private List<Podcast> currentList = new ArrayList<>();
     IBinder localBinder = new LocalBinder();
+    private Handler handler = new Handler();
+    private Runnable runnable = null;
     public static RemoteViews notificationLayout;
     TimeThread timeThread = new TimeThread();
-
-    public static int getTimer() {
-        return timer;
+    public static ForegroundAudioService getInstance() {
+        return instance;
     }
 
+    public static int getTimer() {
+        return getInstance().timer;
+    }
     public static void setTimer(int timer) {
-        ForegroundAudioService.timer = timer;
+        getInstance().timer = timer;
     }
 
     @Nullable
@@ -67,135 +73,132 @@ public class ForegroundAudioService extends Service {
         return localBinder;
     }
 
-    public static ForegroundAudioService getInstance() {
-        return instance;
+    public static Podcast getCurrentPodcast() {
+        return getInstance().currentPodcast;
+    }
+    public static void setCurrentPodcast(Podcast podcast){
+        getInstance().currentPodcast = podcast;
     }
 
-    public Podcast getCurrentAudio() {
-        return podcastQueue.get(currentAudio);
+    public static Integer getDuration() {
+        return getInstance().mediaPlayer.getDuration();
+    }
+    public static MediaPlayer getMediaPlayer(){
+        return getInstance().mediaPlayer;
+    }
+    public static void setMediaPlayer(MediaPlayer mediaPlayer){
+        getInstance().mediaPlayer = mediaPlayer;
     }
 
-    public Integer getDuration() {
-        return mediaPlayer.getDuration();
+    public static Playlist getCurrentPlaylist() {
+        return getInstance().currentPlaylist;
     }
-    public boolean getPlaying(){ return playing;}
+    public static void setCurrentPlaylist(Playlist playlist){
+        getInstance().currentPlaylist = playlist;
+    }
 
-    public int getCurrentSeek() {
-        return mediaPlayer.getCurrentPosition();
+    public static Favorite getCurrentFavorite() {
+        return getInstance().currentFavorite;
     }
-//    public void setCurrentSeek(int seek) {
-//        return currentSeek = currentSeek = seek;
-//    }
+    public static void setCurrentFavorite(Favorite favorite){
+        getInstance().currentFavorite= favorite;
+    }
+
+    public static List<Podcast> getCurrentList() {
+        return getInstance().currentList;
+    }
+    public static void setCurrentList(List<Podcast> newList) {
+        getInstance().currentList = newList;
+    }
+
+    public static int getCurrentSeek() {
+        return getInstance().currentSeek;
+    }
     public void setCurrentSeek(int seek){
-        mediaPlayer.seekTo(seek);
-        currentSeek = seek;
+        getMediaPlayer().seekTo(seek);
+        getInstance().currentSeek = seek;
+    }
+    public static int getCurrentAudio(){
+        return getInstance().currentAudio;
+    }
+    public static void setCurrentAudio(int position){
+        getInstance().currentAudio = position;
+    }
+    public static Handler getHandler(){
+        return getInstance().handler;
+    }
+    public static Runnable getRunnable(){
+        return getInstance().runnable;
+    }
+    public static void setRunable(Runnable runnable){
+        getInstance().runnable = runnable;
     }
 
-    public ArrayList<Podcast> getPodcastQueue(){
-        return podcastQueue;
-    }
-    public MediaPlayer getMediaPlayer() {
-        return ForegroundAudioService.mediaPlayer;
-    }
     public void stopMediaPlayer(){
-//        timeThread = new TimeThread();
-        mediaPlayer.release();
-        timeThread = null;
+        getMediaPlayer().release();
+    }
+    public void startMediaPlayerInFavorite(Favorite favorite, int position){
+//        BackgroundLoadDataService.getAllPlaylist().
+    }
+    public void startMediaPlayerInPlaylist(Playlist playlist, int position){
+        setCurrentPlaylist(playlist);
+        setCurrentList(BackgroundLoadDataService.getPodcastInPlaylist(playlist));
+        setCurrentAudio(position);
+        setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
+        setCurrentSeek(0);
+        startPodcast(getCurrentPodcast());
+    }
+    public static void startPodcast(Podcast podcast){
+        getInstance().loadMediaPlayerFromUrl(podcast.getUrl());
     }
 
     public void nextAudio() {
-        if (currentAudio<podcastQueue.size()){
-            currentAudio++;
-            currentSeek = 0;
-            loadMediaPlayerFromUrl(podcastQueue.get(currentAudio).getUrl());
+        if (getCurrentAudio()<getCurrentList().size()){
+            setCurrentAudio(getCurrentAudio()+1);
+            setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
+            setCurrentSeek(0);
+            startPodcast(getCurrentPodcast());
         }
     }
     public void backAudio() {
-        if (currentAudio>0){
-            currentAudio--;
-            currentSeek = 0;
-            loadMediaPlayerFromUrl(podcastQueue.get(currentAudio).getUrl());
+        if (getCurrentAudio()>0){
+            setCurrentAudio(getCurrentAudio()-1);
+            setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
+            setCurrentSeek(0);
+            startPodcast(getCurrentPodcast());
         }
-    }
-
-    public void loadMediaPlayerByPosition(Integer position) {
-        String url = podcastQueue.get(position).getUrl();
-        currentAudio = position;
-        currentPodcast = podcastQueue.get(position);
-        new DownloadImageAsyncTask().execute(currentPodcast.getUrlImg());
-//        customNotification();
-        loadMediaPlayerFromUrl(url);
-    }
-
-    public void startPodcast(Podcast podcast){
-        podcastQueue.clear();
-        podcastQueue.add(podcast);
-        loadMediaPlayerByPosition(0);
-        mediaPlayer.start();
-    }
-    public void startPodcastByList(ArrayList<Podcast> podcastArrayList){
-        podcastQueue = podcastArrayList;
-        loadMediaPlayerByPosition(0);
-        mediaPlayer.start();
-    }
-    public void initQueueWithStartPodcast(Podcast podcast){
-        podcastQueue.clear();
-        podcastQueue.add(podcast);
-        currentPodcast = podcast;
-        loadMediaPlayerByPosition(0);
-        mediaPlayer.start();
-    }
-    public void loadNextPodcast(String url){
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                try {
-                    CustomMediaPlayer mediaPlayer1 = new CustomMediaPlayer();
-                    mediaPlayer1.setDataSource(url);
-                    waiting = true;
-                    mediaPlayer1.prepare();
-                    waiting = false;
-                    mediaPlayer.setNextMediaPlayer(mediaPlayer1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private void loadMediaPlayerFromUrl(String url) {
         if (url != null && !url.equals("")) {
-            mediaPlayer = new CustomMediaPlayer();
+            setMediaPlayer(new CustomMediaPlayer());
             try {
-                waiting = true;
-                mediaPlayer.setDataSource(url);
-                mediaPlayer.prepare();
-                currentSeek = 0;
-                waiting = false;
+                getMediaPlayer().setDataSource(url);
+                getMediaPlayer().prepare();
+                getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        nextAudio();
+                    }
+                });
             } catch (IOException e) {
                 Log.e(Constant.ERROR, "Tai nhac that bai");
                 e.printStackTrace();
             }
         }
         else{
-            mediaPlayer = new CustomMediaPlayer();
-            mediaPlayer = CustomMediaPlayer.create(this, R.raw.bgbgbg);
+            setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
         }
     }
 
     @SuppressLint({"RemoteViewLayout"})
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        timeThread = new TimeThread();
-        timeThread.start();
-        customNotification();
-        fillData();
+        startNotification();
+        startTimerAndUpdateNotify();
         return START_NOT_STICKY;
     }
 
-    private void fillData(){
-
-    }
     private PendingIntent onButtonNotificationClick(Context context, Integer id) {
         Intent intent = new Intent();
         if (Objects.equals(id, Constant.NEXT)) {
@@ -211,7 +214,7 @@ public class ForegroundAudioService extends Service {
     }
 
     @SuppressLint("RemoteViewLayout")
-    void customNotification() {
+    Notification customNotification() {
 //        Intent notificationIntent = new Intent(this, LoginActivity.class);
 //        Context context = getApplicationContext();
 //        if (context!= null){
@@ -224,13 +227,13 @@ public class ForegroundAudioService extends Service {
         );
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(serviceChannel);
-        if (mediaPlayer.isPlaying()) {
+        if (getMediaPlayer().isPlaying()) {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio);
         } else {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio_stop);
         }
-        notificationLayout.setTextViewText(R.id.tvTenTruyen, currentPodcast.getName());
-        notificationLayout.setImageViewBitmap(R.id.ivAudio , imagePod);
+        notificationLayout.setTextViewText(R.id.tvTenTruyen, getCurrentPodcast().getName());
+        notificationLayout.setImageViewBitmap(R.id.ivAudio , BackgroundLoadDataService.getInstance().getBitmapById(getCurrentPodcast().get_id(), Constant.PODCAST));
         notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Constant.BACK));
         notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Constant.PAUSE_RESUME));
         notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Constant.NEXT));
@@ -243,50 +246,69 @@ public class ForegroundAudioService extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSilent(true)
                 .build();
-        startForeground(1, notification);
+        return notification;
+    }
+    private void startNotification(){
+        startForeground(1, customNotification());
+    }
+    private void updateNotification() {
+        Notification notification = customNotification();
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(1, notification);
     }
 
     public void pauseOrResumeMediaPlayer() {
-        if (mediaPlayer.isPlaying()) {
-            currentSeek = mediaPlayer.getCurrentPosition();
-            mediaPlayer.pause();
-//            playing = false;
+        if (getMediaPlayer().isPlaying()) {
+            setCurrentSeek(getMediaPlayer().getCurrentPosition());
+            getMediaPlayer().pause();
         } else {
-            mediaPlayer.seekTo(currentSeek);
-            mediaPlayer.start();
-//            playing = true;
+            getMediaPlayer().seekTo(getCurrentSeek());
+            getMediaPlayer().start();
         }
     }
     public void pauseMediaPlayer() {
-        currentSeek = mediaPlayer.getCurrentPosition();
-        mediaPlayer.pause();
+        setCurrentSeek(getMediaPlayer().getCurrentPosition());
+        getMediaPlayer().pause();
     }
     public void skipNext10s() {
-        currentSeek = mediaPlayer.getCurrentPosition();
-        if(mediaPlayer.getCurrentPosition()+10000< mediaPlayer.getDuration()){
-            mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()+10000);
-            currentSeek = mediaPlayer.getCurrentPosition();
+        setCurrentSeek(getMediaPlayer().getCurrentPosition());
+        if(getMediaPlayer().getCurrentPosition()+10000< getMediaPlayer().getDuration()){
+            getMediaPlayer().seekTo(getMediaPlayer().getCurrentPosition()+10000);
+            setCurrentSeek(getMediaPlayer().getCurrentPosition());
         }
         else{
-            mediaPlayer.seekTo(mediaPlayer.getDuration());
-            currentSeek = mediaPlayer.getDuration();
+            getMediaPlayer().seekTo(getMediaPlayer().getDuration());
+            setCurrentSeek(getMediaPlayer().getDuration());
         }
     }
     public void forwardprevious10s() {
-        currentSeek = mediaPlayer.getCurrentPosition();
-        if(mediaPlayer.getCurrentPosition()-10000> 0){
-            mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()-10000);
-            currentSeek = mediaPlayer.getCurrentPosition();
+        setCurrentSeek(getMediaPlayer().getCurrentPosition());
+        if(getMediaPlayer().getCurrentPosition()-10000> 0){
+            getMediaPlayer().seekTo(getMediaPlayer().getCurrentPosition()-10000);
+            setCurrentSeek(getMediaPlayer().getCurrentPosition());
         }
         else{
-            mediaPlayer.seekTo(0);
-            currentSeek = 0;
+            getMediaPlayer().seekTo(0);
+            setCurrentSeek(0);
         }
     }
-
-    public void resetMediaPlayer() {
-        currentSeek = 0;
-        mediaPlayer.seekTo(0);
+    public void startTimerAndUpdateNotify(){
+        setRunable(new Runnable() {
+            @Override
+            public void run() {
+                if (timer==0){
+                    pauseMediaPlayer();
+                    timer = -1;
+                }
+                else if(timer!=-1){
+                    timer--;
+                }
+                updateNotification();
+                getHandler().postDelayed(this, 1000);
+            }
+        });
+        //thêm cái gì đó để tắt lặp?
+        getHandler().postDelayed(getRunnable(), 1000);
     }
 
     public class LocalBinder extends Binder {
@@ -302,7 +324,6 @@ public class ForegroundAudioService extends Service {
     }
 
     int time = 0;
-
     public class TimeThread implements Runnable {
         Thread thread;
         @Override
@@ -310,10 +331,7 @@ public class ForegroundAudioService extends Service {
             try {
                 while (time < WaitTime) {
                     Thread.sleep(1000);
-                    if (playing != mediaPlayer.isPlaying()) {
-                        customNotification();
-                        playing = mediaPlayer.isPlaying();
-                    }
+                    updateNotification();
                     //hẹn giờ tắt
                     if (timer==0){
                         pauseMediaPlayer();
@@ -321,11 +339,6 @@ public class ForegroundAudioService extends Service {
                     }
                     else if(timer!=-1){
                         timer--;
-                    }
-                    if (playing) {
-                        time = 0;
-                    } else {
-                        time++;
                     }
                 }
             } catch (InterruptedException e) {
@@ -376,7 +389,6 @@ public class ForegroundAudioService extends Service {
                 mIcon11 = BitmapFactory.decodeStream(in);
                 mIcon11.compress(Bitmap.CompressFormat.PNG, 25, out);
                 decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
-                imagePod = decoded;
             } catch (Exception e) {
                 Log.e("error background service", e.getMessage());
                 e.printStackTrace();

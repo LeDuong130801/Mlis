@@ -27,6 +27,7 @@ import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
+import com.leduongw01.mlis.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,18 +50,17 @@ public class HomeScreen extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
         Intent i = new Intent(HomeScreen.this, BackgroundLoadDataService.class);
         startService(i);
-        BackgroundLoadDataService.no();
         ktDrawer();
-//        ktHandler();
+        ktHandler();
         ktSuKien();
         capNhatRecycleView();
     }
 
     private void capNhatRecycleView() {
         binding.rcvMostPopular.setAdapter(new AllPlaylistAdapter(getApplicationContext(), (v, position) -> {
-            Intent playerIntent = new Intent(this, PlaylistDetailActivity.class);
-            playerIntent.putExtra("playlistId", BackgroundLoadDataService.getAllPlaylist().get(position).get_id());
-            startActivity(playerIntent);
+            Intent intent = new Intent(this, PlaylistDetailActivity.class);
+            intent.putExtra("playlistId", BackgroundLoadDataService.getAllPlaylist().get(position).get_id());
+            startActivity(intent);
 
         }));
         binding.rcvMostPopular.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -118,8 +118,6 @@ public class HomeScreen extends AppCompatActivity {
     }
 
     void ktHandler() {
-        binding.llplaying.setVisibility(View.GONE);
-        hide = true;
         if (ForegroundAudioService.getCurrentPodcast() != null) {
             currentPodcastName = ForegroundAudioService.getCurrentPodcast().getName();
         } else {
@@ -132,9 +130,11 @@ public class HomeScreen extends AppCompatActivity {
                 if (currentPodcastName.equals("") && !hide) {
                     hide = true;
                     binding.llplaying.setVisibility(View.GONE);
-                } else if (hide) {
+                } else if (!currentPodcastName.equals("") && hide) {
                     hide = false;
                     binding.llplaying.setVisibility(View.VISIBLE);
+                    binding.tvTenTruyen.setText(ForegroundAudioService.getCurrentPodcast().getName());
+                    binding.imageAudio.setImageBitmap(BackgroundLoadDataService.getBitmapById(ForegroundAudioService.getCurrentPodcast().get_id(), Constant.PODCAST));
                 }
 //                else if (!currentPodcastName.equals("")) {
 //                    if (ForegroundAudioService.getInstance().) {
@@ -159,7 +159,7 @@ public class HomeScreen extends AppCompatActivity {
         binding.icPauseResume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ForegroundAudioService.getInstance().pauseOrResumeMediaPlayer();
+                ForegroundAudioService.pauseOrResumeMediaPlayer();
             }
         });
     }

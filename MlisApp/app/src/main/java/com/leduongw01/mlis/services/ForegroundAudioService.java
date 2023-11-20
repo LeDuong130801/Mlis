@@ -43,28 +43,27 @@ import java.util.Objects;
 
 public class ForegroundAudioService extends Service {
     private static final ForegroundAudioService instance = new ForegroundAudioService();
-    private MediaPlayer mediaPlayer = new MediaPlayer();
-    private int timer = -1;
-    private int currentSeek = 0;
-    private int currentAudio = 0;
-    private Podcast currentPodcast = new Podcast();
-    private Playlist currentPlaylist = new Playlist();
-    private Favorite currentFavorite = new Favorite();
-    private List<Podcast> currentList = new ArrayList<>();
+    private static MediaPlayer mediaPlayer = new MediaPlayer();
+    private static int timer = -1;
+    private static int currentSeek = 0;
+    private static int currentAudio = 0;
+    private static Podcast currentPodcast = new Podcast();
+    private static Playlist currentPlaylist = new Playlist();
+    private static Favorite currentFavorite = new Favorite();
+    private static List<Podcast> currentList = new ArrayList<>();
     IBinder localBinder = new LocalBinder();
-    private Handler handler = new Handler();
-    private Runnable runnable = null;
+    private static Handler handler = new Handler();
+    private static Runnable runnable = null;
     public static RemoteViews notificationLayout;
-    TimeThread timeThread = new TimeThread();
     public static ForegroundAudioService getInstance() {
         return instance;
     }
 
     public static int getTimer() {
-        return getInstance().timer;
+        return timer;
     }
-    public static void setTimer(int timer) {
-        getInstance().timer = timer;
+    public static void setTimer(int newValue) {
+        timer = newValue;
     }
 
     @Nullable
@@ -74,64 +73,65 @@ public class ForegroundAudioService extends Service {
     }
 
     public static Podcast getCurrentPodcast() {
-        return getInstance().currentPodcast;
+        return currentPodcast;
     }
     public static void setCurrentPodcast(Podcast podcast){
-        getInstance().currentPodcast = podcast;
+        currentPodcast = podcast;
     }
 
     public static Integer getDuration() {
-        return getInstance().mediaPlayer.getDuration();
+        return mediaPlayer.getDuration();
     }
     public static MediaPlayer getMediaPlayer(){
-        return getInstance().mediaPlayer;
+        return mediaPlayer;
     }
-    public static void setMediaPlayer(MediaPlayer mediaPlayer){
-        getInstance().mediaPlayer = mediaPlayer;
+    public static void setMediaPlayer(MediaPlayer newmediaPlayer){
+        mediaPlayer.release();
+        mediaPlayer = newmediaPlayer;
     }
 
     public static Playlist getCurrentPlaylist() {
-        return getInstance().currentPlaylist;
+        return currentPlaylist;
     }
     public static void setCurrentPlaylist(Playlist playlist){
-        getInstance().currentPlaylist = playlist;
+        currentPlaylist = playlist;
     }
 
     public static Favorite getCurrentFavorite() {
-        return getInstance().currentFavorite;
+        return currentFavorite;
     }
     public static void setCurrentFavorite(Favorite favorite){
-        getInstance().currentFavorite= favorite;
+        currentFavorite= favorite;
     }
 
     public static List<Podcast> getCurrentList() {
-        return getInstance().currentList;
+        return currentList;
     }
     public static void setCurrentList(List<Podcast> newList) {
-        getInstance().currentList = newList;
+        currentList = newList;
     }
 
     public static int getCurrentSeek() {
-        return getInstance().currentSeek;
+        return currentSeek;
     }
-    public void setCurrentSeek(int seek){
+    public static void setCurrentSeek(int seek){
         getMediaPlayer().seekTo(seek);
-        getInstance().currentSeek = seek;
+        currentSeek = seek;
     }
     public static int getCurrentAudio(){
-        return getInstance().currentAudio;
+        return currentAudio;
     }
     public static void setCurrentAudio(int position){
-        getInstance().currentAudio = position;
+        currentAudio = position;
     }
     public static Handler getHandler(){
-        return getInstance().handler;
+        return handler;
     }
     public static Runnable getRunnable(){
-        return getInstance().runnable;
+        return runnable;
     }
-    public static void setRunable(Runnable runnable){
-        getInstance().runnable = runnable;
+    public static void setRunable(Runnable newrunnable){
+        runnable = newrunnable;
     }
 
     public void stopMediaPlayer(){
@@ -148,8 +148,8 @@ public class ForegroundAudioService extends Service {
         setCurrentSeek(0);
         startPodcast(getCurrentPodcast());
     }
-    public static void startPodcast(Podcast podcast){
-        getInstance().loadMediaPlayerFromUrl(podcast.getUrl());
+    public void startPodcast(Podcast podcast){
+        loadMediaPlayerFromUrl(podcast.getUrl());
     }
 
     public void nextAudio() {
@@ -175,6 +175,7 @@ public class ForegroundAudioService extends Service {
             try {
                 getMediaPlayer().setDataSource(url);
                 getMediaPlayer().prepare();
+                getMediaPlayer().start();
                 getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
@@ -194,6 +195,7 @@ public class ForegroundAudioService extends Service {
     @SuppressLint({"RemoteViewLayout"})
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startMediaPlayerInPlaylist(currentPlaylist, currentAudio);
         startNotification();
         startTimerAndUpdateNotify();
         return START_NOT_STICKY;
@@ -208,7 +210,9 @@ public class ForegroundAudioService extends Service {
         } else if (Objects.equals(id, Constant.PAUSE_RESUME)) {
             intent = new Intent(this, PauseResumeReceiverNotification.class);
         } else if (Objects.equals(id, Constant.IMAGE)) {
-            return PendingIntent.getActivity(this, 0, new Intent(this, PlayerActivity.class), 0);
+            Intent i = new Intent(this, PlayerActivity.class);
+            i.putExtra("continue", true);
+            return PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
         }
         return PendingIntent.getBroadcast(context, 200, intent, 0);
     }
@@ -233,12 +237,12 @@ public class ForegroundAudioService extends Service {
             notificationLayout = new RemoteViews(getPackageName(), R.layout.nofication_audio_stop);
         }
         notificationLayout.setTextViewText(R.id.tvTenTruyen, getCurrentPodcast().getName());
-        notificationLayout.setImageViewBitmap(R.id.ivAudio , BackgroundLoadDataService.getInstance().getBitmapById(getCurrentPodcast().get_id(), Constant.PODCAST));
+        notificationLayout.setImageViewBitmap(R.id.ivAudio , BackgroundLoadDataService.getBitmapById(getCurrentPodcast().get_id(), Constant.PODCAST));
         notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Constant.BACK));
         notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Constant.PAUSE_RESUME));
         notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Constant.NEXT));
         notificationLayout.setOnClickPendingIntent(R.id.ivAudio, onButtonNotificationClick(getApplicationContext(), Constant.IMAGE));
-        Notification notification = new NotificationCompat.Builder(this, "MlisMediaPlayerF")
+        return new NotificationCompat.Builder(this, "MlisMediaPlayerF")
                 .setSmallIcon(R.drawable.outline_music_note_24)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                 .setCustomContentView(notificationLayout)
@@ -246,7 +250,6 @@ public class ForegroundAudioService extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSilent(true)
                 .build();
-        return notification;
     }
     private void startNotification(){
         startForeground(1, customNotification());
@@ -257,9 +260,9 @@ public class ForegroundAudioService extends Service {
         mNotificationManager.notify(1, notification);
     }
 
-    public void pauseOrResumeMediaPlayer() {
+    public static void pauseOrResumeMediaPlayer() {
         if (getMediaPlayer().isPlaying()) {
-            setCurrentSeek(getMediaPlayer().getCurrentPosition());
+            currentSeek = getMediaPlayer().getCurrentPosition();
             getMediaPlayer().pause();
         } else {
             getMediaPlayer().seekTo(getCurrentSeek());
@@ -322,46 +325,6 @@ public class ForegroundAudioService extends Service {
         stopForeground(STOP_FOREGROUND_REMOVE);
         super.onDestroy();
     }
-
-    int time = 0;
-    public class TimeThread implements Runnable {
-        Thread thread;
-        @Override
-        public void run() {
-            try {
-                while (time < WaitTime) {
-                    Thread.sleep(1000);
-                    updateNotification();
-                    //hẹn giờ tắt
-                    if (timer==0){
-                        pauseMediaPlayer();
-                        timer = -1;
-                    }
-                    else if(timer!=-1){
-                        timer--;
-                    }
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (time >= WaitTime) {
-                time = 0;
-                currentPodcast = new Podcast();
-                currentSeek = 0;
-                currentAudio = 0;
-                stopForeground(STOP_FOREGROUND_REMOVE);
-                thread = null;
-            }
-        }
-
-        void start() {
-            if (thread == null) {
-                thread = new Thread(this);
-                thread.start();
-            }
-        }
-    }
-
     static class CustomMediaPlayer extends MediaPlayer {
         String dataSource;
 
@@ -374,34 +337,6 @@ public class ForegroundAudioService extends Service {
 
         public String getDataSource() {
             return dataSource;
-        }
-    }
-    class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
-
-        public DownloadImageAsyncTask(){}
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            Bitmap decoded = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-                mIcon11.compress(Bitmap.CompressFormat.PNG, 25, out);
-                decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
-            } catch (Exception e) {
-                Log.e("error background service", e.getMessage());
-                e.printStackTrace();
-            }
-            return decoded;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-        }
-
-        @Override
-        protected void onCancelled(Bitmap bitmap) {
-            super.onCancelled(bitmap);
         }
     }
 }

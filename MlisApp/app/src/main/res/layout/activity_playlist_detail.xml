@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.PlaylistDetailActivity">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
         <LinearLayout
             android:id="@+id/lay1"
             android:layout_width="match_parent"
@@ -34,18 +36,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/lay1"
-            app:layout_constraintBottom_toTopOf="@id/lay2">
+            android:layout_weight="1">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginHorizontal="@dimen/_8sdp">
                 <ImageView
-                    android:id="@+id/ivTruyen"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_270sdp"/>
+                    android:id="@+id/ivPlaylist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_100sdp"/>
                 <TextView
-                    android:id="@+id/tvTenTruyen"
+                    android:id="@+id/tvName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="aaaaaaaaaaaa"
@@ -53,16 +55,24 @@
                     android:textStyle="bold"
                     android:textSize="@dimen/_16ssp"/>
                 <TextView
-                    android:id="@+id/tvBoSung"
+                    android:id="@+id/tvAuthor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="adasdsa"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_10ssp"/>
-                <ListView
+                <TextView
+                    android:id="@+id/tvInf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="adasdsa"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_10ssp"/>
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/lvPodcast"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     />
 
             </LinearLayout>
@@ -89,6 +99,6 @@
                 android:backgroundTint="@color/dark"/>
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </layout>

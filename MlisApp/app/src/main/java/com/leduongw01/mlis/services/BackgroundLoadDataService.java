@@ -1,16 +1,21 @@
 package com.leduongw01.mlis.services;
 
+import static com.leduongw01.mlis.MainActivity.noImg;
+
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 
+import com.leduongw01.mlis.MainActivity;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.MapImage;
@@ -67,8 +72,6 @@ public class BackgroundLoadDataService extends Service {
         return null;
     }
 
-    public static void no(){
-    }
     private BackgroundLoadDataService() {
         downloadTask();
     }
@@ -85,13 +88,30 @@ public class BackgroundLoadDataService extends Service {
             new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
         }
     }
-    public Bitmap getBitmapById(String id, String model){
+    public static Playlist getPlaylistById(String id){
+        for (Playlist playlist: allPlaylist){
+            if (playlist.get_id().equals(id)){
+                return playlist;
+            }
+        }
+        return null;
+    }
+    public static Podcast getPodcastById(String id){
+        for (Podcast podcast: allPodcast){
+            if (podcast.get_id().equals(id)){
+                return podcast;
+            }
+        }
+        return null;
+    }
+    public static Bitmap getBitmapById(String id, String model){
+        String att = id+model;
         for (int i = 0; i< getPodcastBitmap().size();i++){
-            if (getPodcastBitmap().get(i).id.equals(id+model.toLowerCase())){
+            if (getPodcastBitmap().get(i).id.equals(att)){
                 return getPodcastBitmap().get(i).bitmap;
             }
         }
-        return BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
+        return noImg;
     }
     public MapImage getMapImageById(String id, String model) {
         for (int i = 0; i < getPodcastBitmap().size(); i++) {
@@ -162,7 +182,7 @@ public class BackgroundLoadDataService extends Service {
                 "1"
         ));
         allPlaylist.add(new Playlist(
-                "1",
+                "6",
                 "Test 1 podcast",
                 "local",
                 "Đời sống, truyền thông",
@@ -172,7 +192,6 @@ public class BackgroundLoadDataService extends Service {
                 "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fvov.jpg?alt=media&token=75f2b920-c604-4c3d-9061-fe4c64d99b96",
                 "1"
         ));
-        getAllPlaylist();
     }
 
     @Nullable
@@ -197,7 +216,7 @@ public class BackgroundLoadDataService extends Service {
                 decoded.compress(Bitmap.CompressFormat.PNG, 50, out);
                 decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
             } catch (Exception e) {
-                decoded = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
+                decoded = noImg;
                 Log.e("error background service", e.getMessage());
                 e.printStackTrace();
                 MapImage mapImage = new MapImage();

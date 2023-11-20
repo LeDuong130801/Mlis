@@ -3,7 +3,9 @@ package com.leduongw01.mlis.activities;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
@@ -13,13 +15,19 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.leduongw01.mlis.R;
+import com.leduongw01.mlis.adapter.AllPlaylistAdapter;
+import com.leduongw01.mlis.adapter.PlaylistDetailAdapter;
 import com.leduongw01.mlis.databinding.ActivityPlaylistDetailBinding;
+import com.leduongw01.mlis.listener.RecyclerViewClickListener;
+import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
+import com.leduongw01.mlis.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +51,12 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                 i.getStringExtra("playlistId") : "-1";
         listChaper.clear();
         if (!playlistId.equals("-1")){
+            Playlist playlist = BackgroundLoadDataService.getPlaylistById(playlistId);
+            assert playlist != null;
+            binding.tvName.setText(playlist.getName());
+            binding.tvAuthor.setText(String.format("Tác giả: %s", playlist.getAuthor()));
+            binding.tvInf.setText(playlist.getDetail());
+            binding.ivPlaylist.setImageBitmap(BackgroundLoadDataService.getBitmapById(playlistId, Constant.PLAYLIST));
             for (Podcast podcast : BackgroundLoadDataService.getAllPodcast()){
                 if (podcast.getPlaylistId().equals(playlistId)){
                     listChaper.add(podcast);
@@ -60,85 +74,23 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         binding.btListenChap1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent i = new Intent(PlaylistDetailActivity.this, PlayerActivity.class);
+                i.putExtra("podcastId", listChaper.get(0).get_id());
+                i.putExtra("playlistId", getIntent().getStringExtra("playlistId"));
+                i.putExtra("index", 0);
+                startActivity(i);
             }
         });
-        ListAdapter adapter = new ListAdapter() {
+        binding.lvPodcast.setAdapter(new PlaylistDetailAdapter(PlaylistDetailActivity.this, listChaper, new RecyclerViewClickListener() {
             @Override
-            public boolean areAllItemsEnabled() {
-                return false;
+            public void recyclerViewListClicked(View v, int position) {
+                Intent i = new Intent(PlaylistDetailActivity.this, PlayerActivity.class);
+                i.putExtra("podcastId", listChaper.get(position).get_id());
+                i.putExtra("playlistId", getIntent().getStringExtra("playlistId"));
+                i.putExtra("index", position);
+                startActivity(i);
             }
-
-            @Override
-            public boolean isEnabled(int i) {
-                return false;
-            }
-
-            @Override
-            public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-
-            }
-
-            @Override
-            public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-
-            }
-
-            @Override
-            public int getCount() {
-                return listChaper.size();
-            }
-
-            @Override
-            public Object getItem(int i) {
-                return listChaper.get(i);
-            }
-
-            @Override
-            public long getItemId(int i) {
-                return i;
-            }
-
-            @Override
-            public boolean hasStableIds() {
-                return false;
-            }
-
-            @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-                if (view == null){
-                    view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_chapter, viewGroup, false);
-                }
-                TextView textView = view.findViewById(R.id.chapName);
-                textView.setText(listChaper.get(i).getName());
-                TextView timeView = view.findViewById(R.id.lastUpdate);
-                timeView.setText(listChaper.get(i).getUpdateOn());
-                return view;
-            }
-
-            @Override
-            public int getItemViewType(int i) {
-                return 0;
-            }
-
-            @Override
-            public int getViewTypeCount() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-        };
-        binding.lvPodcast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(PlaylistDetailActivity.this, PlayerActivity.class);
-                intent.putExtra("podcastId", listChaper.get(i).get_id());
-                startActivity(intent);
-            }
-        });
-        binding.lvPodcast.setAdapter(adapter);
+        }));
+        binding.lvPodcast.setLayoutManager(new LinearLayoutManager(this));
     }
 }

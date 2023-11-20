@@ -13,6 +13,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -40,16 +41,28 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_player);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        if(getIntent().getIntExtra("startNow", 0) == 1){
-            Intent intent = new Intent(this, ForegroundAudioService.class);
-            intent.putExtra("startNow", 1);
-            startService(intent);
+        boolean b= getIntent().getBooleanExtra("continue", false);
+        if (b){
+            Log.d("continue", "yessssss");
+            initSeekBar();
+            ktSuKien();
+            fillData();
         }
-        initSeekBar();
-        ktSuKien();
-        fillData();
+        else{
+            String podcastId = getIntent().getStringExtra("podcastId");
+            String playlistId = getIntent().getStringExtra("playlistId");
+            Integer indexPodcast = getIntent().getIntExtra("index", -1);
+            Intent intent = new Intent(this, ForegroundAudioService.class);
+            ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
+            ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
+            ForegroundAudioService.setCurrentAudio(indexPodcast);
+            startService(intent);
+            initSeekBar();
+            ktSuKien();
+            fillData();
+        }
     }
-    void initSeekBar(){
+    void initSeekBar() {
         binding.seekBarMediaPlayer.setProgress(0);
         binding.seekBarMediaPlayer.setMax(ForegroundAudioService.getMediaPlayer().getDuration());
         binding.tvMediaPlayerDuration.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getDuration()));
@@ -57,7 +70,7 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 if (b){
-                    ForegroundAudioService.getInstance().setCurrentSeek(i);
+                    ForegroundAudioService.setCurrentSeek(i);
                 }
             }
 
@@ -78,6 +91,8 @@ public class PlayerActivity extends AppCompatActivity {
             public void run() {
                 binding.seekBarMediaPlayer.setProgress(ForegroundAudioService.getMediaPlayer().getCurrentPosition());
                 binding.tvCurrentSeek.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getCurrentPosition()));
+                binding.seekBarMediaPlayer.setMax(ForegroundAudioService.getMediaPlayer().getDuration());
+                binding.tvMediaPlayerDuration.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getDuration()));
                 if(ForegroundAudioService.getMediaPlayer().isPlaying()!= playing) {
                     if (ForegroundAudioService.getMediaPlayer().isPlaying()) {
                         binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
@@ -103,15 +118,15 @@ public class PlayerActivity extends AppCompatActivity {
         binding.icPauseResumeMediaPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ForegroundAudioService.getInstance().pauseOrResumeMediaPlayer();
+                ForegroundAudioService.pauseOrResumeMediaPlayer();
 //                if(ForegroundAudioService.getInstance().getMediaPlayer().isPlaying()){
 //                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
 //                }
 //                else{
 //                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_play_arrow_24);
 //                }
-                Intent intent = new Intent(getApplicationContext(), ForegroundAudioService.class);
-                startService(intent);
+//                Intent intent = new Intent(getApplicationContext(), ForegroundAudioService.class);
+//                startService(intent);
             }
         });
         binding.next10sMediaPlayer.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +168,7 @@ public class PlayerActivity extends AppCompatActivity {
         binding.tvTenTruyen.setText(ForegroundAudioService.getCurrentPodcast().getName());
         binding.tvBoSung.setText(ForegroundAudioService.getCurrentPlaylist().getAuthor());
         runnable.run();
-        binding.ivPlayer.setImageBitmap(BackgroundLoadDataService.getInstance().getBitmapById(ForegroundAudioService.getCurrentPodcast().get_id(), Constant.PODCAST));
+        binding.ivPlayer.setImageBitmap(BackgroundLoadDataService.getBitmapById(ForegroundAudioService.getCurrentPodcast().get_id(), Constant.PODCAST));
     }
     String NumberTimeToString(int number){
         number/=1000;

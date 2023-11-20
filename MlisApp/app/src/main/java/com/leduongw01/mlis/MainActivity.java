@@ -5,6 +5,8 @@ package com.leduongw01.mlis;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -22,11 +24,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static Bitmap noImg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        noImg = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
         startService(new Intent(MainActivity.this, BackgroundLoadDataService.class));
         Intent home = new Intent(this, HomeScreen.class);
         startActivity(home);

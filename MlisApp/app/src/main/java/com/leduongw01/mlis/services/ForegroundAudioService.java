@@ -25,6 +25,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.activities.PlayerActivity;
+import com.leduongw01.mlis.databasehelper.MlisMySqlDBHelper;
 import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
@@ -150,6 +151,7 @@ public class ForegroundAudioService extends Service {
     }
     public void startPodcast(Podcast podcast){
         loadMediaPlayerFromUrl(podcast.getUrl());
+        MlisMySqlDBHelper.getInstance().putPodcastToRecent(podcast);
     }
 
     public void nextAudio() {

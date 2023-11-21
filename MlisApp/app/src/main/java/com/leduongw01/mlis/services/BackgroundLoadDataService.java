@@ -68,6 +68,15 @@ public class BackgroundLoadDataService extends Service {
         }
         return t;
     }
+    public static Integer getIndexOfPodcastInPlayList(String podcastId, String playlistId){
+        List<Podcast> p = getPodcastInPlaylist(playlistId);
+        for(int i=0;i<p.size();i++){
+            if (p.get(i).get_id().equals(podcastId)){
+                return i;
+            }
+        }
+        return -1;
+    }
     public static List<Podcast> getPodcastInFavorite(String favoriteId){
         return null;
     }

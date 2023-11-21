@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     >
     <ImageView
+        android:id="@+id/ivAudio"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/noimage"
@@ -15,6 +16,7 @@
         android:orientation="vertical"
         android:layout_weight="1">
         <TextView
+            android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/tentruyen"
@@ -23,6 +25,7 @@
             android:maxLines="1"
             />
         <TextView
+            android:id="@+id/tvAuthor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/thongtin"

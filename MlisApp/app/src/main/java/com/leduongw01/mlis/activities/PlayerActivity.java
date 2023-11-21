@@ -52,6 +52,9 @@ public class PlayerActivity extends AppCompatActivity {
             String podcastId = getIntent().getStringExtra("podcastId");
             String playlistId = getIntent().getStringExtra("playlistId");
             Integer indexPodcast = getIntent().getIntExtra("index", -1);
+            if (indexPodcast==-1){
+                indexPodcast = BackgroundLoadDataService.getIndexOfPodcastInPlayList(podcastId, playlistId);
+            }
             Intent intent = new Intent(this, ForegroundAudioService.class);
             ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
             ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));

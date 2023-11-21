@@ -3,20 +3,47 @@ package com.leduongw01.mlis.databasehelper;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.leduongw01.mlis.models.LocalRecentPodcast;
+import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.utils.Constant;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class MlisMySqlDBHelper{
-    private static SQLiteDatabase instance = SQLiteDatabase.openOrCreateDatabase(Constant.databaseName, null);
-    public static SQLiteDatabase getInstance(){
+    private static final SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(Constant.databaseName, null);
+    private static final MlisMySqlDBHelper instance = new MlisMySqlDBHelper();
+    public static MlisMySqlDBHelper getInstance(){
         return instance;
     }
-    public static Cursor getAllSavedPodcastByStatus(String status){
-        String sql = "select * from podcast where status = \""+status+"\"";
-        return getInstance().rawQuery(sql, null);
+    MlisMySqlDBHelper(){
+        generatorBD();
     }
     public static void generatorBD(){
-        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(Constant.databaseName, null);
-        String sql = "create table if not exists podcast(id text, podcastName text, uri text, status text)";
+        String sql = "create table if not exists recentPodcast(id text, listenOn number)";
         database.execSQL(sql);
+    }
+    public void putPodcastToRecent(Podcast podcast){
+        Date d = new Date();
+        long listenOn = d.getTime();
+        String sql = "insert into recentPodcast values(\""+podcast.get_id()+"\", "+listenOn+"\")";
+        database.execSQL(sql);
+    }
+    public List<LocalRecentPodcast> get3IdRecent(){
+        String sql = "select * from recentPodcast order by listenOn desc";
+        Cursor c = database.rawQuery(sql, null);
+        List<LocalRecentPodcast> output = new ArrayList<LocalRecentPodcast>();
+        if(c.moveToFirst()){
+            do {
+                LocalRecentPodcast a = new LocalRecentPodcast();
+                a.id = c.getString(0);
+                a.listenOn = c.getLong(1);
+                output.add(a);
+            }
+            while (c.moveToNext() && output.size()!=3);
+        }
+        c.close();
+        return output;
     }
 }

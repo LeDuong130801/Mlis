@@ -22,7 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.adapter.AllPlaylistAdapter;
 import com.leduongw01.mlis.adapter.PodcastHAdapter;
+import com.leduongw01.mlis.adapter.PodcastRecentListenedAdapter;
+import com.leduongw01.mlis.databasehelper.MlisMySqlDBHelper;
 import com.leduongw01.mlis.databinding.ActivityHomeScreenBinding;
+import com.leduongw01.mlis.listener.RecyclerViewClickListener;
+import com.leduongw01.mlis.models.LocalRecentPodcast;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
@@ -39,6 +43,8 @@ import retrofit2.Response;
 public class HomeScreen extends AppCompatActivity {
 
     ActivityHomeScreenBinding binding;
+    List<LocalRecentPodcast> top3Recent;
+    List<Podcast> p;
     String currentPodcastName = "";
     boolean hide = true;
     Handler handler;
@@ -64,6 +70,16 @@ public class HomeScreen extends AppCompatActivity {
 
         }));
         binding.rcvMostPopular.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        p = getRecentListenedPodcast();
+        binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(p, new RecyclerViewClickListener() {
+            @Override
+            public void recyclerViewListClicked(View v, int position) {
+                Intent i = new Intent(HomeScreen.this, PlayerActivity.class);
+                i.putExtra("podcastId", p.get(position).get_id());
+                i.putExtra("playlistId", p.get(position).getPlaylistId());
+                startActivity(i);
+            }
+        }));
 //        ApiService.apisService.getPodcastWithSl().enqueue(new Callback<ArrayList<Podcast>>() {
 //            @Override
 //            public void onResponse(Call<ArrayList<Podcast>> call, Response<ArrayList<Podcast>> response) {
@@ -162,6 +178,18 @@ public class HomeScreen extends AppCompatActivity {
                 ForegroundAudioService.pauseOrResumeMediaPlayer();
             }
         });
+    }
+    List<Podcast> getRecentListenedPodcast(){
+        top3Recent = MlisMySqlDBHelper.getInstance().get3IdRecent();
+        List<Podcast> output = new ArrayList<>();
+        for (LocalRecentPodcast localRecentPodcast:top3Recent){
+            Podcast tmp = BackgroundLoadDataService.getPodcastById(localRecentPodcast.id);
+            if (tmp != null){
+                if (!output.contains(tmp))
+                output.add(tmp);
+            }
+        }
+        return output;
     }
 
     @Override

@@ -49,6 +49,7 @@ public class HomeScreen extends AppCompatActivity {
     boolean hide = true;
     Handler handler;
     Runnable runnable;
+    boolean pause = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class HomeScreen extends AppCompatActivity {
                 startActivity(i);
             }
         }));
+        binding.rcvRecent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 //        ApiService.apisService.getPodcastWithSl().enqueue(new Callback<ArrayList<Podcast>>() {
 //            @Override
 //            public void onResponse(Call<ArrayList<Podcast>> call, Response<ArrayList<Podcast>> response) {
@@ -134,6 +136,7 @@ public class HomeScreen extends AppCompatActivity {
     }
 
     void ktHandler() {
+        pause = false;
         if (ForegroundAudioService.getCurrentPodcast() != null) {
             currentPodcastName = ForegroundAudioService.getCurrentPodcast().getName();
         } else {
@@ -151,15 +154,16 @@ public class HomeScreen extends AppCompatActivity {
                     binding.llplaying.setVisibility(View.VISIBLE);
                     binding.tvTenTruyen.setText(ForegroundAudioService.getCurrentPodcast().getName());
                     binding.imageAudio.setImageBitmap(BackgroundLoadDataService.getBitmapById(ForegroundAudioService.getCurrentPodcast().get_id(), Constant.PODCAST));
+
                 }
-//                else if (!currentPodcastName.equals("")) {
-//                    if (ForegroundAudioService.getInstance().) {
-//                        binding.icPauseResume.setImageResource(R.drawable.baseline_pause_24);
-//                    } else {
-//                        binding.icPauseResume.setImageResource(R.drawable.baseline_play_arrow_24);
-//                    }
-//                }
-                handler.postDelayed(runnable, 1000);
+                if (ForegroundAudioService.getMediaPlayer().isPlaying()){
+                    binding.icPauseResume.setImageResource(R.drawable.baseline_pause_24);
+                }
+                else{
+                    binding.icPauseResume.setImageResource(R.drawable.baseline_play_arrow_24);
+                }
+                if (!pause)
+                handler.postDelayed(this, 1000);
             }
         };
         handler.postDelayed(runnable, 1000);
@@ -180,7 +184,7 @@ public class HomeScreen extends AppCompatActivity {
         });
     }
     List<Podcast> getRecentListenedPodcast(){
-        top3Recent = MlisMySqlDBHelper.getInstance().get3IdRecent();
+        top3Recent = new MlisMySqlDBHelper(getApplicationContext()).get3IdRecent();
         List<Podcast> output = new ArrayList<>();
         for (LocalRecentPodcast localRecentPodcast:top3Recent){
             Podcast tmp = BackgroundLoadDataService.getPodcastById(localRecentPodcast.id);
@@ -190,6 +194,19 @@ public class HomeScreen extends AppCompatActivity {
             }
         }
         return output;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pause = true;
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
+        handler = new Handler();
     }
 
     @Override

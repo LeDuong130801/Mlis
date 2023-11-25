@@ -149,9 +149,13 @@ public class ForegroundAudioService extends Service {
         setCurrentSeek(0);
         startPodcast(getCurrentPodcast());
     }
+    public void startPodcast(Context context, Podcast podcast){
+        loadMediaPlayerFromUrl(podcast.getUrl());
+        new MlisMySqlDBHelper(context).putPodcastToRecent(podcast);
+    }
     public void startPodcast(Podcast podcast){
         loadMediaPlayerFromUrl(podcast.getUrl());
-        MlisMySqlDBHelper.getInstance().putPodcastToRecent(podcast);
+        new MlisMySqlDBHelper(this).putPodcastToRecent(podcast);
     }
 
     public void nextAudio() {
@@ -257,9 +261,10 @@ public class ForegroundAudioService extends Service {
         startForeground(1, customNotification());
     }
     private void updateNotification() {
-        Notification notification = customNotification();
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(1, notification);
+//        Notification notification = customNotification();
+//        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        mNotificationManager.notify(1, notification);
+        startForeground(1, customNotification());
     }
 
     public static void pauseOrResumeMediaPlayer() {

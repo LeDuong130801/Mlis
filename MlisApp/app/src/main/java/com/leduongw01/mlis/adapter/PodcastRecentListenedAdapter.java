@@ -53,6 +53,7 @@ public class PodcastRecentListenedAdapter extends RecyclerView.Adapter<PodcastRe
 
         public PodcastRecentListenedViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             tvName = itemView.findViewById(R.id.tvName);
             tvAuthor = itemView.findViewById(R.id.tvAuthor);
             ivAudio = itemView.findViewById(R.id.ivAudio);

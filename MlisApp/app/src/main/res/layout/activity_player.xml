@@ -172,7 +172,7 @@
                 android:background="@android:color/transparent"
                 app:tint="@color/white" />
             <ImageButton
-                android:id="@+id/queueMedia"
+                android:id="@+id/ivPlayerlist"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_weight="1"

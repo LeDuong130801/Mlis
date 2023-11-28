@@ -77,6 +77,13 @@ public class BackgroundLoadDataService extends Service {
         }
         return -1;
     }
+    public static String getAuthorOfPodcast(Podcast podcast){
+        Playlist playlist = getPlaylistById(podcast.getPlaylistId());
+        if (playlist!= null){
+            return playlist.getAuthor();
+        }
+        return "?";
+    }
     public static List<Podcast> getPodcastInFavorite(String favoriteId){
         return null;
     }

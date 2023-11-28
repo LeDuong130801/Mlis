@@ -13,6 +13,7 @@ import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
+import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Constant;
 
 import java.util.List;
@@ -39,6 +40,10 @@ public class PodcastRecentListenedAdapter extends RecyclerView.Adapter<PodcastRe
         holder.tvName.setText(podcastList.get(position).getName());
         holder.tvAuthor.setText(Objects.requireNonNull(BackgroundLoadDataService.getPlaylistById(podcastList.get(position).getPlaylistId())).getAuthor());
         holder.ivAudio.setImageBitmap(BackgroundLoadDataService.getBitmapById(podcastList.get(position).get_id(), Constant.PODCAST));
+        if (position == ForegroundAudioService.getCurrentAudio()){
+            holder.icMore.setVisibility(View.VISIBLE);
+            holder.icMore.setImageResource(R.drawable.outline_music_note_24);
+        }
     }
 
     @Override
@@ -50,6 +55,7 @@ public class PodcastRecentListenedAdapter extends RecyclerView.Adapter<PodcastRe
         TextView tvName;
         TextView tvAuthor;
         ImageView ivAudio;
+        ImageView icMore;
 
         public PodcastRecentListenedViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,6 +63,7 @@ public class PodcastRecentListenedAdapter extends RecyclerView.Adapter<PodcastRe
             tvName = itemView.findViewById(R.id.tvName);
             tvAuthor = itemView.findViewById(R.id.tvAuthor);
             ivAudio = itemView.findViewById(R.id.ivAudio);
+            icMore = itemView.findViewById(R.id.icMore);
         }
 
         @Override

@@ -44,4 +44,6 @@
     <string name="ipdefault">192.168.1.21</string>
     <string name="dangtaidulieu">Đang tải dữ liệu</string>
     <string name="docChuongDau">Đọc chương đầu</string>
+    <string name="dangphat">Đang phát</string>
+    <string name="danhsach">Danh sách</string>
 </resources>

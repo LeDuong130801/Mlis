@@ -158,6 +158,13 @@ public class PlayerActivity extends AppCompatActivity {
                 t.show();
             }
         });
+        binding.ivPlayerlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(PlayerActivity.this, PlayerListActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

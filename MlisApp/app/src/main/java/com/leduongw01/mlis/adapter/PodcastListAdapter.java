@@ -1,7 +1,6 @@
 package com.leduongw01.mlis.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,37 +21,36 @@ import com.leduongw01.mlis.utils.Constant;
 import java.util.List;
 import java.util.Objects;
 
-public class PodcastRecentListenedAdapter extends RecyclerView.Adapter<PodcastRecentListenedAdapter.PodcastRecentListenedViewHolder> {
+public class PodcastListAdapter  extends RecyclerView.Adapter<PodcastListAdapter.PodcastRecentListenedViewHolder> {
     private static RecyclerViewClickListener podcastRecentListenedClickListener;
     List<Podcast> podcastList;
     Context context;
-    public PodcastRecentListenedAdapter(Context context, List<Podcast> list, RecyclerViewClickListener listener){
+    public PodcastListAdapter(Context context, List<Podcast> list, RecyclerViewClickListener listener){
         podcastRecentListenedClickListener = listener;
         podcastList = list;
         this.context = context.getApplicationContext();
     }
     @NonNull
     @Override
-    public PodcastRecentListenedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PodcastListAdapter.PodcastRecentListenedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_audio_recent, parent, false);
         return new PodcastRecentListenedViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PodcastRecentListenedViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PodcastListAdapter.PodcastRecentListenedViewHolder holder, int position) {
         holder.tvName.setText(podcastList.get(position).getName());
         holder.tvAuthor.setText(Objects.requireNonNull(BackgroundLoadDataService.getPlaylistById(podcastList.get(position).getPlaylistId())).getAuthor());
         holder.ivAudio.setImageBitmap(BackgroundLoadDataService.getBitmapById(podcastList.get(position).get_id(), Constant.PODCAST));
-//        if (position == ForegroundAudioService.getCurrentAudio()){
-//            holder.icMore.setVisibility(View.VISIBLE);
-//            holder.icMore.setImageResource(R.drawable.outline_music_note_24);
-//        }
         if (position%2==0){
             holder.layout.setBackgroundColor(context.getColor(R.color.background0));
         }
         else{
             holder.layout.setBackgroundColor(context.getColor(R.color.background1));
+        }
+        if (position == ForegroundAudioService.getCurrentAudio()){
+            holder.layout.setBackgroundColor(context.getColor(R.color.lighter_green));
         }
     }
 

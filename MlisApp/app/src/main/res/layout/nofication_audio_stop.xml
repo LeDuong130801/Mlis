@@ -52,5 +52,10 @@
                     android:src="@drawable/baseline_skip_next_24"/>
             </LinearLayout>
         </LinearLayout>
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:src="@drawable/outline_close_24"/>
     </LinearLayout>
 </layout>

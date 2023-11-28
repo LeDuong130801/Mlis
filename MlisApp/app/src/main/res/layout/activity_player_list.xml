@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/background"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,20 +18,22 @@
                 android:id="@+id/icCancel"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
-                android:src="@drawable/ic_baseline_arrow_back_24"/>
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="@color/normal_text" />
         </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/_12ssp"
             android:text="@string/dangphat"
-            android:textColor="@color/black"
+            android:textColor="@color/normal_text"
             android:textStyle="bold"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
+                android:id="@+id/ivTruyen"
                 android:layout_width="@dimen/_36sdp"
                 android:layout_height="@dimen/_36sdp"/>
             <LinearLayout
@@ -44,14 +47,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/tentruyen"
                     android:textSize="@dimen/_13ssp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/normal_text"
                     android:maxLines="1"/>
                 <TextView
                     android:id="@+id/tvAuthor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="\?"
-                    android:textColor="@color/dark"
+                    android:textColor="@color/subtitle_text"
                     android:textSize="@dimen/_11ssp"
                     android:maxLines="1"/>
             </LinearLayout>
@@ -62,7 +65,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/_12ssp"
             android:text="@string/danhsach"
-            android:textColor="@color/black"
+            android:textColor="@color/normal_text"
             android:textStyle="bold"
             android:layout_marginTop="@dimen/_2sdp"/>
         <androidx.recyclerview.widget.RecyclerView

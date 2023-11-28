@@ -17,7 +17,7 @@
         android:theme="@style/Theme.Mlis"
         tools:targetApi="31">
         <activity
-            android:name=".PlayerListActivity"
+            android:name=".activities.PlayerListActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -85,6 +85,9 @@
             android:exported="true" />
         <receiver
             android:name=".receivers.PauseResumeReceiverNotification"
+            android:exported="true" />
+        <receiver
+            android:name=".receivers.ExitNotifiReceiverNotification"
             android:exported="true" />
     </application>
 

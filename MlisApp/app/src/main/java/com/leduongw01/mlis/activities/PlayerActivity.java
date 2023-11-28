@@ -19,6 +19,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.leduongw01.mlis.R;
+import com.leduongw01.mlis.databasehelper.MlisMySqlDBHelper;
 import com.leduongw01.mlis.databinding.ActivityPlayerBinding;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
@@ -36,6 +37,7 @@ public class PlayerActivity extends AppCompatActivity {
     Runnable runnable;
     Handler handler;
     boolean playing = false;
+    MlisMySqlDBHelper mlisMySqlDBHelper = new MlisMySqlDBHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,15 +53,28 @@ public class PlayerActivity extends AppCompatActivity {
         else{
             String podcastId = getIntent().getStringExtra("podcastId");
             String playlistId = getIntent().getStringExtra("playlistId");
+            String favoriteId = getIntent().getStringExtra("favoriteId");
             Integer indexPodcast = getIntent().getIntExtra("index", -1);
             if (indexPodcast==-1){
                 indexPodcast = BackgroundLoadDataService.getIndexOfPodcastInPlayList(podcastId, playlistId);
             }
-            Intent intent = new Intent(this, ForegroundAudioService.class);
-            ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
-            ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
-            ForegroundAudioService.setCurrentAudio(indexPodcast);
-            startService(intent);
+            if(!Objects.equals(playlistId, "")){
+                Intent intent = new Intent(this, ForegroundAudioService.class);
+                ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
+                ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
+                ForegroundAudioService.setCurrentList(BackgroundLoadDataService.getPodcastInPlaylist(playlistId));
+                ForegroundAudioService.setCurrentAudio(indexPodcast);
+                mlisMySqlDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast());
+                startService(intent);
+            }
+            else if (!favoriteId.equals("")){
+                Intent intent = new Intent(this, ForegroundAudioService.class);
+                ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
+                ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
+                ForegroundAudioService.setCurrentList(BackgroundLoadDataService.getPodcastInPlaylist(playlistId));
+                ForegroundAudioService.setCurrentAudio(indexPodcast);
+                startService(intent);
+            }
             initSeekBar();
             ktSuKien();
             fillData();

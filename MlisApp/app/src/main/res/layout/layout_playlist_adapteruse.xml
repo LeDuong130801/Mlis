@@ -3,8 +3,7 @@
     android:orientation="vertical"
     android:layout_width="@dimen/_80sdp"
     android:layout_height="wrap_content"
-    android:id="@+id/layoutCell"
-    android:visibility="gone">
+    android:id="@+id/layoutCell">
     <ImageView
         android:id="@+id/ivPlaylist"
         android:layout_width="@dimen/_72sdp"
@@ -17,7 +16,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/_10sdp"
         android:maxLines="1"
-        android:textColor="@color/black"
+        android:textColor="@color/normal_text"
         android:layout_marginHorizontal="@dimen/_2sdp"/>
     <TextView
         android:id="@+id/tvAuthor"
@@ -25,7 +24,7 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:textSize="@dimen/_8ssp"
-        android:textColor="@color/gray"
+        android:textColor="@color/subtitle_text"
         android:layout_marginHorizontal="@dimen/_2sdp"/>
 
 </LinearLayout>

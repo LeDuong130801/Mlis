@@ -30,6 +30,7 @@ import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.receivers.BackReceiverNotification;
+import com.leduongw01.mlis.receivers.ExitNotifiReceiverNotification;
 import com.leduongw01.mlis.receivers.NextReceiverNotification;
 import com.leduongw01.mlis.receivers.PauseResumeReceiverNotification;
 import com.leduongw01.mlis.utils.Constant;
@@ -45,9 +46,10 @@ import java.util.Objects;
 public class ForegroundAudioService extends Service {
     private static final ForegroundAudioService instance = new ForegroundAudioService();
     private static MediaPlayer mediaPlayer = new MediaPlayer();
+    private static boolean stop = false;
     private static int timer = -1;
     private static int currentSeek = 0;
-    private static int currentAudio = 0;
+    private static int currentAudio = -1;
     private static Podcast currentPodcast = new Podcast();
     private static Playlist currentPlaylist = new Playlist();
     private static Favorite currentFavorite = new Favorite();
@@ -59,7 +61,6 @@ public class ForegroundAudioService extends Service {
     public static ForegroundAudioService getInstance() {
         return instance;
     }
-
     public static int getTimer() {
         return timer;
     }
@@ -149,13 +150,18 @@ public class ForegroundAudioService extends Service {
         setCurrentSeek(0);
         startPodcast(getCurrentPodcast());
     }
+    public void startMediaWithPosition(int position){
+        setCurrentAudio(position);
+        setCurrentPodcast(getCurrentList().get(position));
+        setCurrentSeek(0);
+        startPodcast(getCurrentPodcast());
+    }
     public void startPodcast(Context context, Podcast podcast){
         loadMediaPlayerFromUrl(podcast.getUrl());
         new MlisMySqlDBHelper(context).putPodcastToRecent(podcast);
     }
     public void startPodcast(Podcast podcast){
         loadMediaPlayerFromUrl(podcast.getUrl());
-        new MlisMySqlDBHelper(this).putPodcastToRecent(podcast);
     }
 
     public void nextAudio() {
@@ -185,6 +191,7 @@ public class ForegroundAudioService extends Service {
                 getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
+                        if (!stop)
                         nextAudio();
                     }
                 });
@@ -215,7 +222,11 @@ public class ForegroundAudioService extends Service {
             intent = new Intent(this, BackReceiverNotification.class);
         } else if (Objects.equals(id, Constant.PAUSE_RESUME)) {
             intent = new Intent(this, PauseResumeReceiverNotification.class);
-        } else if (Objects.equals(id, Constant.IMAGE)) {
+        }
+        else if (Objects.equals(id, Constant.EXIT)) {
+            intent = new Intent(this, ExitNotifiReceiverNotification.class);
+        }
+        else if (Objects.equals(id, Constant.IMAGE)) {
             Intent i = new Intent(this, PlayerActivity.class);
             i.putExtra("continue", true);
             return PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -247,10 +258,11 @@ public class ForegroundAudioService extends Service {
         notificationLayout.setOnClickPendingIntent(R.id.ivbackNofication, onButtonNotificationClick(getApplicationContext(), Constant.BACK));
         notificationLayout.setOnClickPendingIntent(R.id.ivControllNofication, onButtonNotificationClick(getApplicationContext(), Constant.PAUSE_RESUME));
         notificationLayout.setOnClickPendingIntent(R.id.ivNextNofication, onButtonNotificationClick(getApplicationContext(), Constant.NEXT));
+        notificationLayout.setOnClickPendingIntent(R.id.ivClose, onButtonNotificationClick(getApplicationContext(), Constant.NEXT));
         notificationLayout.setOnClickPendingIntent(R.id.ivAudio, onButtonNotificationClick(getApplicationContext(), Constant.IMAGE));
         return new NotificationCompat.Builder(this, "MlisMediaPlayerF")
                 .setSmallIcon(R.drawable.outline_music_note_24)
-                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle()).clearActions()
                 .setCustomContentView(notificationLayout)
                 .setCustomBigContentView(notificationLayout)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -325,6 +337,11 @@ public class ForegroundAudioService extends Service {
         ForegroundAudioService getService() {
             return ForegroundAudioService.this;
         }
+    }
+    public void stopNotification(){
+        stop = true;
+        getMediaPlayer().stop();
+        stopForeground(STOP_FOREGROUND_REMOVE);
     }
 
     @Override

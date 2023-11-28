@@ -4,7 +4,7 @@
     android:layout_width="@dimen/_80sdp"
     android:layout_height="wrap_content"
     android:id="@+id/layoutAudio"
-    android:visibility="gone">
+    android:visibility="visible">
     <ImageView
         android:id="@+id/ivTruyen"
         android:layout_width="@dimen/_72sdp"
@@ -18,7 +18,7 @@
         android:textSize="@dimen/_10sdp"
         android:text="@string/tentruyen"
         android:maxLines="1"
-        android:textColor="@color/black"
+        android:textColor="@color/normal_text"
         android:layout_marginHorizontal="@dimen/_2sdp"/>
     <TextView
         android:id="@+id/tvBoSung"
@@ -27,7 +27,7 @@
         android:maxLines="1"
         android:text="@string/tap1"
         android:textSize="@dimen/_8ssp"
-        android:textColor="@color/gray"
+        android:textColor="@color/subtitle_text"
         android:layout_marginHorizontal="@dimen/_2sdp"/>
 
 </LinearLayout>

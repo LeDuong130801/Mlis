@@ -72,7 +72,7 @@ public class HomeScreen extends AppCompatActivity {
         }));
         binding.rcvMostPopular.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         p = getRecentListenedPodcast();
-        binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(p, new RecyclerViewClickListener() {
+        binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(HomeScreen.this, p, new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
                 Intent i = new Intent(HomeScreen.this, PlayerActivity.class);
@@ -162,7 +162,6 @@ public class HomeScreen extends AppCompatActivity {
                 else{
                     binding.icPauseResume.setImageResource(R.drawable.baseline_play_arrow_24);
                 }
-                if (!pause)
                 handler.postDelayed(this, 1000);
             }
         };

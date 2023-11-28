@@ -10,12 +10,13 @@
         android:layout_height="wrap_content"
         android:text="@string/tentruyen"
         android:textSize="@dimen/_12ssp"
-        android:textColor="@color/black"
+        android:textColor="@color/normal_text"
         />
     <TextView
         android:id="@+id/lastUpdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/subtitle_text"
         android:textSize="@dimen/_10ssp"
         />
 

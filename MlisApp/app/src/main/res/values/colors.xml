@@ -18,7 +18,15 @@
     <color name="custom_red">#cf222e</color>
     <color name="dark">#343a40</color>
     <color name="gray">#6c757d</color>
+    <color name="light_gray2">#bdbdbd</color>
+    <color name="light_gray">#d3d3d3</color>
     <color name="background_dark">#2B2B2B</color>
     <color name="background_light">#CCC8C8</color>
     <color name="tranparent">@android:color/transparent</color>
+
+    <color name="normal_text">@color/white</color>
+    <color name="background">@color/black</color>
+    <color name="subtitle_text">@color/light_gray</color>
+    <color name="background0">@color/background_dark</color>
+    <color name="background1">#F0181818</color>
 </resources>

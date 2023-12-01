@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/playist")
+@RequestMapping("/api/playlist")
 public class PlaylistController {
     @Autowired
     PlaylistService playlistService;

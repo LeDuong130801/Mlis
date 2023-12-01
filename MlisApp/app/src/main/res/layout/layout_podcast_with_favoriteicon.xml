@@ -1,31 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:layout_margin="@dimen/_6sdp"
-    android:weightSum="1">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark"
+    android:id="@+id/layout"
+    android:layout_margin="@dimen/_2sdp"
+    >
+    <ImageView
+        android:id="@+id/ivAudio"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:src="@drawable/noimage"
+        android:background="@drawable/border_2"
+        android:padding="@dimen/_4sdp"
+        android:layout_margin="@dimen/_2sdp"/>
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:layout_marginHorizontal="@dimen/_2sdp"
+        android:layout_weight="1">
         <TextView
-            android:id="@+id/chapName"
+            android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/tentruyen"
-            android:textSize="@dimen/_12ssp"
             android:textColor="@color/normal_text"
+            android:textSize="@dimen/_12ssp"
+            android:maxLines="2"
             />
         <TextView
-            android:id="@+id/lastUpdate"
+            android:id="@+id/tvAuthor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/thongtin"
             android:textColor="@color/subtitle_text"
             android:textSize="@dimen/_10ssp"
+            android:maxLines="1"
             />
     </LinearLayout>
     <ImageView
@@ -36,5 +49,6 @@
         android:layout_gravity="center_vertical"
         android:src="@drawable/outline_favorite_border_24"
         app:tint="@color/white" />
+
 
 </LinearLayout>

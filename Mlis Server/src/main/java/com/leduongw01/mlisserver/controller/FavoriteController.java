@@ -1,6 +1,8 @@
 package com.leduongw01.mlisserver.controller;
 
 import com.leduongw01.mlisserver.model.Favorite;
+import com.leduongw01.mlisserver.model.MlisUser;
+import com.leduongw01.mlisserver.model.Podcast;
 import com.leduongw01.mlisserver.service.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,11 +39,11 @@ public class FavoriteController {
         }
         return "DeleteFailed";
     }
-    @GetMapping("/getall")
+    @GetMapping("/getalls")
     List<Favorite> getAllFavoriteByStatus(@RequestParam("status") String status){
         return favoriteService.getAllFavoriteByStatus(status);
     }
-    @GetMapping("/getall")
+    @GetMapping("/getallu")
     List<Favorite> getAllFavoriteByUserId(@RequestParam("user") String userId){
         return favoriteService.getAllFavoriteByUserId(userId);
     }
@@ -51,5 +53,15 @@ public class FavoriteController {
             return "renameSuccess";
         }
         return "renameFailed";
+    }
+    @PostMapping("/addpodcasttofavorite")
+    String addPodcastToFavorite(String mlisUserId, String podcastId, Favorite favorite){
+        favoriteService.addToFavorite(mlisUserId, podcastId, favorite.get_id());
+        return "200";
+    }
+    @PostMapping("/addpodcasttomainfavorite")
+    String addPodcastToMainFavorite(@RequestParam("mlisUserId")String mlisUserId,@RequestBody List<String> podcastListId){
+        favoriteService.addToMainFavorite(mlisUserId, podcastListId);
+        return "200";
     }
 }

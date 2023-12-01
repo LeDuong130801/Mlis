@@ -2,6 +2,7 @@ package com.leduongw01.mlis.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,10 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
     public void onBindViewHolder(@NonNull PlaylistDetailViewHolder holder, int position) {
         holder.getTvName().setText(podcastList.get(position).getName());
         holder.getTvLastUpdate().setText(podcastList.get(position).getUpdateOn());
-        Bitmap b = BackgroundLoadDataService.getBitmapById(podcastList.get(position).get_id(), Constant.PODCAST);
+        if (BackgroundLoadDataService.mainFavorite!=null)
+        if (BackgroundLoadDataService.mainFavorite.getPodListId().contains(podcastList.get(position).get_id())){
+            holder.ivFavorite.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.outline_favorite_24));
+        }
     }
 
     @Override
@@ -53,6 +57,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
 
         TextView tvName;
         TextView tvLastUpdate;
+        ImageView ivFavorite;
 
         public TextView getTvName() {
             return tvName;
@@ -67,6 +72,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
             itemView.setOnClickListener(this);
             tvName = itemView.findViewById(R.id.chapName);
             tvLastUpdate = itemView.findViewById(R.id.lastUpdate);
+            ivFavorite = itemView.findViewById(R.id.isFavorite);
         }
 
         @Override

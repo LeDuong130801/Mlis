@@ -43,7 +43,7 @@ public class MediaStoragedService {
     public String storeFile(Podcast podcast, MultipartFile file) {
         Random r = new Random();
         String fileName =
-                r.nextLong()+podcast.getName()+ podcast.getCreateBy()+podcast.getCreateOn()+file.getName()+"." + getFileExtension(file.getOriginalFilename());
+                r.nextLong()+podcast.getName()+podcast.getCreateOn()+file.getName()+"." + getFileExtension(file.getOriginalFilename());
         try {
             // Check if the filename contains invalid characters
             if (fileName.contains("..")) {
@@ -60,7 +60,7 @@ public class MediaStoragedService {
     public String storeImage(Podcast podcast, MultipartFile image) {
         Random r = new Random();
         String fileName =
-                r.nextLong()+podcast.getName()+ podcast.getCreateBy()+podcast.getCreateOn()+image.getName()+"." + getFileExtension(image.getOriginalFilename());
+                r.nextLong()+podcast.getName()+podcast.getCreateOn()+image.getName()+"." + getFileExtension(image.getOriginalFilename());
         try {
             // Check if the filename contains invalid characters
             if (fileName.contains("..")) {

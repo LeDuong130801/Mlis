@@ -7,17 +7,23 @@ public class MlisUser {
     private String email;
     private String googleAuth;
     private String status;
+    private String token;
+    private String dateOfBirth;
+    private String gender;
 
     public MlisUser() {
     }
 
-    public MlisUser(String _id, String username, String password, String email, String googleAuth, String status) {
+    public MlisUser(String _id, String username, String password, String email, String googleAuth, String status, String token, String dateOfBirth, String gender) {
         this._id = _id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.googleAuth = googleAuth;
         this.status = status;
+        this.token = token;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
     }
 
     public String get_id() {
@@ -66,5 +72,29 @@ public class MlisUser {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

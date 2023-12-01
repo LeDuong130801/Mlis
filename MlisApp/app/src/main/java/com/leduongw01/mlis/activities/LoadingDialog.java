@@ -12,22 +12,16 @@ import androidx.annotation.NonNull;
 
 import com.leduongw01.mlis.R;
 
-public class LoadingDialog{
-    private Activity activity;
-    private AlertDialog dialog;
-    public LoadingDialog(Activity activity) {
-        this.activity = activity;
+public class LoadingDialog extends Dialog{
+
+    public LoadingDialog(@NonNull Context context) {
+        super(context);
     }
 
-    void showDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        LayoutInflater layoutInflater = activity.getLayoutInflater();
-        builder.setView(R.layout.dialog_loading);
-        builder.setCancelable(true);
-        dialog = builder.create();
-        dialog.show();
-    }
-    void dismiss(){
-        dialog.dismiss();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.dialog_loading);
+        setCancelable(false);
     }
 }

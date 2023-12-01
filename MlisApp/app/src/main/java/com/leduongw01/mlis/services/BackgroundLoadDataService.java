@@ -19,6 +19,7 @@ import com.leduongw01.mlis.MainActivity;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.MapImage;
+import com.leduongw01.mlis.models.MlisUser;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.models.StringValue;
@@ -30,9 +31,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class BackgroundLoadDataService extends Service {
     static BackgroundLoadDataService instance = new BackgroundLoadDataService();
-
+    public static MlisUser mlisUser;
+    public static Favorite mainFavorite;
     public static List<Podcast> allPodcast;
     public static List<Playlist> allPlaylist;
     public static List<MapImage> podcastBitmap;
@@ -95,6 +101,7 @@ public class BackgroundLoadDataService extends Service {
 
     public void downloadTask() {
         fakeData();
+        RealData();
         for (Podcast podcast : getAllPodcast()){
             getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
             new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
@@ -137,9 +144,18 @@ public class BackgroundLoadDataService extends Service {
         }
         return null;
     }
+    public boolean checkAuthen(){
+        if (mlisUser==null){
+            return false;
+        }
+        else if (mlisUser.get_id()==null || mlisUser.get_id().equals("-1")){
+            return false;
+        }
+        return true;
+    }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_NOT_STICKY;
+        return START_REDELIVER_INTENT;
     }
     public void fakeData() {
         if (getAllPodcast()== null){
@@ -208,6 +224,38 @@ public class BackgroundLoadDataService extends Service {
                 "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fvov.jpg?alt=media&token=75f2b920-c604-4c3d-9061-fe4c64d99b96",
                 "1"
         ));
+
+    }
+    public void RealData(){
+        ApiService.apisService.getAllByStatus("1").enqueue(new Callback<List<Playlist>>() {
+            @Override
+            public void onResponse(Call<List<Playlist>> call, Response<List<Playlist>> response) {
+                if (response.isSuccessful()){
+                    allPlaylist.addAll(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Playlist>> call, Throwable t) {
+
+            }
+        });
+    }
+    public void loadMainFavorite(){
+        ApiService.apisService.getAllFavoriteByUserId(mlisUser.get_id()).enqueue(new Callback<List<Favorite>>() {
+            @Override
+            public void onResponse(Call<List<Favorite>> call, Response<List<Favorite>> response) {
+                for (Favorite favorite : response.body()){
+                    if (favorite.get_id().equals(mlisUser.get_id())){
+                        mainFavorite = favorite;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Favorite>> call, Throwable t) {
+            }
+        });
     }
 
     @Nullable

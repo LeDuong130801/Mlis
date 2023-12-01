@@ -25,6 +25,7 @@
                 android:layout_height="@dimen/_1sdp"
                 android:layout_weight="1"/>
             <ImageButton
+                android:id="@+id/openMenu"
                 android:layout_width="@dimen/_36sdp"
                 android:layout_height="@dimen/_36sdp"
                 android:src="@drawable/baseline_more_vert_24"
@@ -57,7 +58,7 @@
             android:lines="1"
             app:layout_constraintTop_toBottomOf="@id/linerc2"
             android:text="@string/tentruyen"
-            android:textColor="@color/white"
+            android:textColor="@color/normal_text"
             android:textSize="@dimen/_18ssp"
             android:gravity="center"
             android:textStyle="bold"
@@ -67,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lines="1"
-            android:textColor="@color/white"
+            android:textColor="@color/normal_text"
             android:text="@string/boSung"
             app:layout_constraintTop_toBottomOf="@id/tvTenTruyen"
             android:gravity="center"
@@ -94,7 +95,7 @@
                 android:layout_gravity="start"
                 android:text="--:--"
                 android:textSize="@dimen/_11ssp"
-                android:textColor="@color/white"
+                android:textColor="@color/normal_text"
                 android:layout_marginStart="@dimen/_12sdp"/>
             <TextView
                 android:id="@+id/tvMediaPlayerDuration"
@@ -104,7 +105,7 @@
                 android:layout_gravity="end"
                 android:text="--:--"
                 android:textSize="@dimen/_11ssp"
-                android:textColor="@color/white"
+                android:textColor="@color/normal_text"
                 android:layout_marginEnd="@dimen/_12sdp"/>
         </GridLayout>
         <LinearLayout
@@ -121,7 +122,7 @@
                 android:layout_weight="2"
                 android:src="@drawable/baseline_skip_previous_24"
                 android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text" />
             <ImageButton
                 android:id="@+id/back10sMediaPlayer"
                 android:layout_width="0dp"
@@ -129,7 +130,8 @@
                 android:layout_weight="2"
                 android:src="@drawable/outline_replay_10_24"
                 android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text"
+                />
             <ImageButton
                 android:id="@+id/icPauseResumeMediaPlayer"
                 android:layout_width="0dp"
@@ -138,7 +140,7 @@
                 android:src="@drawable/baseline_pause_24"
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text" />
             <ImageButton
                 android:id="@+id/next10sMediaPlayer"
                 android:layout_width="0dp"
@@ -146,7 +148,7 @@
                 android:layout_weight="2"
                 android:src="@drawable/outline_forward_10_24"
                 android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text" />
             <ImageButton
                 android:id="@+id/nextSkipMediaPlayer"
                 android:layout_width="0dp"
@@ -154,7 +156,7 @@
                 android:layout_weight="2"
                 android:src="@drawable/baseline_skip_next_24"
                 android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/linearBottom"
@@ -170,7 +172,7 @@
                 android:layout_weight="1"
                 android:src="@drawable/ic_baseline_access_time_24"
                 android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text" />
             <ImageButton
                 android:id="@+id/ivPlayerlist"
                 android:layout_width="0dp"
@@ -178,7 +180,7 @@
                 android:layout_weight="1"
                 android:src="@drawable/outline_queue_music_24"
                 android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text" />
             <ImageButton
                 android:id="@+id/systemSound"
                 android:layout_width="0dp"
@@ -186,7 +188,7 @@
                 android:layout_weight="1"
                 android:src="@drawable/outline_volume_up_24"
                 android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                app:tint="@color/normal_text" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

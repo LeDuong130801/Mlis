@@ -1,5 +1,6 @@
 package com.leduongw01.mlis.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.DialogCompat;
 import androidx.databinding.DataBindingUtil;
@@ -14,7 +15,11 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -80,6 +85,24 @@ public class PlayerActivity extends AppCompatActivity {
             fillData();
         }
     }
+
+    void showMenu(View view){
+        PopupMenu popup = new PopupMenu(this, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_player, popup.getMenu());
+        popup.show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.themvaodanhsach:{
+
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void initSeekBar() {
         binding.seekBarMediaPlayer.setProgress(0);
         binding.seekBarMediaPlayer.setMax(ForegroundAudioService.getMediaPlayer().getDuration());
@@ -119,6 +142,22 @@ public class PlayerActivity extends AppCompatActivity {
                     }
                     playing = ForegroundAudioService.getMediaPlayer().isPlaying();
                 }
+                if (ForegroundAudioService.getCurrentAudio()==0){
+                    binding.backSkipMediaPlayer.setClickable(false);
+                    binding.backSkipMediaPlayer.setColorFilter(R.color.light_gray);
+                }
+                else{
+                    binding.backSkipMediaPlayer.setClickable(true);
+                    binding.backSkipMediaPlayer.setColorFilter(null);
+                }
+                if(ForegroundAudioService.getCurrentAudio()==ForegroundAudioService.getCurrentList().size()-1){
+                    binding.nextSkipMediaPlayer.setClickable(false);
+                    binding.nextSkipMediaPlayer.setColorFilter(R.color.light_gray);
+                }
+                else{
+                    binding.nextSkipMediaPlayer.setClickable(true);
+                    binding.nextSkipMediaPlayer.setColorFilter(null);
+                }
                 handler.postDelayed(runnable, 1000);
             }
         };
@@ -137,14 +176,6 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ForegroundAudioService.pauseOrResumeMediaPlayer();
-//                if(ForegroundAudioService.getInstance().getMediaPlayer().isPlaying()){
-//                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
-//                }
-//                else{
-//                    binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_play_arrow_24);
-//                }
-//                Intent intent = new Intent(getApplicationContext(), ForegroundAudioService.class);
-//                startService(intent);
             }
         });
         binding.next10sMediaPlayer.setOnClickListener(new View.OnClickListener() {
@@ -178,6 +209,24 @@ public class PlayerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(PlayerActivity.this, PlayerListActivity.class);
                 startActivity(i);
+            }
+        });
+        binding.openMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMenu(view);
+            }
+        });
+        binding.backSkipMediaPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ForegroundAudioService.getInstance().backAudio();
+            }
+        });
+        binding.nextSkipMediaPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ForegroundAudioService.getInstance().nextAudio();
             }
         });
     }

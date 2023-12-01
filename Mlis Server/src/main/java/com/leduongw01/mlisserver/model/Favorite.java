@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +19,16 @@ public class Favorite {
     String _id;
     String name;
     String createOn;
-    ArrayList<String> podListId;
+    List<String> podListId;
     String userId;
     String status;
+    public Favorite(String id, List<String> podListId){
+        _id = id;
+        name = "Danh sách yêu thích";
+        Date date = new Date();
+        createOn = date.getTime()+"";
+        this.podListId = podListId;
+        userId = id;
+        status = "1";
+    }
 }

@@ -12,6 +12,7 @@ public class Constant {
     public static Integer TITTLE = 2;
     public static Integer IMAGE = 1;
     public static Integer EXIT = 3;
+    public static String PREFERENCES_NAME = "MlisData";
     public static String databaseName="MlisDatabase";
     public static String ERROR = "do";
     public static String SHOW = "xanh";

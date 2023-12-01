@@ -32,6 +32,7 @@ import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Constant;
+import com.leduongw01.mlis.utils.MyComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,7 @@ public class HomeScreen extends AppCompatActivity {
                 startActivity(i);
             }
         }));
+
         binding.rcvRecent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 //        ApiService.apisService.getPodcastWithSl().enqueue(new Callback<ArrayList<Podcast>>() {
 //            @Override
@@ -126,15 +128,29 @@ public class HomeScreen extends AppCompatActivity {
         assert actionbar != null;
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24);
-
+        ktNavigator();
+    }
+    void ktNavigator(){
         View headerView = binding.navHomeScreen.getHeaderView(0);
         headerView.findViewById(R.id.goLogin).setOnClickListener(view -> {
             Intent intent = new Intent(HomeScreen.this, LoginActivity.class);
             startActivity(intent);
         });
+        if (BackgroundLoadDataService.getInstance().checkAuthen()){
+            headerView.findViewById(R.id.goLogin).setVisibility(View.INVISIBLE);
+        }
+        else{
+            headerView.findViewById(R.id.goLogin).setVisibility(View.VISIBLE);
+        }
         Menu menu = binding.navHomeScreen.getMenu();
+        menu.findItem(R.id.favoritelist).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                MyComponent.ToastShort(HomeScreen.this, "Clicked to favorite");
+                return false;
+            }
+        });
     }
-
     void ktHandler() {
         pause = false;
         if (ForegroundAudioService.getCurrentPodcast() != null) {

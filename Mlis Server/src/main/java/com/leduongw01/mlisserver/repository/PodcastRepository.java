@@ -7,8 +7,7 @@ import java.util.List;
 
 public interface PodcastRepository extends MongoRepository<Podcast, String> {
     public Podcast getPodcastBy_id(String id);
-    public List<Podcast> getAllByCreateBy(String createBy);
     public boolean existsPodcastBy_id(String id);
-    List<Podcast> getAllByAuthor(String author);
+//    List<Podcast> getAllByAuthor(String author);
     List<Podcast> getAllByStatus(String s);
 }

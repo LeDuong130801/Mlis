@@ -8,15 +8,23 @@ import androidx.databinding.DataBindingUtil;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.databinding.ActivitySignUpBinding;
+import com.leduongw01.mlis.models.MlisUser;
+import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.utils.MyComponent;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity {
     ActivitySignUpBinding binding;
@@ -41,6 +49,8 @@ public class SignUpActivity extends AppCompatActivity {
         String myFormat="MM/dd/yyyy";
         SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.US);
         binding.etDateOfBirth.setText(dateFormat.format(new Date()));
+        genderChecked = 0;
+        binding.etGender.setText(R.string.nam);
     }
     private void ktSuKien(){
         DatePickerDialog.OnDateSetListener date = (view, year, month, day) -> {
@@ -86,12 +96,10 @@ public class SignUpActivity extends AppCompatActivity {
             this.finish();
         });
         binding.btSignUp.setOnClickListener(view -> {
-            if(!signUpProcess().equals("0")){
-                this.finish();
-            }
+            signUpProcess();
         });
     }
-    private String signUpProcess(){
+    private void signUpProcess(){
         String username = binding.etUsername.getText().toString();
         String email = binding.etEmail.getText().toString();
         String password = binding.etPassword1.getText().toString();
@@ -101,22 +109,36 @@ public class SignUpActivity extends AppCompatActivity {
         String key = "0";
         if(username.isEmpty() && email.isEmpty()){
             MyComponent.ToastShort(this, "Tên người dùng hoặc email không được bỏ trống");
-            return key;
+            return;
         }
         if(password.isEmpty()){
             MyComponent.ToastShort(this, "Mật khẩu không được bỏ trống");
-            return key;
+            return;
         }
         if (password2.isEmpty()){
             MyComponent.ToastShort(this, "Vui lòng nhập lại mật khẩu");
-            return key;
+            return;
         }
         if(!password.equals(password2)){
             MyComponent.ToastShort(this, "Mật khẩu không khớp");
-            return key;
+            return;
         }
-        //something
-        return key;
+        MlisUser mlisUser = new MlisUser("0", username, password, email, "", "1", "a", dateOfBirth, gender);
+        final String[] kq = {"0"};
+        ApiService.apisService.register(mlisUser).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()){
+                    MyComponent.ToastShort(SignUpActivity.this, "Đăng ký thành công");
+                    onBackPressed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
     }
     private void updateLabel(){
         String myFormat="MM/dd/yyyy";

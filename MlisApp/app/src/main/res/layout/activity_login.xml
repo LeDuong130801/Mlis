@@ -41,6 +41,7 @@
                 android:drawablePadding="@dimen/_4sdp"
                 android:drawableTint="@color/success"
                 android:hint="@string/tennguoidunghoacemail"
+                android:text=""
                 android:inputType="textEmailAddress"
                 android:paddingHorizontal="@dimen/_6sdp"
                 android:paddingVertical="@dimen/_8sdp" />
@@ -55,6 +56,7 @@
                 android:drawablePadding="@dimen/_4sdp"
                 android:drawableTint="@color/success"
                 android:hint="@string/matkhau"
+                android:text=""
                 android:inputType="textPassword"
                 android:paddingHorizontal="@dimen/_6sdp"
                 android:paddingVertical="@dimen/_8sdp" />

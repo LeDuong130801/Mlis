@@ -88,10 +88,11 @@
             android:orientation="horizontal"
             android:weightSum="1">
             <ImageView
+                android:id="@+id/isFavorite"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:padding="@dimen/_6sdp"
-                android:src="@drawable/ic_baseline_star_24"
+                android:src="@drawable/outline_favorite_border_24"
                 app:tint="@color/normal_text" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btListenChap1"

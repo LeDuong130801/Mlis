@@ -43,10 +43,10 @@ public class PodcastController {
         podcastService.addPodcast(podcast);
         return ResponseEntity.ok().body(fileName);
     }
-    @GetMapping("/getpodbyauthor")
-    public List<Podcast> getAllByAuthor(@RequestParam(name = "author") String author){
-        return podcastService.getAllByAuthor(author);
-    }
+//    @GetMapping("/getpodbyauthor")
+//    public List<Podcast> getAllByAuthor(@RequestParam(name = "author") String author){
+//        return podcastService.getAllByAuthor(author);
+//    }
 //    @PostMapping("/addpodcasttofirebase")
 ////    public String addPodcastToFirebase(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException, ExecutionException, InterruptedException {
 ////        Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);

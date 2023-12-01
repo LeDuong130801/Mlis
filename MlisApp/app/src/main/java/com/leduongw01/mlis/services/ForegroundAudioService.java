@@ -46,7 +46,7 @@ import java.util.Objects;
 public class ForegroundAudioService extends Service {
     private static final ForegroundAudioService instance = new ForegroundAudioService();
     private static MediaPlayer mediaPlayer = new MediaPlayer();
-    private static boolean stop = false;
+    private static boolean playing = false;
     private static int timer = -1;
     private static int currentSeek = 0;
     private static int currentAudio = -1;
@@ -191,7 +191,6 @@ public class ForegroundAudioService extends Service {
                 getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
-                        if (!stop)
                         nextAudio();
                     }
                 });
@@ -264,7 +263,7 @@ public class ForegroundAudioService extends Service {
                 .setSmallIcon(R.drawable.outline_music_note_24)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle()).clearActions()
                 .setCustomContentView(notificationLayout)
-                .setCustomBigContentView(notificationLayout)
+//                .setCustomBigContentView(notificationLayout)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSilent(true)
                 .build();
@@ -325,7 +324,10 @@ public class ForegroundAudioService extends Service {
                 else if(timer!=-1){
                     timer--;
                 }
-                updateNotification();
+                if (getMediaPlayer().isPlaying()!=playing){
+                    updateNotification();
+                    playing = getMediaPlayer().isPlaying();
+                }
                 getHandler().postDelayed(this, 1000);
             }
         });
@@ -334,12 +336,12 @@ public class ForegroundAudioService extends Service {
     }
 
     public class LocalBinder extends Binder {
+
         ForegroundAudioService getService() {
             return ForegroundAudioService.this;
         }
     }
     public void stopNotification(){
-        stop = true;
         getMediaPlayer().stop();
         stopForeground(STOP_FOREGROUND_REMOVE);
     }

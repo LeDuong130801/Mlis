@@ -10,10 +10,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MlisUser {
-    String _id;
-    String username;
-    String password;
-    String email;
-    String googleAuth;
-    String status;
+    private String _id;
+    private String username;
+    private String password;
+    private String email;
+    private String googleAuth;
+    private String status;
+    private String token;
+    private String dateOfBirth;
+    private String gender;
 }

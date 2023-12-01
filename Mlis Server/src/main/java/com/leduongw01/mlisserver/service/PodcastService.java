@@ -23,12 +23,9 @@ public class PodcastService {
         return podcastRepository.getPodcastBy_id(id);
         else return new Podcast("-1");
     }
-    public List<Podcast> getAllByCreateBy(String author){
-        return podcastRepository.getAllByCreateBy(author);
-    }
-    public List<Podcast> getAllByAuthor(String author){
-        return podcastRepository.getAllByAuthor(author);
-    }
+//    public List<Podcast> getAllByAuthor(String author){
+//        return podcastRepository.getAllByAuthor(author);
+//    }
     public void addPodcast(Podcast podcast){
         podcast.setCreateOn((new Date()).getTime()+"");
         podcast.setUpdateOn((new Date()).getTime()+"");

@@ -35,7 +35,10 @@
             <ImageView
                 android:id="@+id/ivTruyen"
                 android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"/>
+                android:layout_height="@dimen/_36sdp"
+                android:background="@drawable/border_2"
+                android:padding="@dimen/_4sdp"
+                android:layout_margin="@dimen/_2sdp"/>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -53,7 +56,7 @@
                     android:id="@+id/tvAuthor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="\?"
+                    android:text=""
                     android:textColor="@color/subtitle_text"
                     android:textSize="@dimen/_11ssp"
                     android:maxLines="1"/>

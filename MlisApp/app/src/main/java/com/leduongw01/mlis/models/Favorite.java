@@ -1,19 +1,20 @@
 package com.leduongw01.mlis.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Favorite {
     private String _id;
     private String name;
     private String createOn;
-    private ArrayList<String> podListId;
+    private List<String> podListId;
     private String userId;
     private String status;
 
     public Favorite() {
     }
 
-    public Favorite(String _id, String name, String createOn, ArrayList<String> podListId, String userId, String status) {
+    public Favorite(String _id, String name, String createOn, List<String> podListId, String userId, String status) {
         this._id = _id;
         this.name = name;
         this.createOn = createOn;
@@ -46,11 +47,11 @@ public class Favorite {
         this.createOn = createOn;
     }
 
-    public ArrayList<String> getPodListId() {
+    public List<String> getPodListId() {
         return podListId;
     }
 
-    public void setPodListId(ArrayList<String> podListId) {
+    public void setPodListId(List<String> podListId) {
         this.podListId = podListId;
     }
 

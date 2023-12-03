@@ -18,6 +18,7 @@ public class Podcast {
     private String updateOn;
     private String url;
     private String urlImg;
+    private String playlistId;
     private String status;
     public Podcast(String _id){
         this._id = _id;

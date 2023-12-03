@@ -28,6 +28,7 @@ import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.utils.Constant;
+import com.leduongw01.mlis.utils.MyComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,17 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        binding.ivPlaylist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MyComponent.ToastShort(PlaylistDetailActivity.this, "s");
+            }
+        });
+        if (listChaper.size()==0){
+            binding.btListenChap1.setText("Tập truyện này chưa có chương");
+            binding.btListenChap1.setClickable(false);
+        }
+        else
         binding.btListenChap1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

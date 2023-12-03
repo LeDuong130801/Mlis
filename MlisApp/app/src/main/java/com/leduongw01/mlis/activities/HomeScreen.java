@@ -84,6 +84,13 @@ public class HomeScreen extends AppCompatActivity {
         }));
 
         binding.rcvRecent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        binding.rcvPodcast.setAdapter(new AllPlaylistAdapter(getApplicationContext(), (v, position) -> {
+            Intent intent = new Intent(this, PlaylistDetailActivity.class);
+            intent.putExtra("playlistId", BackgroundLoadDataService.getAllPlaylist().get(position).get_id());
+            startActivity(intent);
+
+        }));
+        binding.rcvPodcast.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 //        ApiService.apisService.getPodcastWithSl().enqueue(new Callback<ArrayList<Podcast>>() {
 //            @Override
 //            public void onResponse(Call<ArrayList<Podcast>> call, Response<ArrayList<Podcast>> response) {

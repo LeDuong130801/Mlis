@@ -12,13 +12,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Playlist {
-    String _id;
-    String name;
-    String author;
-    String category;
-    String createOn;
-    String updateOn;
-    String detail;
-    String urlImg;
-    String status;
+    private String _id;
+    private String name;
+    private String author;
+    private String category;
+    private String createOn;
+    private String updateOn;
+    private String detail;
+    private String urlImg;
+    private String status;
 }

@@ -1,21 +1,29 @@
 package com.leduongw01.mlisserver.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leduongw01.mlisserver.model.Playlist;
+import com.leduongw01.mlisserver.model.Podcast;
+import com.leduongw01.mlisserver.service.MediaStoragedService;
 import com.leduongw01.mlisserver.service.PlaylistService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
 @Slf4j
+@CrossOrigin
 @RequestMapping("/api/playlist")
 public class PlaylistController {
     @Autowired
     PlaylistService playlistService;
+    @Autowired
+    MediaStoragedService mediaStoragedService;
 
     @GetMapping("/getbyidandstatus")
     Playlist getPlaylistById(@RequestParam("contentId") String id, @RequestParam("contentStatus") String status){
@@ -59,7 +67,10 @@ public class PlaylistController {
         return  playlistService.updatePlayist(playlist);
     }
     @PostMapping("/createPlaylist")
-    Playlist createPlaylist(@RequestBody Playlist playlist){
+    Playlist createPlaylist(@RequestParam(name = "fileImage", required = false) MultipartFile file, @RequestParam("playlist") String playlistStr) throws JsonProcessingException {
+        Playlist playlist = new ObjectMapper().readValue(playlistStr, Playlist.class);
+        String imageName = mediaStoragedService.storeFileImage(file);
+        playlist.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
         return playlistService.createPlayist(playlist);
     }
     @DeleteMapping("/deletePlaylist")

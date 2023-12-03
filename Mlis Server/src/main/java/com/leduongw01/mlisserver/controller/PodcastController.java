@@ -37,9 +37,9 @@ public class PodcastController {
         Date d = new Date();
         podcast.setCreateOn(d.getTime()+"");
         String fileName = mediaStoragedService.storeFile(podcast, file);
-        podcast.setUrl("storage\\file\\"+fileName);
+        podcast.setUrl("http:\\\\192.168.1.35:8080\\storage\\files\\"+fileName);
         String imageName = mediaStoragedService.storeImage(podcast, image);
-        podcast.setUrlImg("storage\\file\\"+imageName);
+        podcast.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
         podcastService.addPodcast(podcast);
         return ResponseEntity.ok().body(fileName);
     }

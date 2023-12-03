@@ -106,10 +106,6 @@ public class BackgroundLoadDataService extends Service {
             getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
             new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
         }
-        for (Playlist playlist : getAllPlaylist()){
-            getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
-            new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
-        }
     }
     public static Playlist getPlaylistById(String id){
         for (Playlist playlist: allPlaylist){
@@ -232,6 +228,10 @@ public class BackgroundLoadDataService extends Service {
             public void onResponse(Call<List<Playlist>> call, Response<List<Playlist>> response) {
                 if (response.isSuccessful()){
                     allPlaylist.addAll(response.body());
+                    for (Playlist playlist : getAllPlaylist()){
+                        getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
+                        new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
+                    }
                 }
             }
 

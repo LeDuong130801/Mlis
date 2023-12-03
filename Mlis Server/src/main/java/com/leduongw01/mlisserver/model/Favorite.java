@@ -16,12 +16,12 @@ import java.util.List;
 @Setter
 public class Favorite {
     @Id
-    String _id;
-    String name;
-    String createOn;
-    List<String> podListId;
-    String userId;
-    String status;
+    private String _id;
+    private String name;
+    private String createOn;
+    private List<String> podListId;
+    private String userId;
+    private String status;
     public Favorite(String id, List<String> podListId){
         _id = id;
         name = "Danh sách yêu thích";

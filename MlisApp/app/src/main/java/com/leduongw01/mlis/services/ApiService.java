@@ -48,7 +48,7 @@ public interface ApiService {
     Call<String> register(
             @Body MlisUser mlisUser
     );
-    @GET("api/playlist/getallbystatus")
+    @GET("api/playlist/getallbyStatus")
     Call<List<Playlist>> getAllByStatus(
             @Query("contentStatus") String status
     );

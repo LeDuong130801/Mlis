@@ -70,6 +70,6 @@ public class PlaylistService {
         return playlists.subList((page-1)*quantity, page*quantity);
     }
     public List<Playlist> getAllPlayist(){
-        return playlistRepository.getAllBy();
+        return playlistRepository.findAll();
     }
 }

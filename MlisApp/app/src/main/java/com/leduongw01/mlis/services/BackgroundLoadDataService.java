@@ -223,20 +223,44 @@ public class BackgroundLoadDataService extends Service {
 
     }
     public void RealData(){
+        for (Playlist playlist : getAllPlaylist()){
+            getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
+            new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
+        }
+        for (Podcast podcast : getAllPodcast()){
+            getPodcastBitmap().add(new MapImage(podcast.get_id()+Constant.PODCAST, null));
+            new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
+        }
         ApiService.apisService.getAllByStatus("1").enqueue(new Callback<List<Playlist>>() {
             @Override
             public void onResponse(Call<List<Playlist>> call, Response<List<Playlist>> response) {
                 if (response.isSuccessful()){
                     allPlaylist.addAll(response.body());
-                    for (Playlist playlist : getAllPlaylist()){
-                        getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
-                        new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
+                    for (int i=2;i<allPlaylist.size();i++){
+                        getPodcastBitmap().add(new MapImage(allPlaylist.get(i).get_id()+Constant.PLAYLIST, null));
+                        new DownloadTask(allPlaylist.get(i).get_id()+Constant.PLAYLIST).execute(allPlaylist.get(i).getUrlImg());
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<List<Playlist>> call, Throwable t) {
+            }
+        });
+        ApiService.apisService.getAllPodcast().enqueue(new Callback<ArrayList<Podcast>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Podcast>> call, Response<ArrayList<Podcast>> response) {
+                if (response.isSuccessful()){
+                    allPodcast.addAll(response.body());
+                    for (int i=3;i<allPodcast.size();i++){
+                        getPodcastBitmap().add(new MapImage(allPodcast.get(i).get_id()+Constant.PODCAST, null));
+                        new DownloadTask(allPodcast.get(i).get_id()+Constant.PODCAST).execute(allPodcast.get(i).getUrlImg());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Podcast>> call, Throwable t) {
 
             }
         });

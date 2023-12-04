@@ -8,6 +8,7 @@ import com.leduongw01.mlisserver.service.PodcastService;
 import io.micrometer.core.instrument.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -41,6 +45,7 @@ public class PodcastController {
         String imageName = mediaStoragedService.storeImage(podcast, image);
         podcast.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
         podcastService.addPodcast(podcast);
+        log.info("dasđâsdá");
         return ResponseEntity.ok().body(fileName);
     }
 //    @GetMapping("/getpodbyauthor")
@@ -65,61 +70,17 @@ public class PodcastController {
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     public ResponseEntity<Resource> downloadDocument(@RequestParam(name = "url") String url) throws IOException {
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(url));
+        File file = new File("./storage/files/" + url);
+        Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
         return ResponseEntity.ok()
-                .headers(HttpHeaders.EMPTY)
-                .contentLength(url.length())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(resource);
     }
-    @GetMapping(
-            value = "/g",
-            produces = MediaType.ALL_VALUE
-    )
-    public MultipartFile downloadDocument() throws IOException {
-        InputStreamResource resource = new InputStreamResource(new FileInputStream("./storage/files/Media2localnow.mp3"));
-        log.info("ĐÁadsadsads");
-        return new MultipartFile() {
-            @Override
-            public String getName() {
-                return "ahahaha";
-            }
-
-            @Override
-            public String getOriginalFilename() {
-                return null;
-            }
-
-            @Override
-            public String getContentType() {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public long getSize() {
-                return 0;
-            }
-
-            @Override
-            public byte[] getBytes() throws IOException {
-                return new byte[0];
-            }
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return resource.getInputStream();
-            }
-
-            @Override
-            public void transferTo(File dest) throws IOException, IllegalStateException {
-
-            }
-        };
+    @GetMapping("/getall")
+    public List<Podcast> getAll(){
+        return podcastService.getAll();
     }
 }

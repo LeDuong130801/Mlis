@@ -47,6 +47,9 @@ public class PodcastService {
         }
         return out;
     }
+    public List<Podcast> getAll(){
+        return podcastRepository.findAll();
+    }
 //    public String savePodcastFile(MultipartFile file) throws ExecutionException, InterruptedException {
 //        StorageReference db = FirestoreClient.getFirestore();
 //        ApiFuture<WriteResult> c = db.collection(podcastCollection).document(podcast.getName()).set(podcast);

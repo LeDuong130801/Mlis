@@ -1,5 +1,7 @@
 package com.leduongw01.mlis.adapter;
 
+import static com.leduongw01.mlis.MainActivity.noImg;
+
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -44,15 +46,21 @@ public class AllPlaylistAdapter extends RecyclerView.Adapter<AllPlaylistAdapter.
         holder.getPlaylistNameTextView().setText(BackgroundLoadDataService.getAllPlaylist().get(position).getName());
         holder.getPlaylistAuthorTextView().setText(BackgroundLoadDataService.getAllPlaylist().get(position).getAuthor());
         Handler a = new Handler();
-        while (!BackgroundLoadDataService.getInstance().getMapImageById(BackgroundLoadDataService.getAllPlaylist().get(position).get_id(), Constant.PLAYLIST).hasRes){
-            a.postDelayed(null, 100);
+        try{
+            while (!BackgroundLoadDataService.getInstance().getMapImageById(BackgroundLoadDataService.getAllPlaylist().get(position).get_id(), Constant.PLAYLIST).hasRes){
+                a.postDelayed(null, 100);
+                Log.d("while", "onBindViewHolder: loop inf");
+            }
+            holder.getPlaylistImageView().setImageBitmap(BackgroundLoadDataService.getInstance().getBitmapById(BackgroundLoadDataService.getAllPlaylist().get(position).get_id(), Constant.PLAYLIST));
         }
-        holder.getPlaylistImageView().setImageBitmap(BackgroundLoadDataService.getInstance().getBitmapById(BackgroundLoadDataService.getAllPlaylist().get(position).get_id(), Constant.PLAYLIST));
+        catch (NullPointerException e){
+            holder.getPlaylistImageView().setImageBitmap(noImg);
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        Log.d("SDa", BackgroundLoadDataService.getAllPlaylist().size()+"");
         return BackgroundLoadDataService.allPlaylist.size();
     }
 

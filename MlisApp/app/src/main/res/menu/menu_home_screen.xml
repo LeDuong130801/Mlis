@@ -8,6 +8,8 @@
         android:id="@+id/setting"
         android:title="@string/caidat"
         />
+    <item android:id="@+id/logout"
+        android:title="@string/dangxuat"/>
     <item
         android:id="@+id/exit"
         android:title="@string/thoat"/>

@@ -10,10 +10,13 @@ import com.leduongw01.mlis.models.StringValue;
 import com.leduongw01.mlis.utils.Constant;
 import com.leduongw01.mlis.utils.DefaultConfig;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
@@ -24,6 +27,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 
 public interface ApiService {
     Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
@@ -32,8 +36,13 @@ public interface ApiService {
             .build().create(ApiService.class);
     @GET("testapi/getkey")
     Call<StringValue> getApiKey();
-    @GET("api/podcast/getpodcastwithsl?page=1&quantity=4")
-    Call<ArrayList<Podcast>> getPodcastWithSl();
+    @GET("storage/files/{url}")
+    @Streaming
+    Call<ResponseBody> getFile(
+            @Path("url") String url
+    );
+    @GET("api/podcast/getall")
+    Call<ArrayList<Podcast>> getAllPodcast();
     @GET("api/mlis/login")
     Call<MlisUser> login(
             @Query("username") String username,
@@ -48,6 +57,7 @@ public interface ApiService {
     Call<String> register(
             @Body MlisUser mlisUser
     );
+    //playlist
     @GET("api/playlist/getallbyStatus")
     Call<List<Playlist>> getAllByStatus(
             @Query("contentStatus") String status

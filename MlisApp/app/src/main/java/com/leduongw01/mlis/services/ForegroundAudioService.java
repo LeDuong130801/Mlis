@@ -8,13 +8,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -35,13 +39,25 @@ import com.leduongw01.mlis.receivers.NextReceiverNotification;
 import com.leduongw01.mlis.receivers.PauseResumeReceiverNotification;
 import com.leduongw01.mlis.utils.Constant;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ForegroundAudioService extends Service {
     private static final ForegroundAudioService instance = new ForegroundAudioService();
@@ -165,7 +181,7 @@ public class ForegroundAudioService extends Service {
     }
 
     public void nextAudio() {
-        if (getCurrentAudio()<getCurrentList().size()){
+        if (getCurrentAudio()<getCurrentList().size()-1){
             setCurrentAudio(getCurrentAudio()+1);
             setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
             setCurrentSeek(0);
@@ -181,23 +197,32 @@ public class ForegroundAudioService extends Service {
         }
     }
 
+//    private void loadMediaPlayerFromUrl(String url) {
+//        if (url != null && !url.equals("")) {
+//            setMediaPlayer(new CustomMediaPlayer());
+//            try {
+//                getMediaPlayer().setDataSource(url);
+//                getMediaPlayer().prepare();
+//                getMediaPlayer().start();
+//                getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                    @Override
+//                    public void onCompletion(MediaPlayer mediaPlayer) {
+//                        nextAudio();
+//                    }
+//                });
+//            } catch (IOException e) {
+//                Log.e(Constant.ERROR, "Tai nhac that bai");
+//                e.printStackTrace();
+//            }
+//        }
+//        else{
+//            setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
+//        }
+//    }
     private void loadMediaPlayerFromUrl(String url) {
         if (url != null && !url.equals("")) {
             setMediaPlayer(new CustomMediaPlayer());
-            try {
-                getMediaPlayer().setDataSource(url);
-                getMediaPlayer().prepare();
-                getMediaPlayer().start();
-                getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        nextAudio();
-                    }
-                });
-            } catch (IOException e) {
-                Log.e(Constant.ERROR, "Tai nhac that bai");
-                e.printStackTrace();
-            }
+            new DownloadFileFromURL().execute(url);
         }
         else{
             setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
@@ -351,18 +376,72 @@ public class ForegroundAudioService extends Service {
         stopForeground(STOP_FOREGROUND_REMOVE);
         super.onDestroy();
     }
-    static class CustomMediaPlayer extends MediaPlayer {
+    class CustomMediaPlayer extends MediaPlayer {
         String dataSource;
 
         @Override
         public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
             // TODO Auto-generated method stub
             super.setDataSource(path);
+            new DownloadFileFromURL().execute(path);
             dataSource = path;
         }
 
         public String getDataSource() {
             return dataSource;
+        }
+    }
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+        public DownloadFileFromURL(){}
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+                URL url = new URL(f_url[0]);
+                URLConnection conection = url.openConnection();
+                conection.connect();
+                int lenghtOfFile = conection.getContentLength();
+                InputStream input = new BufferedInputStream(url.openStream(),
+                        8192);
+                OutputStream output = new FileOutputStream(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/Download/a.kml");
+                String e = Environment.getExternalStorageDirectory().toString() + "/Downloads/a";
+                byte data[] = new byte[1024];
+                long total = 0;
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                    output.write(data, 0, count);
+                }
+                output.flush();
+                output.close();
+                input.close();
+                getMediaPlayer().setDataSource(getApplicationContext(), Uri.parse(Environment.getExternalStorageDirectory().toString()+"/Download/a.kml"));
+                getMediaPlayer().prepare();
+                getMediaPlayer().start();
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+            return null;
+        }
+
+        /**
+         * Updating progress bar
+         **/
+        protected void onProgressUpdate(String... progress) {
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        @Override
+        protected void onPostExecute(String file_url) {
+
         }
     }
 }

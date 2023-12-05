@@ -31,4 +31,13 @@ public class Favorite {
         userId = id;
         status = "1";
     }
+    public Favorite(String id){
+        _id = id;
+        name = "Danh sách yêu thích";
+        Date date = new Date();
+        createOn = date.getTime()+"";
+        this.podListId = new ArrayList<>();
+        userId = id;
+        status = "1";
+    }
 }

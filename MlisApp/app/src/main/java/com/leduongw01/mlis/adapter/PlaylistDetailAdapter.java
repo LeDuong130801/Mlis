@@ -3,6 +3,7 @@ package com.leduongw01.mlis.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.Podcast;
+import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.utils.Constant;
 
@@ -22,13 +24,15 @@ import java.util.List;
 
 public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAdapter.PlaylistDetailViewHolder> {
     private static RecyclerViewClickListener playlistDetailClickListener;
+    private static RecyclerViewClickListener favoriteClickListener;
     Context context;
     List<Podcast> podcastList;
 
-    public PlaylistDetailAdapter(Context context, List<Podcast> podcastList, RecyclerViewClickListener clickListener){
+    public PlaylistDetailAdapter(Context context, List<Podcast> podcastList, RecyclerViewClickListener clickListener, RecyclerViewClickListener favoriteClickListener){
         this.context = context;
         this.podcastList = podcastList;
         PlaylistDetailAdapter.playlistDetailClickListener = clickListener;
+        PlaylistDetailAdapter.favoriteClickListener = favoriteClickListener;
     }
     @NonNull
     @Override
@@ -44,7 +48,10 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
         holder.getTvLastUpdate().setText(podcastList.get(position).getUpdateOn());
         if (BackgroundLoadDataService.mainFavorite!=null)
         if (BackgroundLoadDataService.mainFavorite.getPodListId().contains(podcastList.get(position).get_id())){
-            holder.ivFavorite.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.outline_favorite_24));
+            holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_24));
+        }
+        else{
+            holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_border_24));
         }
     }
 
@@ -73,8 +80,8 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
             tvName = itemView.findViewById(R.id.chapName);
             tvLastUpdate = itemView.findViewById(R.id.lastUpdate);
             ivFavorite = itemView.findViewById(R.id.isFavorite);
+            ivFavorite.setOnClickListener(view -> favoriteClickListener.recyclerViewListClicked(view, getLayoutPosition()));
         }
-
         @Override
         public void onClick(View view) {
             playlistDetailClickListener.recyclerViewListClicked(view, getLayoutPosition());

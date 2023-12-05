@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -148,6 +149,11 @@ public class HomeScreen extends AppCompatActivity {
             Intent intent = new Intent(HomeScreen.this, LoginActivity.class);
             startActivity(intent);
         });
+        SharedPreferences sharedPreferences = getSharedPreferences(Constant.PREFERENCES_NAME, MODE_PRIVATE);
+
+        String name = sharedPreferences.getString("username", "none").equals("none")?"Chưa đăng nhập": sharedPreferences.getString("username", "none");
+        TextView tvUsername = headerView.findViewById(R.id.tvUsername);
+        tvUsername.setText(name);
         if (BackgroundLoadDataService.getInstance().checkAuthen()){
             headerView.findViewById(R.id.goLogin).setVisibility(View.INVISIBLE);
         }
@@ -158,7 +164,8 @@ public class HomeScreen extends AppCompatActivity {
         menu.findItem(R.id.favoritelist).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                MyComponent.ToastShort(HomeScreen.this, "Clicked to favorite");
+                Intent intent = new Intent(HomeScreen.this, FavoriteActivity.class);
+                startActivity(intent);
                 return false;
             }
         });

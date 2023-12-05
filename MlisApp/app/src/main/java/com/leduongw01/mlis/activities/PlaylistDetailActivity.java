@@ -26,12 +26,17 @@ import com.leduongw01.mlis.databinding.ActivityPlaylistDetailBinding;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
+import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.utils.Constant;
 import com.leduongw01.mlis.utils.MyComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PlaylistDetailActivity extends AppCompatActivity {
     ActivityPlaylistDetailBinding binding;
@@ -96,13 +101,35 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         binding.lvPodcast.setAdapter(new PlaylistDetailAdapter(PlaylistDetailActivity.this, listChaper, new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
+                //itemview
                 Intent i = new Intent(PlaylistDetailActivity.this, PlayerActivity.class);
                 i.putExtra("podcastId", listChaper.get(position).get_id());
                 i.putExtra("playlistId", getIntent().getStringExtra("playlistId"));
                 i.putExtra("index", position);
                 startActivity(i);
             }
-        }));
+        },
+                new RecyclerViewClickListener() {
+                    @Override
+                    public void recyclerViewListClicked(View v, int position) {
+                        //favorite
+                        ArrayList<String> tmp = new ArrayList<String>();
+                        tmp.add(listChaper.get(position).get_id());
+                        MyComponent.ToastShort(PlaylistDetailActivity.this, "loved");
+                        ApiService.apisService.addPodcastToMainFavorite(BackgroundLoadDataService.mlisUser.get_id(), tmp).enqueue(new Callback<String>() {
+                            @Override
+                            public void onResponse(Call<String> call, Response<String> response) {
+                                if (response.isSuccessful())
+                                ktSukien();
+                            }
+
+                            @Override
+                            public void onFailure(Call<String> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                }));
         binding.lvPodcast.setLayoutManager(new LinearLayoutManager(this));
     }
 }

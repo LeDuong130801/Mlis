@@ -24,6 +24,7 @@ import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.models.StringValue;
 import com.leduongw01.mlis.utils.Constant;
+import com.leduongw01.mlis.utils.MyComponent;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,6 +42,7 @@ public class BackgroundLoadDataService extends Service {
     public static Favorite mainFavorite;
     public static List<Podcast> allPodcast;
     public static List<Playlist> allPlaylist;
+    public static List<Favorite> allFavorite;
     public static List<MapImage> podcastBitmap;
     public static BackgroundLoadDataService getInstance() {
         return instance;
@@ -48,6 +50,9 @@ public class BackgroundLoadDataService extends Service {
     //getter static
     public static List<Podcast> getAllPodcast() {
         return allPodcast;
+    }
+    public static List<Favorite> getAllFavorite() {
+        return allFavorite;
     }
     public static List<Playlist> getAllPlaylist() {
         return allPlaylist;
@@ -163,6 +168,9 @@ public class BackgroundLoadDataService extends Service {
         if(podcastBitmap == null){
             podcastBitmap = new ArrayList<>();
         }
+        if(allFavorite == null){
+            allFavorite = new ArrayList<>();
+        }
         allPodcast.add(
                 new Podcast(
                         "3",
@@ -264,6 +272,28 @@ public class BackgroundLoadDataService extends Service {
 
             }
         });
+
+    }
+    public void loadFavorite(){
+        if (!mlisUser.get_id().equals("-1"))
+            ApiService.apisService.getAllFavoriteByUserId(mlisUser.get_id()).enqueue(new Callback<List<Favorite>>() {
+                @Override
+                public void onResponse(Call<List<Favorite>> call, Response<List<Favorite>> response) {
+                    if (response.isSuccessful()){
+                        assert response.body() != null;
+                        allFavorite.addAll(response.body());
+                        for (Favorite favorite : response.body()){
+                            if (favorite.get_id().equals(mlisUser.get_id())){
+                                mainFavorite = favorite;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Favorite>> call, Throwable t) {
+                }
+            });
     }
     public void loadMainFavorite(){
         ApiService.apisService.getAllFavoriteByUserId(mlisUser.get_id()).enqueue(new Callback<List<Favorite>>() {

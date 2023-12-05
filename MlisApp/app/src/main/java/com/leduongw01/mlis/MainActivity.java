@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     BackgroundLoadDataService.mlisUser = response.body();
                     if(BackgroundLoadDataService.getInstance().checkAuthen()){
                         MyComponent.ToastShort(MainActivity.this, "Đã đăng nhập bằng tài khoản "+BackgroundLoadDataService.mlisUser.getUsername());
-                        BackgroundLoadDataService.getInstance().loadMainFavorite();
+                        BackgroundLoadDataService.getInstance().loadFavorite();
                     }
                     else{
                         MyComponent.ToastShort(MainActivity.this, "Phiên đăng nhập đã hết hạn");
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onFailure(Call<MlisUser> call, Throwable t) {
-                    BackgroundLoadDataService.mlisUser = null;
+                    BackgroundLoadDataService.mlisUser = new MlisUser("-1");
                     MyComponent.ToastShort(MainActivity.this, "Phiên đăng nhập đã hết hạn");
                     Intent home = new Intent(MainActivity.this, HomeScreen.class);
                     startActivity(home);

@@ -13,6 +13,11 @@ public class MlisUser {
 
     public MlisUser() {
     }
+    public MlisUser(String _id) {
+        this._id = _id;
+        username = "none";
+        token = "none";
+    }
 
     public MlisUser(String _id, String username, String password, String email, String googleAuth, String status, String token, String dateOfBirth, String gender) {
         this._id = _id;

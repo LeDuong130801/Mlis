@@ -74,6 +74,10 @@ public class FavoriteService {
         return favoriteRepository.getFavoriteBy_id(id);
     }
     public List<Favorite> getAllFavoriteByUserId(String userId){
+        if (!favoriteRepository.existsFavoriteBy_id(userId)){
+        Favorite favorite = new Favorite(userId);
+        favoriteRepository.insert(favorite);
+    }
         return favoriteRepository.getAllByUserIdAndStatus(userId, "1");
     }
     public List<Favorite> getAllFavoriteByStatus(String status){

@@ -170,8 +170,8 @@ public class HomeScreen extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 SharedPreferences sharedPreferences = getSharedPreferences(Constant.PREFERENCES_NAME, MODE_PRIVATE);
-                                sharedPreferences.edit().putString("username", "none").commit();
-                                sharedPreferences.edit().putString("token", "none").commit();
+                                sharedPreferences.edit().putString("username", "none").apply();
+                                sharedPreferences.edit().putString("token", "none").apply();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.putExtra("EXIT", true);

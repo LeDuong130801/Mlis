@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
+import com.leduongw01.mlis.MainActivity;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.databinding.ActivityLoginBinding;
 import com.leduongw01.mlis.models.MlisUser;
@@ -18,6 +19,7 @@ import com.leduongw01.mlis.utils.Constant;
 import com.leduongw01.mlis.utils.MyComponent;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,12 +74,14 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()){
                     BackgroundLoadDataService.mlisUser = response.body();
                     MlisUser mlisUser = response.body();
-                    if (mlisUser!=null){
+                    if (mlisUser!=null && !Objects.requireNonNull(mlisUser).get_id().equals("-1")){
                         SharedPreferences sharedPreferences = getSharedPreferences(Constant.PREFERENCES_NAME, MODE_PRIVATE);
                         sharedPreferences.edit().putString("username", mlisUser.getUsername()).commit();
                         sharedPreferences.edit().putString("token", mlisUser.getToken()).commit();
                         MyComponent.ToastShort(LoginActivity.this, "Đăng nhập thành công");
-                        onBackPressed();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                         return;
                     }
                     MyComponent.ToastShort(LoginActivity.this, "Tài khoản hoặc mật khẩu không chính xác");

@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         else{
             BackgroundLoadDataService.mlisUser = null;
             Intent home = new Intent(this, HomeScreen.class);
+            home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(home);
         }
     }

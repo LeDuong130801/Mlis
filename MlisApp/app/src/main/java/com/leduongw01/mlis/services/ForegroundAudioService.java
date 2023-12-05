@@ -197,37 +197,38 @@ public class ForegroundAudioService extends Service {
         }
     }
 
-//    private void loadMediaPlayerFromUrl(String url) {
-//        if (url != null && !url.equals("")) {
-//            setMediaPlayer(new CustomMediaPlayer());
-//            try {
-//                getMediaPlayer().setDataSource(url);
-//                getMediaPlayer().prepare();
-//                getMediaPlayer().start();
-//                getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                    @Override
-//                    public void onCompletion(MediaPlayer mediaPlayer) {
-//                        nextAudio();
-//                    }
-//                });
-//            } catch (IOException e) {
-//                Log.e(Constant.ERROR, "Tai nhac that bai");
-//                e.printStackTrace();
-//            }
-//        }
-//        else{
-//            setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
-//        }
-//    }
     private void loadMediaPlayerFromUrl(String url) {
         if (url != null && !url.equals("")) {
             setMediaPlayer(new CustomMediaPlayer());
-            new DownloadFileFromURL().execute(url);
+            try {
+                getMediaPlayer().setDataSource(url);
+                getMediaPlayer().prepare();
+                getMediaPlayer().start();
+                getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        nextAudio();
+                    }
+                });
+            } catch (IOException e) {
+                new DownloadFileFromURL().execute(url);
+                Log.e(Constant.ERROR, "Tai nhac that bai");
+                e.printStackTrace();
+            }
         }
         else{
             setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
         }
     }
+//    private void loadMediaPlayerFromUrl(String url) {
+//        if (url != null && !url.equals("")) {
+//            setMediaPlayer(new CustomMediaPlayer());
+//            new DownloadFileFromURL().execute(url);
+//        }
+//        else{
+//            setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
+//        }
+//    }
 
     @SuppressLint({"RemoteViewLayout"})
     @Override
@@ -383,7 +384,6 @@ public class ForegroundAudioService extends Service {
         public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
             // TODO Auto-generated method stub
             super.setDataSource(path);
-            new DownloadFileFromURL().execute(path);
             dataSource = path;
         }
 
@@ -410,7 +410,6 @@ public class ForegroundAudioService extends Service {
                 OutputStream output = new FileOutputStream(Environment
                         .getExternalStorageDirectory().toString()
                         + "/Download/a.kml");
-                String e = Environment.getExternalStorageDirectory().toString() + "/Downloads/a";
                 byte data[] = new byte[1024];
                 long total = 0;
                 while ((count = input.read(data)) != -1) {

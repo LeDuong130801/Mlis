@@ -55,13 +55,15 @@ public class FavoriteController {
         return "renameFailed";
     }
     @PostMapping("/addpodcasttofavorite")
-    String addPodcastToFavorite(String mlisUserId, String podcastId, Favorite favorite){
-        favoriteService.addToFavorite(mlisUserId, podcastId, favorite.get_id());
-        return "200";
+    Favorite addPodcastToFavorite(String mlisUserId, String podcastId, Favorite favorite){
+        return favoriteService.addToFavorite(mlisUserId, podcastId, favorite.get_id());
     }
     @PostMapping("/addpodcasttomainfavorite")
-    String addPodcastToMainFavorite(@RequestParam("mlisUserId")String mlisUserId,@RequestBody List<String> podcastListId){
-        favoriteService.addToMainFavorite(mlisUserId, podcastListId);
-        return "200";
+    Favorite addPodcastToMainFavorite(@RequestParam("mlisUserId")String mlisUserId,@RequestBody List<String> podcastListId){
+        return favoriteService.addToMainFavorite(mlisUserId, podcastListId);
+    }
+    @PutMapping("/removepodcasttomainfavorite")
+    Favorite removePodcastToMainFavorite(@RequestParam("mlisUserId")String mlisUserId,@RequestBody List<String> podcastListId){
+        return favoriteService.removeToMainFavorite(mlisUserId, podcastListId);
     }
 }

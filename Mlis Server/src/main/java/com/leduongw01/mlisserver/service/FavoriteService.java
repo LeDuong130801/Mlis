@@ -45,10 +45,10 @@ public class FavoriteService {
         favorite.setCreateOn((new Date()).getTime()+"");
         return favoriteRepository.insert(favorite);
     }
-    public void addToMainFavorite(String mlisUserId, List<String> podcastListId){
+    public Favorite addToMainFavorite(String mlisUserId, List<String> podcastListId){
         if (!favoriteRepository.existsFavoriteBy_id(mlisUserId)){
             Favorite favorite = new Favorite(mlisUserId, podcastListId);
-            favoriteRepository.insert(favorite);
+            return favoriteRepository.insert(favorite);
         }
         else{
             Favorite favorite = favoriteRepository.getFavoriteBy_id(mlisUserId);
@@ -57,18 +57,35 @@ public class FavoriteService {
                     favorite.getPodListId().add(podcastId);
                 }
             }
-            favoriteRepository.save(favorite);
+            return favoriteRepository.save(favorite);
         }
     }
-    public void addToFavorite(String mlisUserId, String podcastId, String favoriteId){
+    public Favorite removeToMainFavorite(String mlisUserId, List<String> podcastListId){
+        if (!favoriteRepository.existsFavoriteBy_id(mlisUserId)){
+            Favorite favorite = new Favorite(mlisUserId);
+            return favoriteRepository.insert(favorite);
+        }
+        else{
+            Favorite favorite = favoriteRepository.getFavoriteBy_id(mlisUserId);
+            for (String podcastId: podcastListId){
+                int index = favorite.getPodListId().indexOf(podcastId);
+                if (index!=-1){
+                    favorite.getPodListId().remove(index);
+                }
+            }
+            return favoriteRepository.save(favorite);
+        }
+    }
+    public Favorite addToFavorite(String mlisUserId, String podcastId, String favoriteId){
         if (favoriteRepository.existsFavoriteBy_idAndUserId(favoriteId, mlisUserId)){
             Favorite favorite = favoriteRepository.getFavoriteBy_id(favoriteId);
             if (!favorite.getPodListId().contains(podcastId)){
                 favorite.getPodListId().add(podcastId);
             }
             favorite.getPodListId().add(podcastId);
-            favoriteRepository.save(favorite);
+            return favoriteRepository.save(favorite);
         }
+        return null;
     }
     public Favorite getFavorite(String id){
         return favoriteRepository.getFavoriteBy_id(id);

@@ -47,12 +47,14 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
         holder.getTvName().setText(podcastList.get(position).getName());
         holder.getTvLastUpdate().setText(podcastList.get(position).getUpdateOn());
         if (BackgroundLoadDataService.mainFavorite!=null)
-        if (BackgroundLoadDataService.mainFavorite.getPodListId().contains(podcastList.get(position).get_id())){
-            holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_24));
-        }
-        else{
-            holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_border_24));
-        }
+            if (BackgroundLoadDataService.getInstance().checkAuthen()){
+                if (BackgroundLoadDataService.mainFavorite.getPodListId().contains(podcastList.get(position).get_id())){
+                    holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_24));
+                }
+                else{
+                    holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_border_24));
+                }
+            }
     }
 
     @Override

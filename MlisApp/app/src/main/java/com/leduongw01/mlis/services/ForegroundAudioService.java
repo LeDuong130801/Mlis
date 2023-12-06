@@ -66,10 +66,10 @@ public class ForegroundAudioService extends Service {
     private static int timer = -1;
     private static int currentSeek = 0;
     private static int currentAudio = -1;
-    private static Podcast currentPodcast = new Podcast();
-    private static Playlist currentPlaylist = new Playlist();
-    private static Favorite currentFavorite = new Favorite();
-    private static List<Podcast> currentList = new ArrayList<>();
+    private static Podcast currentPodcast;
+    private static Playlist currentPlaylist;
+    private static Favorite currentFavorite;
+    private static List<Podcast> currentList;
     IBinder localBinder = new LocalBinder();
     private static Handler handler = new Handler();
     private static Runnable runnable = null;
@@ -156,9 +156,16 @@ public class ForegroundAudioService extends Service {
         getMediaPlayer().release();
     }
     public void startMediaPlayerInFavorite(Favorite favorite, int position){
-//        BackgroundLoadDataService.getAllPlaylist().
+        setCurrentPlaylist(null);
+        setCurrentFavorite(favorite);
+        setCurrentList(BackgroundLoadDataService.getPodcastListByFavorite(favorite));
+        setCurrentAudio(position);
+        setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
+        setCurrentSeek(0);
+        startPodcast(getCurrentPodcast());
     }
     public void startMediaPlayerInPlaylist(Playlist playlist, int position){
+        setCurrentFavorite(null);
         setCurrentPlaylist(playlist);
         setCurrentList(BackgroundLoadDataService.getPodcastInPlaylist(playlist));
         setCurrentAudio(position);
@@ -233,7 +240,10 @@ public class ForegroundAudioService extends Service {
     @SuppressLint({"RemoteViewLayout"})
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (currentPlaylist!=null)
         startMediaPlayerInPlaylist(currentPlaylist, currentAudio);
+        if (currentFavorite!=null)
+            startMediaPlayerInFavorite(currentFavorite, currentAudio);
         startNotification();
         startTimerAndUpdateNotify();
         return START_NOT_STICKY;

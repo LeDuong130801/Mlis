@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -26,6 +27,7 @@ public class FavoriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_favorite);
         Objects.requireNonNull(getSupportActionBar()).hide();
+        BackgroundLoadDataService.getInstance().loadFavorite();
         ktRecycle();
     }
 
@@ -34,7 +36,9 @@ public class FavoriteActivity extends AppCompatActivity {
                 new RecyclerViewClickListener() {
                     @Override
                     public void recyclerViewListClicked(View v, int position) {
-
+                        Intent intent = new Intent(FavoriteActivity.this, FavoriteDetailActivity.class);
+                        intent.putExtra("favoriteId", BackgroundLoadDataService.getAllFavorite().get(position).get_id());
+                        startActivity(intent);
                     }
                 },
                 new RecycleViewLongClickListener() {

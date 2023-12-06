@@ -14,6 +14,9 @@ public class Playlist {
 
     public Playlist() {
     }
+    public Playlist(String id) {
+        _id= id;
+    }
 
     public Playlist(String _id, String name, String author, String category, String createOn, String updateOn, String detail, String urlImg, String status) {
         this._id = _id;

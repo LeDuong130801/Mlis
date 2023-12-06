@@ -39,7 +39,7 @@ public class AllFavoriteAdapter extends RecyclerView.Adapter<AllFavoriteAdapter.
     @Override
     public void onBindViewHolder(@NonNull AllFavoriteViewHolder holder, int position) {
         holder.favoriteName.setText(favoriteList.get(position).getName());
-        holder.favoriteB.setText(BackgroundLoadDataService.mlisUser.getUsername());
+        holder.favoriteB.setText(favoriteList.get(position).getPodListId().size()+" truyện");
     }
 
     @Override

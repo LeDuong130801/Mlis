@@ -2,16 +2,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.FavoriteActivity">
+    tools:context=".activities.FavoriteDetailActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/background">
         <TextView
+            android:id="@+id/favoriteName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/danhsachyeuthichcua"
+            android:text=""
             android:textSize="@dimen/_16ssp"
             android:textColor="@color/normal_text"/>
         <ScrollView
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             >
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcvFavoriteList"
+                android:id="@+id/rcvPodcastList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

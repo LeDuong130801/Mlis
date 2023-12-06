@@ -63,7 +63,7 @@ public class PlayerActivity extends AppCompatActivity {
             if (indexPodcast==-1){
                 indexPodcast = BackgroundLoadDataService.getIndexOfPodcastInPlayList(podcastId, playlistId);
             }
-            if(!Objects.equals(playlistId, "")){
+            if(!Objects.equals(playlistId, null)){
                 Intent intent = new Intent(this, ForegroundAudioService.class);
                 ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
                 ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
@@ -72,11 +72,11 @@ public class PlayerActivity extends AppCompatActivity {
                 mlisMySqlDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast());
                 startService(intent);
             }
-            else if (!favoriteId.equals("")){
+            else if (favoriteId != null){
                 Intent intent = new Intent(this, ForegroundAudioService.class);
                 ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
-                ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
-                ForegroundAudioService.setCurrentList(BackgroundLoadDataService.getPodcastInPlaylist(playlistId));
+                ForegroundAudioService.setCurrentFavorite(BackgroundLoadDataService.getFavoriteById(favoriteId));
+                ForegroundAudioService.setCurrentList(BackgroundLoadDataService.getPodcastListByFavorite(favoriteId));
                 ForegroundAudioService.setCurrentAudio(indexPodcast);
                 startService(intent);
             }
@@ -231,16 +231,11 @@ public class PlayerActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent i = new Intent(PlayerActivity.this, HomeScreen.class);
-        startActivity(i);
-    }
 
     void fillData() {
         binding.tvTenTruyen.setText(ForegroundAudioService.getCurrentPodcast().getName());
-        binding.tvBoSung.setText(ForegroundAudioService.getCurrentPlaylist().getAuthor());
+        ;
+        binding.tvBoSung.setText(BackgroundLoadDataService.getAuthorOfPodcast(ForegroundAudioService.getCurrentPodcast()));
         runnable.run();
         binding.ivPlayer.setImageBitmap(BackgroundLoadDataService.getBitmapById(ForegroundAudioService.getCurrentPodcast().get_id(), Constant.PODCAST));
     }

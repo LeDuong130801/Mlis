@@ -1,5 +1,6 @@
 package com.leduongw01.mlis.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -24,6 +25,7 @@ import com.leduongw01.mlis.adapter.AllPlaylistAdapter;
 import com.leduongw01.mlis.adapter.PlaylistDetailAdapter;
 import com.leduongw01.mlis.databinding.ActivityPlaylistDetailBinding;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
+import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.ApiService;
@@ -50,6 +52,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_playlist_detail);
         getChap();
         ktSukien();
+        ktRecycle();
     }
     private void getChap(){
         Intent i = getIntent();
@@ -98,6 +101,9 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+    void ktRecycle(){
+
         binding.lvPodcast.setAdapter(new PlaylistDetailAdapter(PlaylistDetailActivity.this, listChaper, new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
@@ -115,16 +121,34 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                         //favorite
                         ArrayList<String> tmp = new ArrayList<String>();
                         tmp.add(listChaper.get(position).get_id());
-                        MyComponent.ToastShort(PlaylistDetailActivity.this, "loved");
-                        ApiService.apisService.addPodcastToMainFavorite(BackgroundLoadDataService.mlisUser.get_id(), tmp).enqueue(new Callback<String>() {
+                        if (BackgroundLoadDataService.mainFavorite.getPodListId().contains(listChaper.get(position).get_id())){
+                            ApiService.apisService.removePodcastToMainFavorite(BackgroundLoadDataService.mlisUser.get_id(), tmp).enqueue(new Callback<Favorite>() {
+                                @Override
+                                public void onResponse(Call<Favorite> call, Response<Favorite> response) {
+                                    if (response.isSuccessful()){
+                                        BackgroundLoadDataService.getInstance().setMainFavorite(response.body());
+                                        ktRecycle();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Favorite> call, Throwable t) {
+
+                                }
+                            });
+                        }
+                        else
+                        ApiService.apisService.addPodcastToMainFavorite(BackgroundLoadDataService.mlisUser.get_id(), tmp).enqueue(new Callback<Favorite>() {
                             @Override
-                            public void onResponse(Call<String> call, Response<String> response) {
-                                if (response.isSuccessful())
-                                ktSukien();
+                            public void onResponse(Call<Favorite> call, @NonNull Response<Favorite> response) {
+                                if (response.isSuccessful()){
+                                    BackgroundLoadDataService.mainFavorite = response.body();
+                                    ktRecycle();
+                                }
                             }
 
                             @Override
-                            public void onFailure(Call<String> call, Throwable t) {
+                            public void onFailure(Call<Favorite> call, Throwable t) {
 
                             }
                         });

@@ -128,6 +128,36 @@ public class BackgroundLoadDataService extends Service {
         }
         return null;
     }
+    public static Favorite getFavoriteById(String id){
+        for (Favorite favorite: allFavorite){
+            if (favorite.get_id().equals(id)){
+                return favorite;
+            }
+        }
+        return null;
+    }
+    public static List<Podcast> getPodcastListByFavorite(Favorite favorite){
+        List<String> idList = favorite.getPodListId();
+        List<Podcast> podcastList = new ArrayList<>();
+        for (String id: idList){
+            if (getPodcastById(id)!=null){
+                podcastList.add(getPodcastById(id));
+            }
+        }
+        return podcastList;
+    }
+    public static List<Podcast> getPodcastListByFavorite(String favoriteId){
+        Favorite favorite = getFavoriteById(favoriteId);
+        assert favorite != null;
+        List<String> idList = favorite.getPodListId();
+        List<Podcast> podcastList = new ArrayList<>();
+        for (String id: idList){
+            if (getPodcastById(id)!=null){
+                podcastList.add(getPodcastById(id));
+            }
+        }
+        return podcastList;
+    }
     public static Bitmap getBitmapById(String id, String model){
         String att = id+model;
         for (int i = 0; i< getPodcastBitmap().size();i++){
@@ -281,6 +311,7 @@ public class BackgroundLoadDataService extends Service {
                 public void onResponse(Call<List<Favorite>> call, Response<List<Favorite>> response) {
                     if (response.isSuccessful()){
                         assert response.body() != null;
+                        allFavorite.clear();
                         allFavorite.addAll(response.body());
                         for (Favorite favorite : response.body()){
                             if (favorite.get_id().equals(mlisUser.get_id())){
@@ -310,6 +341,14 @@ public class BackgroundLoadDataService extends Service {
             public void onFailure(Call<List<Favorite>> call, Throwable t) {
             }
         });
+    }
+    public void setMainFavorite(Favorite favorite){
+        for (int i=0;i<allFavorite.size();i++){
+            if (allFavorite.get(i).get_id().equals(mlisUser.get_id())){
+                allFavorite.set(i, favorite);
+            }
+        }
+        mainFavorite = favorite;
     }
 
     @Nullable

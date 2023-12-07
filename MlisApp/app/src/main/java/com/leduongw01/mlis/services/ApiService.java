@@ -2,6 +2,7 @@ package com.leduongw01.mlis.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.leduongw01.mlis.models.Comment;
 import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.MlisUser;
 import com.leduongw01.mlis.models.Playlist;
@@ -59,6 +60,8 @@ public interface ApiService {
     Call<String> register(
             @Body MlisUser mlisUser
     );
+    @GET("api/mlis/getname")
+    Call<String> getUsername(@Query("userId") String userId,@Query("pos") int position);
     //playlist
     @GET("api/playlist/getallbyStatus")
     Call<List<Playlist>> getAllByStatus(
@@ -77,5 +80,16 @@ public interface ApiService {
     @GET("api/favorite/getallu")
     Call<List<Favorite>> getAllFavoriteByUserId(
             @Query("user") String userId
+    );
+    //comment
+    @POST("api/comment/send")
+    Call<Comment> sendComment(
+            @Query("userId") String userId,
+            @Body Comment comment
+    );
+    @GET("api/comment/viewComment")
+    Call<List<Comment>> viewComment(
+            @Query("podcastId") String podcastId,
+            @Query("status") String status
     );
 }

@@ -48,4 +48,8 @@
     <string name="danhsach">Danh sách</string>
     <string name="dangxuat">Đăng xuất</string>
     <string name="danhsachyeuthichcua">Danh sách yêu thích của</string>
+    <string name="who">Who</string>
+    <string name="binhluan">Bình luận</string>
+    <string name="b_n_c_n_ng_nh_p_c_th_b_nh_lu_n">Bạn cần đăng nhập để có thể bình luận</string>
+    <string name="ch_a_c_b_nh_lu_n">Chưa có bình luận</string>
 </resources>

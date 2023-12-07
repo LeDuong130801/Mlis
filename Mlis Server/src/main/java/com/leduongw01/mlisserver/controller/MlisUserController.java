@@ -32,4 +32,8 @@ public class MlisUserController {
         }
         return "0";
     }
+    @GetMapping("/getname")
+    String getName(@RequestParam("userId")String userId, @RequestParam("pos") int pos){
+        return mlisUserService.getUsernameById(userId);
+    }
 }

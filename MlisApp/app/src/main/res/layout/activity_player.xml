@@ -182,7 +182,7 @@
                 android:background="@android:color/transparent"
                 app:tint="@color/normal_text" />
             <ImageButton
-                android:id="@+id/systemSound"
+                android:id="@+id/openChat"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_weight="1"

@@ -56,7 +56,7 @@ public class FavoriteController {
     }
     @PostMapping("/addpodcasttofavorite")
     Favorite addPodcastToFavorite(String mlisUserId, String podcastId, Favorite favorite){
-        return favoriteService.addToFavorite(mlisUserId, podcastId, favorite.get_id());
+        return favoriteService.addToFavorite(mlisUserId, podcastId, favorite);
     }
     @PostMapping("/addpodcasttomainfavorite")
     Favorite addPodcastToMainFavorite(@RequestParam("mlisUserId")String mlisUserId,@RequestBody List<String> podcastListId){

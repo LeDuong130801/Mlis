@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 public class MyComponent {
 
@@ -32,5 +33,18 @@ public class MyComponent {
     public static void setStringRef(Context context, String name, String value){
         SharedPreferences s = context.getSharedPreferences(Constant.PREFERENCES_NAME, Context.MODE_PRIVATE);
         s.edit().putString(name, value).apply();
+    }
+    public static String getStringTempRef(Context context, String name){
+        SharedPreferences s = context.getSharedPreferences(Constant.PREFERENCESTEMP_NAME, Context.MODE_PRIVATE);
+        return s.getString(name, "none");
+    }
+    public static void setStringTempRef(Context context, String name, String value){
+        SharedPreferences s = context.getSharedPreferences(Constant.PREFERENCESTEMP_NAME, Context.MODE_PRIVATE);
+        s.edit().putString(name, value).apply();
+    }
+    public static String toDateTimeStr(String str){
+        long num = Long.parseLong(str);
+        Date date = new Date(num);
+        return date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900);
     }
 }

@@ -13,6 +13,7 @@ public class Constant {
     public static Integer IMAGE = 1;
     public static Integer EXIT = 3;
     public static String PREFERENCES_NAME = "MlisData";
+    public static String PREFERENCESTEMP_NAME = "Temp";
     public static String REF_USERNAME = "username";
     public static String REF_TOKEN = "token";
     public static String databaseName="MlisDatabase";

@@ -190,11 +190,11 @@ public class PlayerActivity extends AppCompatActivity {
                 ForegroundAudioService.getInstance().forwardprevious10s();
             }
         });
-        binding.systemSound.setOnClickListener(new View.OnClickListener() {
+        binding.openChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SoundControllDialog t = new SoundControllDialog(PlayerActivity.this);
-                t.show();
+                Intent i = new Intent(PlayerActivity.this, ChatActivity.class);
+                startActivity(i);
             }
         });
         binding.timerPlayer.setOnClickListener(new View.OnClickListener() {

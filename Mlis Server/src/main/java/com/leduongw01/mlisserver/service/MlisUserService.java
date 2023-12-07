@@ -43,4 +43,10 @@ public class MlisUserService {
         mlisUserRepository.insert(mlisUser);
         return true;
     }
+    public String getUsernameById(String userId){
+        if (mlisUserRepository.existsById(userId)){
+            return mlisUserRepository.getMlisUserBy_id(userId).getUsername();
+        }
+        return "none";
+    }
 }

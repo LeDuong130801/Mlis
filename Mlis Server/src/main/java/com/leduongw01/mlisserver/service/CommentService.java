@@ -1,10 +1,13 @@
 package com.leduongw01.mlisserver.service;
 
 import com.leduongw01.mlisserver.model.Comment;
+import com.leduongw01.mlisserver.model.ViewComment;
 import com.leduongw01.mlisserver.repository.CommentRepository;
+import com.leduongw01.mlisserver.repository.MlisUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +15,8 @@ import java.util.List;
 public class CommentService {
     @Autowired
     CommentRepository commentRepository;
+    @Autowired
+    MlisUserRepository mlisUserRepository;
     public Comment getCommentById(String id){
         return commentRepository.getCommentBy_id(id);
     }
@@ -23,7 +28,7 @@ public class CommentService {
     public List<Comment> getAllCommentByPodcastId(String podcastId){
         return commentRepository.getAllByPodcastId(podcastId);
     }
-    public List<Comment> getAllCOmmentByPodcastIdAndStatus(String podcastId, String status){
+    public List<Comment> getAllCommentByPodcastIdAndStatus(String podcastId, String status){
         return commentRepository.getAllByPodcastIdAndStatus(podcastId, status);
     }
     public void deleteComment(String commentId){
@@ -32,5 +37,32 @@ public class CommentService {
             comment.setStatus("-1");
             commentRepository.save(comment);
         }
+    }
+    public List<ViewComment> getViewCommentByPodcastId(String podcastId){
+        List<Comment> commentList = getAllCommentByPodcastId(podcastId);
+        return getViewComments(commentList);
+    }
+    public List<ViewComment> getViewCommentByPodcastIdAndStatus(String podcastId, String status){
+        List<Comment> commentList = getAllCommentByPodcastIdAndStatus(podcastId, status);
+        return getViewComments(commentList);
+    }
+
+    private List<ViewComment> getViewComments(List<Comment> commentList) {
+        List<ViewComment> viewComments = new ArrayList<>();
+        for (Comment comment : commentList){
+            String username = "Người dùng không xác định";
+            if (mlisUserRepository.existsMlisUserBy_id(comment.getUserId())){
+                username = mlisUserRepository.getMlisUserBy_id(comment.getUserId()).getUsername();
+            }
+            ViewComment viewComment = new ViewComment();
+            viewComment._id = comment.get_id();
+            viewComment.cmtOn = comment.getCmtOn();
+            viewComment.content = comment.getContent();
+            viewComment.userId = comment.getUserId();
+            viewComment.status = comment.getStatus();
+            viewComment.username = username;
+            viewComments.add(viewComment);
+        }
+        return viewComments;
     }
 }

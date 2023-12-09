@@ -8,6 +8,7 @@ import com.leduongw01.mlis.models.MlisUser;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.models.StringValue;
+import com.leduongw01.mlis.models.ViewComment;
 import com.leduongw01.mlis.utils.Constant;
 import com.leduongw01.mlis.utils.DefaultConfig;
 
@@ -88,7 +89,7 @@ public interface ApiService {
             @Body Comment comment
     );
     @GET("api/comment/viewComment")
-    Call<List<Comment>> viewComment(
+    Call<List<ViewComment>> viewComment(
             @Query("podcastId") String podcastId,
             @Query("status") String status
     );

@@ -13,6 +13,6 @@ public class TestApiController {
     @GetMapping("/getkey")
     public StringValue getKey(){
         log.info("get");
-        return new StringValue("a", "MlisServer");
+        return new StringValue("a", "MlisServer", "haha");
     }
 }

@@ -11,6 +11,7 @@ import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.adapter.CommentAdapter;
 import com.leduongw01.mlis.databinding.ActivityChatBinding;
 import com.leduongw01.mlis.models.Comment;
+import com.leduongw01.mlis.models.ViewComment;
 import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
@@ -55,7 +56,7 @@ public class ChatActivity extends AppCompatActivity {
                     ApiService.apisService.sendComment(BackgroundLoadDataService.mlisUser.get_id(), comment).enqueue(new Callback<Comment>() {
                         @Override
                         public void onResponse(Call<Comment> call, Response<Comment> response) {
-                            ktSuKien();
+                            loadComment();
                         }
 
                         @Override
@@ -69,9 +70,9 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
     void loadComment(){
-        ApiService.apisService.viewComment(ForegroundAudioService.getCurrentPodcast().get_id(), "1").enqueue(new Callback<List<Comment>>() {
+        ApiService.apisService.viewComment(ForegroundAudioService.getCurrentPodcast().get_id(), "1").enqueue(new Callback<List<ViewComment>>() {
             @Override
-            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+            public void onResponse(Call<List<ViewComment>> call, Response<List<ViewComment>> response) {
                 if (response.isSuccessful()){
                     if (response.body() != null ? response.body().isEmpty() : false){
                         binding.noCommentText.setVisibility(View.VISIBLE);
@@ -80,18 +81,18 @@ public class ChatActivity extends AppCompatActivity {
                     else{
                         binding.noCommentText.setVisibility(View.GONE);
                         binding.rcvComment.setVisibility(View.VISIBLE);
-                        List<Comment> commentList = new ArrayList<>();
+                        List<ViewComment> viewComments = new ArrayList<>();
                         for (int i=response.body().size()-1; i>=0; i--){
-                            commentList.add(response.body().get(i));
+                            viewComments.add(response.body().get(i));
                         }
-                        binding.rcvComment.setAdapter(new CommentAdapter(ChatActivity.this, commentList));
+                        binding.rcvComment.setAdapter(new CommentAdapter(ChatActivity.this, viewComments));
                         binding.rcvComment.setLayoutManager(new LinearLayoutManager(ChatActivity.this, LinearLayoutManager.VERTICAL, false));
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Comment>> call, Throwable t) {
+            public void onFailure(Call<List<ViewComment>> call, Throwable t) {
 
             }
         });

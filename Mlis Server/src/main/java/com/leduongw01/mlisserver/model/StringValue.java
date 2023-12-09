@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StringValue {
-    String non;
-    String body;
+    String id;
+    String text1;
+    String text2;
 }

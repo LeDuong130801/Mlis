@@ -1,31 +1,15 @@
 package com.leduongw01.mlis.models;
 
-public class Comment {
-    String _id;
-    String podcastId;
-    String userId;
-    String content;
-    String cmtOn;
-    String status;
+public class ViewComment {
+     String _id;
+     String podcastId;
+     String userId;
+     String username;
+     String content;
+     String cmtOn;
+     String status;
 
-    public Comment() {
-    }
-    public Comment(String podcastId, String userId, String content){
-        this._id = null;
-        this.podcastId = podcastId;
-        this.userId = userId;
-        this.content = content;
-        this.cmtOn = "0";
-        this.status = "1";
-    }
-
-    public Comment(String _id, String podcastId, String mlisUserId, String content, String cmtOn, String status) {
-        this._id = _id;
-        this.podcastId = podcastId;
-        this.userId = mlisUserId;
-        this.content = content;
-        this.cmtOn = cmtOn;
-        this.status = status;
+    public ViewComment() {
     }
 
     public String get_id() {
@@ -50,6 +34,14 @@ public class Comment {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getContent() {

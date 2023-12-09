@@ -14,7 +14,7 @@ public class Comment {
     @Id
     String _id;
     String podcastId;
-    String mlisUserId;
+    String userId;
     String content;
     String cmtOn;
     String status;

@@ -1,11 +1,14 @@
 package com.leduongw01.mlisserver.service;
 
 import com.leduongw01.mlisserver.model.MlisUser;
+import com.leduongw01.mlisserver.model.StringValue;
 import com.leduongw01.mlisserver.repository.MlisUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -48,5 +51,18 @@ public class MlisUserService {
             return mlisUserRepository.getMlisUserBy_id(userId).getUsername();
         }
         return "none";
+    }
+    public List<StringValue> getListNameByListId(List<String> listId){
+        List<StringValue> listMapName = new ArrayList<>();
+        for (String userId: listId){
+            if (mlisUserRepository.existsById(userId)){
+                String username = mlisUserRepository.getMlisUserBy_id(userId).getUsername();
+                listMapName.add(new StringValue(userId, username, "unuse"));
+            }
+            else{
+                listMapName.add(new StringValue(userId, "Người dùng đã bị xóa", "unuse"));
+            }
+        }
+        return listMapName;
     }
 }

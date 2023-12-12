@@ -64,6 +64,7 @@ public class PlaylistController {
 
     @PostMapping("/updatePlaylist")
     Playlist updatePlayList(@RequestBody Playlist playlist){
+        log.info("update "+playlist.get_id());
         return  playlistService.updatePlayist(playlist);
     }
     @PostMapping("/createPlaylist")
@@ -74,7 +75,7 @@ public class PlaylistController {
         return playlistService.createPlayist(playlist);
     }
     @DeleteMapping("/deletePlaylist")
-    Playlist deletePlaylist(@RequestBody Playlist playlist){
-        return playlistService.deletePlaylist(playlist);
+    Playlist deletePlaylist(@RequestParam("playlistId") String playlistId){
+        return playlistService.deletePlaylist(playlistId);
     }
 }

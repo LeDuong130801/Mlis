@@ -83,4 +83,12 @@ public class PodcastController {
     public List<Podcast> getAll(){
         return podcastService.getAll();
     }
+    @PostMapping("/updatePodcast")
+    public Podcast updatePodcast(@RequestBody Podcast podcast){
+        return podcastService.updatePodcast(podcast);
+    }
+    @DeleteMapping("/deletePodcast")
+    public void deletePodcast(@RequestParam("podcastId")String podcastId){
+        podcastService.deletePodcast(podcastId);
+    }
 }

@@ -14,9 +14,13 @@ public class PlaylistService {
     PlaylistRepository playlistRepository;
     public Playlist updatePlayist(Playlist playlist){
         if(playlistRepository.existsAllBy_idAndStatus(playlist.get_id(), "1")){
+            Playlist p = playlistRepository.getPlaylistBy_id(playlist.get_id());
             playlist.setStatus("1");
             Date d = new Date();
             long time = d.getTime();
+            playlist.setCreateOn(p.getCreateOn());
+            if (playlist.getUrlImg().equals("0"))
+                playlist.setUrlImg(p.getUrlImg());
             playlist.setUpdateOn(time+"");
             return playlistRepository.save(playlist);
         }
@@ -33,8 +37,9 @@ public class PlaylistService {
         playlist.setCreateOn(time+"");
         return playlistRepository.save(playlist);
     }
-    public Playlist deletePlaylist(Playlist playlist){
-        if(playlistRepository.existsAllBy_idAndStatus(playlist.get_id(), "1")){
+    public Playlist deletePlaylist(String playlistId){
+        if(playlistRepository.existsAllBy_idAndStatus(playlistId, "1")){
+            Playlist playlist = playlistRepository.getPlaylistBy_id(playlistId);
             playlist.setStatus("-1");
             Date d = new Date();
             long time = d.getTime();
@@ -70,6 +75,6 @@ public class PlaylistService {
         return playlists.subList((page-1)*quantity, page*quantity);
     }
     public List<Playlist> getAllPlayist(){
-        return playlistRepository.findAll();
+        return playlistRepository.getAllBy_idIsNotNull();
     }
 }

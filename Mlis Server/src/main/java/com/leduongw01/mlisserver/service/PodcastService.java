@@ -48,7 +48,27 @@ public class PodcastService {
         return out;
     }
     public List<Podcast> getAll(){
-        return podcastRepository.findAll();
+        return podcastRepository.getAllBy_idIsNotNull();
+    }
+    public Podcast updatePodcast(Podcast podcast){
+        if (podcastRepository.existsPodcastBy_id(podcast.get_id())){
+            Podcast p = podcastRepository.getPodcastBy_id(podcast.get_id());
+            podcast.setUrlImg(p.getUrlImg());
+            podcast.setUrl(p.getUrl());
+            podcast.setUpdateOn(new Date().getTime()+"");
+            podcast.setCreateOn(p.getCreateOn());
+            podcast.setStatus(p.getStatus());
+            return podcastRepository.save(podcast);
+        }
+        return  null;
+    }
+    public void deletePodcast(String podcastId){
+        if (podcastRepository.existsPodcastBy_id(podcastId)){
+            Podcast p = podcastRepository.getPodcastBy_id(podcastId);
+            p.setUpdateOn(new Date().getTime()+"");
+            p.setStatus("-1");
+            podcastRepository.save(p);
+        }
     }
 //    public String savePodcastFile(MultipartFile file) throws ExecutionException, InterruptedException {
 //        StorageReference db = FirestoreClient.getFirestore();

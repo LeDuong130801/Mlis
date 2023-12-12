@@ -13,4 +13,5 @@ public interface PlaylistRepository extends MongoRepository<Playlist, String> {
     List<Playlist> getAllByAuthor(String author);
     List<Playlist> getAllByAuthorAndStatus(String author, String status);
     List<Playlist> getAllBy();
+    List<Playlist> getAllBy_idIsNotNull();
 }

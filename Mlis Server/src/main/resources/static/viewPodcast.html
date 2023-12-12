@@ -69,12 +69,14 @@
                 if (request.readyState === 4 && request.status === 200) {
                     list = JSON.parse(request.response);
                     const selects = document.getElementById("playlistId");
+                    const eselects = document.getElementById("eplaylistId");
                     let str = "";
                     for (let i = 0; i < list.length; i++) {
                         console.log(list[i])
                         str += createNodeOption(list[i]);
                     }
                     selects.innerHTML = str;
+                    eselects.innerHTML = str;
                 }
             };
             request.open("GET", urlendpoint, true);
@@ -90,6 +92,16 @@
             console.log(fileImage, fileImageName);
         }
         function getFileData(e) {
+            filePodcast = e.target.files[0];
+            fileName = Math.round(Math.random() * 9999) + filePodcast.name;
+            console.log(filePodcast, fileName);
+        }
+        function geteImageData(e) {
+            fileImage = e.target.files[0];
+            fileImageName = Math.round(Math.random() * 9999) + fileImage.name;
+            console.log(fileImage, fileImageName);
+        }
+        function geteFileData(e) {
             filePodcast = e.target.files[0];
             fileName = Math.round(Math.random() * 9999) + filePodcast.name;
             console.log(filePodcast, fileName);
@@ -116,7 +128,6 @@
             request.onreadystatechange = () => {
                 if (request.readyState === 4 && request.status === 200) {
                     console.log(request.responseText);
-                    console.log("re");
                 }
             };
             formData.append("file", filePodcast);
@@ -130,22 +141,19 @@
             const crestr = cre.getDate() + 1 + "/" + (cre.getMonth() + 1) + "/" + (cre.getUTCFullYear() + 70);
             const upe = new Date(0, 0, 0, 0, 0, Number(value.updateOn) / 1000);
             const upeStr = upe.getDate() + 1 + "/" + (upe.getMonth() + 1) + "/" + (upe.getUTCFullYear() + 70);
-            return (`<tr><td>
-                <span class="custom-checkbox">
-                    <input type="checkbox" id="checkbox1" name="options[]" value="1" />
-                    <label for="checkbox1"></label>
-                </span>
-            </td>
+            return (`<tr>
                 <td>${value._id}</td>
                 <td>${shorter(value.name, 10)}</td>
                 <td>${shorter(value.detail, 20)}</td>
-                <td>${value.category}</td>
                 <td>${crestr}</td>
                 <td>${upeStr}</td>
                 <td>${shorter(value.url, 20)}</td>
                 <td>${shorter(value.urlImg, 20)}</td>
                 <td>${value.playlistId}</td>
-                <td>${value = "1" ? "ok" : "not use"}</td></tr>`);
+                <td>${value.status === "1" ? "ok" : "not use"}</td>
+                <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}', '${value.name}', '${value.detail}', '${value.playlistId}')"></i></td>
+                <td><i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i></td>
+                </tr>`);
         }
         function createNodeOption(value) {
             return `<option value="${value._id}">${value.name}</option>`
@@ -156,11 +164,67 @@
             }
             return value;
         }
+        
+        function openEditModal(id, name, detail, playlistId){
+            $("#editModal").modal({show: true});
+            $("#id").val(id);
+            $("#ename").val(name);
+            $("#edetail").val(detail);
+            $("#eplaylistId").val(playlistId);
+        }
+        function savePodcast(){
+            const id = document.getElementById("id").value;
+            const name = document.getElementById("ename").value;
+            const detail = document.getElementById("edetail").value;
+            const playlistId = document.getElementById("eplaylistId").value;
+            let data = {
+                _id: id,
+                name: name ? name : "No name",
+                createOn: "0",
+                updateOn: "0",
+                detail: detail ? detail : "No detail",
+                playlistId: playlistId,
+                url: "0",
+                urlImg: "0",
+                status: "1"
+            };
+            const request = new XMLHttpRequest();
+            const urlendpoint = "http://localhost:8080/api/podcast/updatePodcast";
+            request.open("POST", urlendpoint, true);
+            request.onreadystatechange = () => {
+                if (request.readyState === 4 && request.status === 200) {
+                    console.log(request.responseText);
+                    loadAllPodcast();
+                }
+            };
+            data = JSON.stringify(data);
+            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            request.send(data);
+        }
+        function openDeleteModal(id){
+            $("#deleteModal").modal({show: true});
+            $("#deleteId").val(id);
+        }
+        function deletePodcast(){
+            const deleteId = document.getElementById("deleteId").value;
+            const request = new XMLHttpRequest();
+            const urlendpoint = "http://localhost:8080/api/podcast/deletePodcast";
+            request.open("DELETE", urlendpoint, true);
+            const formData = new FormData();
+            formData.append("podcastId", deleteId);
+            request.onreadystatechange = ()=>{
+                if (request.readyState === 4 && request.status === 200) {
+                    loadAllPodcast();
+                    $("#deleteId").val("");
+                }
+            }
+            request.send(formData);
+        }
     </script>
 </head>
 
 <body>
-    <div class="container-xl">
+    <div class="container">
         <div class="table-responsive">
             <div class="table-wrapper">
                 <div class="table-title">
@@ -169,57 +233,30 @@
                             <h2>View <b>Podcast</b></h2>
                         </div>
                         <div class="col-sm-6">
-                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i
-                                    class="material-icons">&#xE147;</i> <span>Tạo Tập truyện mới</span></a>
-                            <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i
-                                    class="material-icons">&#xE15C;</i> <span>Xóa</span></a>
+                            <a href="#addModal" class="btn btn-success" data-toggle="modal"><i
+                                    class="material-icons">&#xE147;</i> <span>Tạo Podcast hoặc truyện mới</span></a>
                         </div>
                     </div>
                 </div>
-                <table class="table table-striped table-hover">
+                <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>
-                                <span class="custom-checkbox">
-                                    <input type="checkbox" id="selectAll">
-                                    <label for="selectAll"></label>
-                                </span>
-                            </th>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Detail</th>
-                            <th>Create On</th>
-                            <th>Update On</th>
-                            <th>File Url</th>
-                            <th>Image Url</th>
-                            <th>Playlist</th>
-                            <th>Status</th>
+                            <th scope="col">Id</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Detail</th>
+                            <th scope="col">Create On</th>
+                            <th scope="col">Update On</th>
+                            <th scope="col">File Url</th>
+                            <th scope="col">Image Url</th>
+                            <th scope="col">Playlist</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" colspan="2"></th>
                         </tr>
                     </thead>
                     <tbody id="tablebody">
-                        <tr>
-                            <td>
-                                <span class="custom-checkbox">
-                                    <input type="checkbox" id="checkbox1" name="options[]" value="1">
-                                    <label for="checkbox1"></label>
-                                </span>
-                            </td>
-                            <td>Thoats</td>
-                            <td>lieu thuat quan</td>
-                            <td>?</td>
-                            <td>12/12/2001</td>
-                            <td>12/12/2001</td>
-                            <td>Khong co thong tin</td>
-                            <td>heheheh</td>
-                            <td>OK</td>
-                            <!-- <td>
-							<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-						</td> -->
-                        </tr>
                     </tbody>
                 </table>
-                <div class="clearfix">
+                <!-- <div class="clearfix">
                     <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
                     <ul class="pagination">
                         <li class="page-item disabled"><a href="#">Previous</a></li>
@@ -230,12 +267,12 @@
                         <li class="page-item"><a href="#" class="page-link">5</a></li>
                         <li class="page-item"><a href="#" class="page-link">Next</a></li>
                     </ul>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
     <!-- Edit Modal HTML -->
-    <div id="addEmployeeModal" class="modal fade">
+    <div id="addModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form>
@@ -252,20 +289,21 @@
                             <label>Detail</label>
                             <textarea class="form-control" id="detail" required></textarea>
                         </div>
-                        <se class="form-group">
+                        <div class="form-group">
                             <label>Select Playlist</label>
                             <select class="form-control" name="playlistId" id="playlistId">
                             </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Image</label>
-                        <input class="form-control" type="file" id="imageUrl" onchange="getImageData(event)"
-                            accept="image/png, image/jpeg, image/svg, image/jpg" />
-                    </div>
-                    <div class="form-group">
-                        <label>File podcast</label>
-                        <input class="form-control" type="file" id="fileUrl" onchange="getFileData(event)"
-                            accept="audio/mp3, audio/m4v" />
+                        </div>
+                        <div class="form-group">
+                            <label>Image</label>
+                            <input class="form-control" type="file" id="imageUrl" onchange="getImageData(event)"
+                                accept="image/png, image/jpeg, image/svg, image/jpg" />
+                        </div>
+                        <div class="form-group">
+                            <label>File podcast</label>
+                            <input class="form-control" type="file" id="fileUrl" onchange="getFileData(event)"
+                                accept="audio/mp3, audio/m4v" />
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
@@ -276,48 +314,56 @@
         </div>
     </div>
     <!-- Edit Modal HTML -->
-    <div id="editEmployeeModal" class="modal fade">
+    <div id="editModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form>
                     <div class="modal-header">
-                        <h4 class="modal-title">Edit Playlist</h4>
+                        <h4 class="modal-title">Edit Podcast</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">
+                        <input type="text" class="form-control" id="id" required hidden>
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" class="form-control" id="ename" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Author</label>
-                            <input type="email" class="form-control" id="eauthor" required>
                         </div>
                         <div class="form-group">
                             <label>Detail</label>
                             <textarea class="form-control" id="edetail"></textarea>
                         </div>
                         <div class="form-group">
+                            <label>Select Playlist</label>
+                            <select class="form-control" name="eplaylistId" id="eplaylistId">
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>Image</label>
-                            <input class="form-control" type="file" id="eimageUrl" onchange="getImageData(event)"
+                            <input class="form-control" type="file" id="eimageUrl" onchange="geteImageData(event)"
                                 accept="image/png, image/jpeg, image/svg, image/jpg" />
+                        </div>
+                        <div class="form-group">
+                            <label>File podcast</label>
+                            <input class="form-control" type="file" id="efileUrl" onchange="geteFileData(event)"
+                                accept="audio/mp3, audio/m4v" />
                         </div>
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                        <input type="submit" class="btn btn-info" value="Save">
+                        <input type="button" class="btn btn-info" value="Save" data-dismiss="modal" onclick="savePodcast()">
                     </div>
                 </form>
             </div>
         </div>
     </div>
     <!-- Delete Modal HTML -->
-    <div id="deleteEmployeeModal" class="modal fade">
+    <div id="deleteModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form>
                     <div class="modal-header">
-                        <h4 class="modal-title">Delete Employee</h4>
+                        <h4 class="modal-title">Delete Podcast</h4>
+                        <input type="text" id="deleteId" hidden>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">
@@ -326,7 +372,7 @@
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                        <input type="submit" class="btn btn-danger" value="Delete">
+                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Delete" onclick="deletePodcast()">
                     </div>
                 </form>
             </div>

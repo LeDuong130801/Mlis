@@ -8,30 +8,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 
 import com.leduongw01.mlis.activities.HomeScreen;
-import com.leduongw01.mlis.activities.LoadingDialog;
 import com.leduongw01.mlis.models.MlisUser;
-import com.leduongw01.mlis.models.StringValue;
 import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.utils.Constant;
-import com.leduongw01.mlis.utils.DefaultConfig;
 import com.leduongw01.mlis.utils.MyComponent;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

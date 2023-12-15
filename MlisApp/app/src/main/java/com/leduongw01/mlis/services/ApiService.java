@@ -9,33 +9,26 @@ import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.models.StringValue;
 import com.leduongw01.mlis.models.ViewComment;
-import com.leduongw01.mlis.utils.Constant;
-import com.leduongw01.mlis.utils.DefaultConfig;
+import com.leduongw01.mlis.utils.MyConfig;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 
 public interface ApiService {
     Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
-    ApiService apisService = new Retrofit.Builder().baseUrl(DefaultConfig.serverAddress)
+    ApiService apisService = new Retrofit.Builder().baseUrl(MyConfig.serverAddress)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build().create(ApiService.class);
     @GET("testapi/getkey")

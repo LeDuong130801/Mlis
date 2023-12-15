@@ -52,4 +52,7 @@
     <string name="binhluan">Bình luận</string>
     <string name="b_n_c_n_ng_nh_p_c_th_b_nh_lu_n">Bạn cần đăng nhập để có thể bình luận</string>
     <string name="ch_a_c_b_nh_lu_n">Chưa có bình luận</string>
+    <string name="ki_m_hi_p_tu_ti_n">Kiếm hiệp - Tu tiên</string>
+    <string name="truy_n_ma">Truyện ma</string>
+    <string name="khampha">Khám phá</string>
 </resources>

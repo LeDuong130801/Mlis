@@ -1,5 +1,6 @@
 package com.leduongw01.mlis.adapter;
 
+
 import static com.leduongw01.mlis.MainActivity.noImg;
 
 import android.content.Context;
@@ -23,35 +24,37 @@ import com.leduongw01.mlis.utils.Constant;
 
 import java.util.List;
 
-public class AllPlaylistAdapter extends RecyclerView.Adapter<AllPlaylistAdapter.AllPlaylistViewHolder> {
+public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
 
     Context context;
-    private static RecyclerViewClickListener recyclerViewAllPlaylistClickListener;
-    public AllPlaylistAdapter(){}
-    public AllPlaylistAdapter(Context context, RecyclerViewClickListener recyclerViewAllPlaylistClickListener){
+    List<Playlist> playlists;
+    private static RecyclerViewClickListener recyclerViewPlaylistClickListener;
+    public PlaylistAdapter(){}
+    public PlaylistAdapter(Context context, List<Playlist> playlistList, RecyclerViewClickListener recyclerViewPlaylistClickListener){
         this.context = context;
-        AllPlaylistAdapter.recyclerViewAllPlaylistClickListener = recyclerViewAllPlaylistClickListener;
+        playlists = playlistList;
+        PlaylistAdapter.recyclerViewPlaylistClickListener = recyclerViewPlaylistClickListener;
     }
 
     @NonNull
     @Override
-    public AllPlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_playlist_adapteruse, parent, false);
-        return new AllPlaylistViewHolder(view, context);
+        return new PlaylistViewHolder(view, context);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AllPlaylistViewHolder holder, int position) {
-        holder.getPlaylistNameTextView().setText(BackgroundLoadDataService.getAllPlaylist().get(position).getName());
-        holder.getPlaylistAuthorTextView().setText(BackgroundLoadDataService.getAllPlaylist().get(position).getAuthor());
+    public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
+        holder.getPlaylistNameTextView().setText(playlists.get(position).getName());
+        holder.getPlaylistAuthorTextView().setText(playlists.get(position).getAuthor());
         Handler a = new Handler();
         try{
-            while (!BackgroundLoadDataService.getInstance().getMapImageById(BackgroundLoadDataService.getAllPlaylist().get(position).get_id(), Constant.PLAYLIST).hasRes){
+            while (!BackgroundLoadDataService.getInstance().getMapImageById(playlists.get(position).get_id(), Constant.PLAYLIST).hasRes){
                 a.postDelayed(null, 100);
                 Log.d("while", "onBindViewHolder: loop inf");
             }
-            holder.getPlaylistImageView().setImageBitmap(BackgroundLoadDataService.getBitmapById(BackgroundLoadDataService.getAllPlaylist().get(position).get_id(), Constant.PLAYLIST));
+            holder.getPlaylistImageView().setImageBitmap(BackgroundLoadDataService.getBitmapById(playlists.get(position).get_id(), Constant.PLAYLIST));
         }
         catch (NullPointerException e){
             holder.getPlaylistImageView().setImageBitmap(noImg);
@@ -61,14 +64,13 @@ public class AllPlaylistAdapter extends RecyclerView.Adapter<AllPlaylistAdapter.
 
     @Override
     public int getItemCount() {
-        return BackgroundLoadDataService.allPlaylist.size();
+        return playlists.size();
     }
 
-    static class AllPlaylistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class PlaylistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView playlistImageView;
         TextView playlistNameTextView;
         TextView playlistAuthorTextView;
-        LinearLayout layout;
 
         public ImageView getPlaylistImageView() {
             return playlistImageView;
@@ -82,23 +84,18 @@ public class AllPlaylistAdapter extends RecyclerView.Adapter<AllPlaylistAdapter.
             return playlistAuthorTextView;
         }
 
-        public LinearLayout getLayout() {
-            return layout;
-        }
-
-        public AllPlaylistViewHolder(@NonNull View itemView, Context context) {
+        public PlaylistViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
             itemView.setOnClickListener(this);
             playlistImageView = itemView.findViewById(R.id.ivPlaylist);
             playlistNameTextView = itemView.findViewById(R.id.tvName);
             playlistAuthorTextView = itemView.findViewById(R.id.tvAuthor);
-            layout = itemView.findViewById(R.id.layoutCell);
-            layout.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onClick(View view) {
-            recyclerViewAllPlaylistClickListener.recyclerViewListClicked(view, getLayoutPosition());
+            recyclerViewPlaylistClickListener.recyclerViewListClicked(view, getLayoutPosition());
         }
     }
 }
+

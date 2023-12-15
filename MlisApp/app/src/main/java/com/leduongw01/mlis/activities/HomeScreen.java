@@ -1,13 +1,11 @@
 package com.leduongw01.mlis.activities;
 
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,30 +25,30 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.leduongw01.mlis.MainActivity;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.adapter.AllPlaylistAdapter;
-import com.leduongw01.mlis.adapter.PodcastHAdapter;
+import com.leduongw01.mlis.adapter.PlaylistAdapter;
 import com.leduongw01.mlis.adapter.PodcastRecentListenedAdapter;
 import com.leduongw01.mlis.databasehelper.MlisMySqlDBHelper;
 import com.leduongw01.mlis.databinding.ActivityHomeScreenBinding;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.LocalRecentPodcast;
+import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
-import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
+import com.leduongw01.mlis.utils.MyConfig;
 import com.leduongw01.mlis.utils.Constant;
-import com.leduongw01.mlis.utils.MyComponent;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class HomeScreen extends AppCompatActivity {
 
     ActivityHomeScreenBinding binding;
     List<LocalRecentPodcast> top3Recent;
+    List<Playlist> listMa;
+    List<Playlist> listKiemHiep;
+    List<Playlist> listMoiCapNhat;
     List<Podcast> p;
     String currentPodcastName = "";
     boolean hide = true;
@@ -71,14 +69,15 @@ public class HomeScreen extends AppCompatActivity {
     }
 
     private void capNhatRecycleView() {
-        binding.rcvMostPopular.setAdapter(new AllPlaylistAdapter(getApplicationContext(), (v, position) -> {
+        splitData();
+        binding.rcvKhamPha.setAdapter(new AllPlaylistAdapter(getApplicationContext(), (v, position) -> {
             Intent intent = new Intent(this, PlaylistDetailActivity.class);
             intent.putExtra("playlistId", BackgroundLoadDataService.getAllPlaylist().get(position).get_id());
             startActivity(intent);
 
         }));
-        binding.rcvMostPopular.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        p = getRecentListenedPodcast();
+        binding.rcvKhamPha.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
         binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(HomeScreen.this, p, new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
@@ -88,35 +87,47 @@ public class HomeScreen extends AppCompatActivity {
                 startActivity(i);
             }
         }));
-
         binding.rcvRecent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        binding.rcvPodcast.setAdapter(new AllPlaylistAdapter(getApplicationContext(), (v, position) -> {
-            Intent intent = new Intent(this, PlaylistDetailActivity.class);
-            intent.putExtra("playlistId", BackgroundLoadDataService.getAllPlaylist().get(position).get_id());
-            startActivity(intent);
 
+        binding.rcvCateKiemHiep.setAdapter(new PlaylistAdapter(getApplicationContext(), listKiemHiep, (v, position) -> {
+            Intent intent = new Intent(this, PlaylistDetailActivity.class);
+            intent.putExtra("playlistId", listKiemHiep.get(position).get_id());
+            startActivity(intent);
         }));
-        binding.rcvPodcast.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-//        ApiService.apisService.getPodcastWithSl().enqueue(new Callback<ArrayList<Podcast>>() {
-//            @Override
-//            public void onResponse(Call<ArrayList<Podcast>> call, Response<ArrayList<Podcast>> response) {
-//                allPodcastList = response.body();
-//                binding.rcvPodcast.setAdapter(new AllPlaylistAdapter(getApplicationContext(), BackgroundLoadDataService.getAllPlaylist(), ((v, position) -> {
-//                    Intent playerIntent = new Intent(HomeScreen.this, PlaylistDetailActivity.class);
-//                    playerIntent.putExtra("playlistId", BackgroundLoadDataService.getAllPlaylist().get(position).get_id());
-//                    if (ForegroundAudioService.getMediaPlayer().isPlaying()) {
-//                        ForegroundAudioService.getInstance().stopMediaPlayer();
-//                    }
-//                    startActivity(playerIntent);
-//                })));
-//                binding.rcvPodcast.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ArrayList<Podcast>> call, Throwable t) {
-//                Log.d("eq", "onFailure: ");
-//            }
-//        });
+        binding.rcvCateKiemHiep.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        binding.rcvCateMa.setAdapter(new PlaylistAdapter(getApplicationContext(),listMa, (v, position) -> {
+            Intent intent = new Intent(this, PlaylistDetailActivity.class);
+            intent.putExtra("playlistId", listMa.get(position).get_id());
+            startActivity(intent);
+        }));
+        binding.rcvCateMa.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        binding.rcvMoiCapNhat.setAdapter(new PlaylistAdapter(getApplicationContext(),listMa, (v, position) -> {
+            Intent intent = new Intent(this, PlaylistDetailActivity.class);
+            intent.putExtra("playlistId", listMa.get(position).get_id());
+            startActivity(intent);
+        }));
+        binding.rcvMoiCapNhat.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+    }
+    private void splitData(){
+        List<Playlist> playlistList = BackgroundLoadDataService.getAllPlaylist();
+        listMa = new ArrayList<>();
+        listKiemHiep = new ArrayList<>();
+        listMoiCapNhat = new ArrayList<>();
+        Date date = new Date();
+        long t = date.getTime();
+        for (Playlist playlist: playlistList){
+            if (playlist.isMa()){
+                listMa.add(playlist);
+            }
+            if (playlist.isKiemHiep()){
+                listKiemHiep.add(playlist);
+            }
+            if (Long.parseLong(playlist.getUpdateOn()) - t >Constant.oneday* MyConfig.DAYOFNEW){
+                listMoiCapNhat.add(playlist);
+            }
+        }
     }
 
     private void ktDrawer() {

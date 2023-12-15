@@ -1,6 +1,8 @@
 package com.leduongw01.mlis.models;
 
 
+import com.leduongw01.mlis.utils.Constant;
+
 public class Playlist {
     private String _id;
     private String name;
@@ -100,5 +102,21 @@ public class Playlist {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    public boolean isMa(){
+        for (String s: Constant.Ma){
+            if (category.contains(s)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isKiemHiep(){
+        for (String s: Constant.KiemHiep){
+            if (category.contains(s)){
+                return true;
+            }
+        }
+        return false;
     }
 }

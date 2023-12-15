@@ -8,20 +8,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.leduongw01.mlis.models.LocalRecentPodcast;
 import com.leduongw01.mlis.models.Podcast;
-import com.leduongw01.mlis.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MlisMySqlDBHelper extends SQLiteOpenHelper {
+public class MlisSqliteDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MlisDatabase";
     private static final String TABLE_RECENT= "RecentPodcast";
     private static final String COL_ID= "id";
     private static final String COL_LISTEN_ON= "listen_on";
     private static final Integer DATABASE_VERSION = 1;
 
-    public MlisMySqlDBHelper (Context context) {
+    public MlisSqliteDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -55,6 +54,14 @@ public class MlisMySqlDBHelper extends SQLiteOpenHelper {
                 LocalRecentPodcast a = new LocalRecentPodcast();
                 a.id = c.getString(0);
                 a.listenOn = c.getLong(1);
+                boolean y = true;
+                for(LocalRecentPodcast localRecentPodcast : output){
+                    if (localRecentPodcast.id.equals(a.id)){
+                        y = false;
+                        break;
+                    }
+                }
+                if (y)
                 output.add(a);
             }
             while (c.moveToNext() && output.size()!=3);

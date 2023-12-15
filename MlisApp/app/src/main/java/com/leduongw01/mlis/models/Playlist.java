@@ -3,6 +3,8 @@ package com.leduongw01.mlis.models;
 
 import com.leduongw01.mlis.utils.Constant;
 
+import java.util.Locale;
+
 public class Playlist {
     private String _id;
     private String name;
@@ -105,7 +107,7 @@ public class Playlist {
     }
     public boolean isMa(){
         for (String s: Constant.Ma){
-            if (category.contains(s)){
+            if (category.toLowerCase().contains(s)){
                 return true;
             }
         }
@@ -113,7 +115,7 @@ public class Playlist {
     }
     public boolean isKiemHiep(){
         for (String s: Constant.KiemHiep){
-            if (category.contains(s)){
+            if (category.toLowerCase().contains(s)){
                 return true;
             }
         }

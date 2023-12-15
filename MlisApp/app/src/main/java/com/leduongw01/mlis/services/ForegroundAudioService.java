@@ -18,12 +18,13 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.activities.PlayerActivity;
-import com.leduongw01.mlis.databasehelper.MlisMySqlDBHelper;
+import com.leduongw01.mlis.databasehelper.MlisSqliteDBHelper;
 import com.leduongw01.mlis.models.Favorite;
 import com.leduongw01.mlis.models.Playlist;
 import com.leduongw01.mlis.models.Podcast;
@@ -34,6 +35,7 @@ import com.leduongw01.mlis.receivers.PauseResumeReceiverNotification;
 import com.leduongw01.mlis.utils.Constant;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -165,18 +167,25 @@ public class ForegroundAudioService extends Service {
     }
     public void startPodcast(Context context, Podcast podcast){
         loadMediaPlayerFromUrl(podcast.getUrl());
-        new MlisMySqlDBHelper(context).putPodcastToRecent(podcast);
+        new MlisSqliteDBHelper(context).putPodcastToRecent(podcast);
     }
     public void startPodcast(Podcast podcast){
         loadMediaPlayerFromUrl(podcast.getUrl());
     }
 
+//    public void nextAudio() {
+//        if (getCurrentAudio()<getCurrentList().size()-1){
+//            setCurrentAudio(getCurrentAudio()+1);
+//            setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
+//            setCurrentSeek(0);
+//            startPodcast(getCurrentPodcast());
+//        }
+//    }
     public void nextAudio() {
         if (getCurrentAudio()<getCurrentList().size()-1){
             setCurrentAudio(getCurrentAudio()+1);
             setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
             setCurrentSeek(0);
-            startPodcast(getCurrentPodcast());
         }
     }
     public void backAudio() {
@@ -184,7 +193,6 @@ public class ForegroundAudioService extends Service {
             setCurrentAudio(getCurrentAudio()-1);
             setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
             setCurrentSeek(0);
-            startPodcast(getCurrentPodcast());
         }
     }
 
@@ -202,7 +210,7 @@ public class ForegroundAudioService extends Service {
                     }
                 });
             } catch (IOException e) {
-                new DownloadFileFromURL().execute(url);
+                new DownloadFileFromURL(ForegroundAudioService.this).execute(url);
                 Log.e(Constant.ERROR, "Tai nhac that bai");
                 e.printStackTrace();
             }
@@ -220,12 +228,11 @@ public class ForegroundAudioService extends Service {
 //            setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
 //        }
 //    }
-
     @SuppressLint({"RemoteViewLayout"})
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (currentPlaylist!=null)
-        startMediaPlayerInPlaylist(currentPlaylist, currentAudio);
+            startMediaPlayerInPlaylist(currentPlaylist, currentAudio);
         if (currentFavorite!=null)
             startMediaPlayerInFavorite(currentFavorite, currentAudio);
         startNotification();
@@ -371,7 +378,7 @@ public class ForegroundAudioService extends Service {
         stopForeground(STOP_FOREGROUND_REMOVE);
         super.onDestroy();
     }
-    class CustomMediaPlayer extends MediaPlayer {
+    static class CustomMediaPlayer extends MediaPlayer {
         String dataSource;
 
         @Override
@@ -380,13 +387,22 @@ public class ForegroundAudioService extends Service {
             super.setDataSource(path);
             dataSource = path;
         }
+        @Override
+        public void setDataSource(@NonNull Context context, @NonNull Uri uri) throws IOException {
+            super.setDataSource(context, uri);
+
+        }
 
         public String getDataSource() {
             return dataSource;
         }
     }
+    @SuppressLint("StaticFieldLeak")
     class DownloadFileFromURL extends AsyncTask<String, String, String> {
-        public DownloadFileFromURL(){}
+        Context context;
+        public DownloadFileFromURL(Context context){
+            this.context = context;
+        };
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -404,7 +420,7 @@ public class ForegroundAudioService extends Service {
                 OutputStream output = new FileOutputStream(Environment
                         .getExternalStorageDirectory().toString()
                         + "/Download/a.kml");
-                byte data[] = new byte[1024];
+                byte[] data = new byte[1024];
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
                     total += count;
@@ -414,11 +430,11 @@ public class ForegroundAudioService extends Service {
                 output.flush();
                 output.close();
                 input.close();
-                getMediaPlayer().setDataSource(getApplicationContext(), Uri.parse(Environment.getExternalStorageDirectory().toString()+"/Download/a.kml"));
+                getMediaPlayer().setDataSource(context, Uri.parse(Environment.getExternalStorageDirectory().toString() + "/Download/a.kml"));
                 getMediaPlayer().prepare();
                 getMediaPlayer().start();
             } catch (Exception e) {
-                Log.e("Error: ", e.getMessage());
+                Log.e("datasource error", "sad");
             }
             return null;
         }

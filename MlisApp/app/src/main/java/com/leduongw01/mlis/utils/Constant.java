@@ -24,7 +24,7 @@ public class Constant {
     public static String PLAYLIST = "playlist";
     public static long oneday = 86400000;
     //category Playlist
-    public static String[] Ma = {"ma", "kinh dị", "kinh di", "horror"};
+    public static String[] Ma = {"ma", "kinh dị", "kinh di", "horror", "truyện ma"};
     public static String[] KiemHiep = {"kiem hiep", "kiếm hiệp", "tu tien", "tu tiên"};
     //type Logpod
     public static String CREATE = "create";

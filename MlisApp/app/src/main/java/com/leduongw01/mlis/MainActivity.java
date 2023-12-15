@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.leduongw01.mlis.activities.HomeScreen;
 import com.leduongw01.mlis.models.MlisUser;
@@ -53,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<MlisUser> call, Throwable t) {
                     BackgroundLoadDataService.mlisUser = new MlisUser("-1");
-                    MyComponent.ToastShort(MainActivity.this, "Phiên đăng nhập đã hết hạn");
+                    MyComponent.ToastShort(MainActivity.this, "Mất kết nối với máy chủ");
                     Intent home = new Intent(MainActivity.this, HomeScreen.class);
+                    Handler handler = new Handler();
+                    handler.postDelayed(null, 5000);
                     startActivity(home);
                 }
             });

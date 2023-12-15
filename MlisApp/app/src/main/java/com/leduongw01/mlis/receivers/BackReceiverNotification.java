@@ -10,5 +10,7 @@ public class BackReceiverNotification extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         ForegroundAudioService.getInstance().backAudio();
+        Intent i = new Intent(context, ForegroundAudioService.class);
+        context.startService(i);
     }
 }

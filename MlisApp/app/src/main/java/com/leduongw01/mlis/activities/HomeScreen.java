@@ -27,7 +27,7 @@ import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.adapter.AllPlaylistAdapter;
 import com.leduongw01.mlis.adapter.PlaylistAdapter;
 import com.leduongw01.mlis.adapter.PodcastRecentListenedAdapter;
-import com.leduongw01.mlis.databasehelper.MlisMySqlDBHelper;
+import com.leduongw01.mlis.databasehelper.MlisSqliteDBHelper;
 import com.leduongw01.mlis.databinding.ActivityHomeScreenBinding;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.LocalRecentPodcast;
@@ -77,7 +77,7 @@ public class HomeScreen extends AppCompatActivity {
 
         }));
         binding.rcvKhamPha.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
+        p = getRecentListenedPodcast();
         binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(HomeScreen.this, p, new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
@@ -264,7 +264,7 @@ public class HomeScreen extends AppCompatActivity {
         });
     }
     List<Podcast> getRecentListenedPodcast(){
-        top3Recent = new MlisMySqlDBHelper(getApplicationContext()).get3IdRecent();
+        top3Recent = new MlisSqliteDBHelper(getApplicationContext()).get3IdRecent();
         List<Podcast> output = new ArrayList<>();
         for (LocalRecentPodcast localRecentPodcast:top3Recent){
             Podcast tmp = BackgroundLoadDataService.getPodcastById(localRecentPodcast.id);

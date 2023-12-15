@@ -2,39 +2,26 @@ package com.leduongw01.mlis.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.DialogCompat;
 import androidx.databinding.DataBindingUtil;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.leduongw01.mlis.R;
-import com.leduongw01.mlis.databasehelper.MlisMySqlDBHelper;
+import com.leduongw01.mlis.databasehelper.MlisSqliteDBHelper;
 import com.leduongw01.mlis.databinding.ActivityPlayerBinding;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Constant;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Objects;
 
 public class PlayerActivity extends AppCompatActivity {
@@ -42,7 +29,7 @@ public class PlayerActivity extends AppCompatActivity {
     Runnable runnable;
     Handler handler;
     boolean playing = false;
-    MlisMySqlDBHelper mlisMySqlDBHelper = new MlisMySqlDBHelper(this);
+    MlisSqliteDBHelper mlisSqliteDBHelper = new MlisSqliteDBHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +56,7 @@ public class PlayerActivity extends AppCompatActivity {
                 ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
                 ForegroundAudioService.setCurrentList(BackgroundLoadDataService.getPodcastInPlaylist(playlistId));
                 ForegroundAudioService.setCurrentAudio(indexPodcast);
-                mlisMySqlDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast());
+                mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast());
                 startService(intent);
             }
             else if (favoriteId != null){
@@ -221,12 +208,16 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ForegroundAudioService.getInstance().backAudio();
+                startFore();
+                fillData();
             }
         });
         binding.nextSkipMediaPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ForegroundAudioService.getInstance().nextAudio();
+                startFore();
+                fillData();
             }
         });
     }
@@ -253,5 +244,9 @@ public class PlayerActivity extends AppCompatActivity {
             return "0"+number;
         }
         return ""+number;
+    }
+    private void startFore(){
+        Intent i = new Intent(PlayerActivity.this, ForegroundAudioService.class);
+        startService(i);
     }
 }

@@ -15,6 +15,15 @@
             android:text=""
             android:textSize="@dimen/_16ssp"
             android:textColor="@color/normal_text"/>
+        <TextView
+            android:id="@+id/tvTrong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/danhsachtrong"
+            android:textColor="@color/normal_text"
+            android:layout_marginVertical="@dimen/_40sdp"
+            android:layout_gravity="center"
+            android:gravity="center"/>
         <ScrollView
             android:layout_margin="@dimen/_4sdp"
             android:layout_width="match_parent"

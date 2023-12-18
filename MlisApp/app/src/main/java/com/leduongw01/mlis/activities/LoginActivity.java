@@ -1,5 +1,7 @@
 package com.leduongw01.mlis.activities;
 
+import androidx.activity.result.ActivityResult;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -81,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                         MyComponent.ToastShort(LoginActivity.this, "Đăng nhập thành công");
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        onBackPressed();
                         return;
                     }
                     MyComponent.ToastShort(LoginActivity.this, "Tài khoản hoặc mật khẩu không chính xác");

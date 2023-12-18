@@ -50,7 +50,7 @@ public class AoRtoPlaylistDialog extends Dialog {
                             @Override
                             public void onResponse(Call<Favorite> call, Response<Favorite> response) {
                                 if (response.isSuccessful()){
-                                    BackgroundLoadDataService.getAllFavorite().set(position, response.body());
+                                    BackgroundLoadDataService.getInstance().loadFavorite();
                                     ktSuKien();
                                 }
                             }
@@ -66,11 +66,11 @@ public class AoRtoPlaylistDialog extends Dialog {
                     @Override
                     public void recyclerViewListClicked(View v, int position) {
                         BackgroundLoadDataService.getAllFavorite().get(position).getPodListId().remove(podcast.get_id());
-                        ApiService.apisService.addPodcastToFavorite(BackgroundLoadDataService.mlisUser.get_id(), podcast.get_id(), BackgroundLoadDataService.getAllFavorite().get(position)).enqueue(new Callback<Favorite>() {
+                        ApiService.apisService.removePodcastToFavorite(BackgroundLoadDataService.mlisUser.get_id(), podcast.get_id(), BackgroundLoadDataService.getAllFavorite().get(position)).enqueue(new Callback<Favorite>() {
                             @Override
                             public void onResponse(Call<Favorite> call, Response<Favorite> response) {
                                 if (response.isSuccessful()){
-                                    BackgroundLoadDataService.getAllFavorite().set(position, response.body());
+                                    BackgroundLoadDataService.getInstance().loadFavorite();
                                     ktSuKien();
                                 }
                             }

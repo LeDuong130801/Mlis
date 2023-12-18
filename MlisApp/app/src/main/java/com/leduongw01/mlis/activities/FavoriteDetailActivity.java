@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.leduongw01.mlis.R;
+import com.leduongw01.mlis.adapter.FavoriteDetailAdapter;
 import com.leduongw01.mlis.adapter.PodcastListAdapter;
 import com.leduongw01.mlis.databinding.ActivityFavoriteDetailBinding;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
@@ -35,19 +36,25 @@ public class FavoriteDetailActivity extends AppCompatActivity {
     }
     void ktRecycle(){
         if (favorite==null){
+            binding.tvTrong.setVisibility(View.VISIBLE);
             return;
         }
+        else if (favorite.getPodListId().size()!=0){
+            binding.tvTrong.setVisibility(View.GONE);
+        }
+        binding.favoriteName.setText(favorite.getName());
         List<Podcast> podcastList = BackgroundLoadDataService.getPodcastListByFavorite(favorite);
-        binding.rcvPodcastList.setAdapter(new PodcastListAdapter(FavoriteDetailActivity.this, podcastList, new RecyclerViewClickListener() {
+        binding.rcvPodcastList.setAdapter(new FavoriteDetailAdapter(FavoriteDetailActivity.this, podcastList, new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
                 Intent i = new Intent(FavoriteDetailActivity.this, PlayerActivity.class);
                 i.putExtra("podcastId", podcastList.get(position).get_id());
                 i.putExtra("favoriteId", favorite.get_id());
+                i.putExtra("playlistId", "none");
                 i.putExtra("index", position);
                 startActivity(i);
             }
         }));
-        binding.rcvPodcastList.setLayoutManager(new LinearLayoutManager(this));
+        binding.rcvPodcastList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 }

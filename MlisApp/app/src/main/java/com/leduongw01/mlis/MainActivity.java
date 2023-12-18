@@ -3,9 +3,13 @@ package com.leduongw01.mlis;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -30,7 +34,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         noImg = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
         startService(new Intent(MainActivity.this, BackgroundLoadDataService.class));
-
+        int permission_write_storage = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission_write_storage != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+        int permission_read_storage = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permission_read_storage != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
         SharedPreferences sharedPreferences = getSharedPreferences(Constant.PREFERENCES_NAME, MODE_PRIVATE);
         if (!sharedPreferences.getString("username", "none").equals("none")){
             ApiService.apisService.loginwithtoken(
@@ -56,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
                     BackgroundLoadDataService.mlisUser = new MlisUser("-1");
                     MyComponent.ToastShort(MainActivity.this, "Mất kết nối với máy chủ");
                     Intent home = new Intent(MainActivity.this, HomeScreen.class);
-                    Handler handler = new Handler();
-                    handler.postDelayed(null, 5000);
                     startActivity(home);
                 }
             });

@@ -30,10 +30,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     List<Playlist> playlists;
     private static RecyclerViewClickListener recyclerViewPlaylistClickListener;
     public PlaylistAdapter(){}
-    public PlaylistAdapter(Context context, List<Playlist> playlistList, RecyclerViewClickListener recyclerViewPlaylistClickListener){
+    public PlaylistAdapter(Context context, List<Playlist> playlistList, RecyclerViewClickListener recyclerViewClickListener){
         this.context = context;
         playlists = playlistList;
-        PlaylistAdapter.recyclerViewPlaylistClickListener = recyclerViewPlaylistClickListener;
+        recyclerViewPlaylistClickListener = recyclerViewClickListener;
     }
 
     @NonNull
@@ -52,7 +52,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         try{
             while (!BackgroundLoadDataService.getInstance().getMapImageById(playlists.get(position).get_id(), Constant.PLAYLIST).hasRes){
                 a.postDelayed(null, 100);
-                Log.d("while", "onBindViewHolder: loop inf");
             }
             holder.getPlaylistImageView().setImageBitmap(BackgroundLoadDataService.getBitmapById(playlists.get(position).get_id(), Constant.PLAYLIST));
         }

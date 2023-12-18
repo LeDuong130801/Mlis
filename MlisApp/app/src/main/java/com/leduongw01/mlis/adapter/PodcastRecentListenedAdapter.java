@@ -2,6 +2,7 @@ package com.leduongw01.mlis.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
+import com.leduongw01.mlis.models.LocalRecentPodcast;
 import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Constant;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,9 +29,14 @@ public class PodcastRecentListenedAdapter extends RecyclerView.Adapter<PodcastRe
     private static RecyclerViewClickListener podcastRecentListenedClickListener;
     List<Podcast> podcastList;
     Context context;
-    public PodcastRecentListenedAdapter(Context context, List<Podcast> list, RecyclerViewClickListener listener){
+    public PodcastRecentListenedAdapter(Context context, List<LocalRecentPodcast> list, RecyclerViewClickListener listener){
         podcastRecentListenedClickListener = listener;
-        podcastList = list;
+        podcastList = new ArrayList<>();
+        for (LocalRecentPodcast e : list){
+            Podcast p = BackgroundLoadDataService.getPodcastById(e.id);
+            if(p!=null)
+                podcastList.add(p);
+        }
         this.context = context.getApplicationContext();
     }
     @NonNull

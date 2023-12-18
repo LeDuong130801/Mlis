@@ -39,17 +39,18 @@
 
             app:layout_constraintTop_toBottomOf="@id/linerc1"
             app:layout_constraintBottom_toTopOf="@id/tvTenTruyen"
-            android:gravity="center">
+            android:gravity="center"
+            >
+
             <ImageView
                 android:id="@+id/ivPlayer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/pikachubackground"
                 android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginEnd="@dimen/_20sdp"
-                android:scaleType="fitCenter"
                 android:background="@drawable/border12"
-                />
+                android:scaleType="fitCenter"
+                android:src="@drawable/pikachubackground" />
         </LinearLayout>
         <TextView
             android:id="@+id/tvTenTruyen"
@@ -186,7 +187,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_weight="1"
-                android:src="@drawable/outline_volume_up_24"
+                android:src="@drawable/outline_chat_24"
                 android:background="@android:color/transparent"
                 app:tint="@color/normal_text" />
         </LinearLayout>

@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_light"
+        android:background="@color/background"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/dangnhapbangtaikhoancuaban"
-                android:textColor="@color/dark"
+                android:textColor="@color/normal_text"
                 android:textSize="@dimen/_16ssp"
                 android:textStyle="bold" />
 
@@ -68,6 +68,7 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="end"
                 android:text="@string/quenmatkhau"
+                android:textColor="@color/normal_text"
                 android:textStyle="bold" />
 
             <com.google.android.material.button.MaterialButton
@@ -91,7 +92,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/banchuacotaikhoan" />
+                android:text="@string/banchuacotaikhoan"
+                android:textColor="@color/normal_text"/>
 
             <TextView
                 android:id="@+id/goSignUp"
@@ -99,7 +101,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:text="@string/dangky"
-                android:textSize="@dimen/_13ssp" />
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/normal_text"/>
         </LinearLayout>
     </LinearLayout>
 

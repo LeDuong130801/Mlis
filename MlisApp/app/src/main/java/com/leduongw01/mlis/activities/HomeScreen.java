@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.leduongw01.mlis.MainActivity;
 import com.leduongw01.mlis.R;
 import com.leduongw01.mlis.adapter.AllPlaylistAdapter;
+import com.leduongw01.mlis.adapter.CateKiemHiepPlaylistAdapter;
+import com.leduongw01.mlis.adapter.CateMaPlaylistAdapter;
+import com.leduongw01.mlis.adapter.MoiCapNhatPlaylistAdapter;
 import com.leduongw01.mlis.adapter.PlaylistAdapter;
 import com.leduongw01.mlis.adapter.PodcastRecentListenedAdapter;
 import com.leduongw01.mlis.databasehelper.MlisSqliteDBHelper;
@@ -49,7 +53,6 @@ public class HomeScreen extends AppCompatActivity {
     List<Playlist> listMa;
     List<Playlist> listKiemHiep;
     List<Playlist> listMoiCapNhat;
-    List<Podcast> p;
     String currentPodcastName = "";
     boolean hide = true;
     Handler handler;
@@ -60,8 +63,9 @@ public class HomeScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
-        Intent i = new Intent(HomeScreen.this, BackgroundLoadDataService.class);
-        startService(i);
+//        Intent i = new Intent(HomeScreen.this, BackgroundLoadDataService.class);
+//        startService(i);
+        getRecentListenedPodcast();
         ktDrawer();
         ktHandler();
         ktSuKien();
@@ -77,35 +81,36 @@ public class HomeScreen extends AppCompatActivity {
 
         }));
         binding.rcvKhamPha.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        p = getRecentListenedPodcast();
-        binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(HomeScreen.this, p, new RecyclerViewClickListener() {
+        binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(HomeScreen.this, top3Recent, new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
                 Intent i = new Intent(HomeScreen.this, PlayerActivity.class);
-                i.putExtra("podcastId", p.get(position).get_id());
-                i.putExtra("playlistId", p.get(position).getPlaylistId());
+                i.putExtra("podcastId", top3Recent.get(position).id);
+                i.putExtra("playlistId", top3Recent.get(position).playlistId);
+                i.putExtra("favoriteId", top3Recent.get(position).favoriteId);
+                i.putExtra("continue", false);
                 startActivity(i);
             }
         }));
         binding.rcvRecent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        binding.rcvCateKiemHiep.setAdapter(new PlaylistAdapter(getApplicationContext(), listKiemHiep, (v, position) -> {
+        binding.rcvCateKiemHiep.setAdapter(new CateKiemHiepPlaylistAdapter(getApplicationContext(), listKiemHiep, (v, position) -> {
             Intent intent = new Intent(this, PlaylistDetailActivity.class);
             intent.putExtra("playlistId", listKiemHiep.get(position).get_id());
             startActivity(intent);
         }));
         binding.rcvCateKiemHiep.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        binding.rcvCateMa.setAdapter(new PlaylistAdapter(getApplicationContext(),listMa, (v, position) -> {
+        binding.rcvCateMa.setAdapter(new CateMaPlaylistAdapter(getApplicationContext(),listMa, (v, position) -> {
             Intent intent = new Intent(this, PlaylistDetailActivity.class);
             intent.putExtra("playlistId", listMa.get(position).get_id());
             startActivity(intent);
         }));
         binding.rcvCateMa.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        binding.rcvMoiCapNhat.setAdapter(new PlaylistAdapter(getApplicationContext(),listMa, (v, position) -> {
+        binding.rcvMoiCapNhat.setAdapter(new MoiCapNhatPlaylistAdapter(getApplicationContext(),listMoiCapNhat, (v, position) -> {
             Intent intent = new Intent(this, PlaylistDetailActivity.class);
-            intent.putExtra("playlistId", listMa.get(position).get_id());
+            intent.putExtra("playlistId", listMoiCapNhat.get(position).get_id());
             startActivity(intent);
         }));
         binding.rcvMoiCapNhat.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -124,7 +129,7 @@ public class HomeScreen extends AppCompatActivity {
             if (playlist.isKiemHiep()){
                 listKiemHiep.add(playlist);
             }
-            if (Long.parseLong(playlist.getUpdateOn()) - t >Constant.oneday* MyConfig.DAYOFNEW){
+            if ((Long.parseLong(playlist.getUpdateOn()) - t) < (Constant.oneday* MyConfig.DAYOFNEW)){
                 listMoiCapNhat.add(playlist);
             }
         }
@@ -263,17 +268,13 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
     }
-    List<Podcast> getRecentListenedPodcast(){
-        top3Recent = new MlisSqliteDBHelper(getApplicationContext()).get3IdRecent();
-        List<Podcast> output = new ArrayList<>();
-        for (LocalRecentPodcast localRecentPodcast:top3Recent){
-            Podcast tmp = BackgroundLoadDataService.getPodcastById(localRecentPodcast.id);
-            if (tmp != null){
-                if (!output.contains(tmp))
-                output.add(tmp);
-            }
+    synchronized void getRecentListenedPodcast(){
+        if (BackgroundLoadDataService.getInstance().checkAuthen()){
+            top3Recent = new MlisSqliteDBHelper(getApplicationContext()).get3IdRecent(BackgroundLoadDataService.mlisUser.get_id());
         }
-        return output;
+        else {
+            top3Recent = new MlisSqliteDBHelper(getApplicationContext()).get3IdRecent();
+        }
     }
 
     @Override
@@ -322,6 +323,7 @@ public class HomeScreen extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 return true;
             }
 
@@ -331,5 +333,13 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ktDrawer();
+        ktSuKien();
+        capNhatRecycleView();
     }
 }

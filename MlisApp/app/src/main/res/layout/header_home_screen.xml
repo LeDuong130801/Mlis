@@ -3,12 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_green">
+    android:background="@color/background_dark">
     <ImageView
-        android:layout_width="@dimen/_120sdp"
-        android:layout_height="@dimen/_120sdp"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_80sdp"
         android:layout_gravity="center"
-        android:src="@drawable/qiqi"/>
+        android:src="@drawable/outline_user_contact_calendar_24"/>
     <TextView
         android:id="@+id/tvUsername"
         android:layout_width="match_parent"
@@ -26,8 +26,8 @@
         android:textSize="@dimen/_14ssp"
         android:textAllCaps="false"
         android:layout_marginHorizontal="@dimen/_22sdp"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/success"
+        android:backgroundTint="@color/success"
+        android:textColor="@color/normal_text"
         android:layout_gravity="center"
         />
 

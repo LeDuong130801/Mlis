@@ -1,10 +1,13 @@
 package com.leduongw01.mlis.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import com.leduongw01.mlis.R;
@@ -26,7 +29,7 @@ import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
     ActivityChatBinding binding;
-
+    int REQLogin = 4219;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,16 +37,18 @@ public class ChatActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         ktSuKien();
         loadComment();
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                loadComment();
+                handler.postDelayed(this, 5000);
+            }
+        };
+        handler.postDelayed(runnable, 1000);
     }
 
     void ktSuKien() {
-        if (BackgroundLoadDataService.getInstance().checkAuthen()) {
-            binding.noCommentBox.setVisibility(View.GONE);
-            binding.commentBox.setVisibility(View.VISIBLE);
-        } else {
-            binding.commentBox.setVisibility(View.GONE);
-            binding.noCommentBox.setVisibility(View.VISIBLE);
-        }
         binding.btSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,8 +73,22 @@ public class ChatActivity extends AppCompatActivity {
                 binding.etComment.setText("");
             }
         });
+        binding.goLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(ChatActivity.this, LoginActivity.class);
+                startActivityForResult(i, REQLogin);
+            }
+        });
     }
     void loadComment(){
+        if (BackgroundLoadDataService.getInstance().checkAuthen()) {
+            binding.noCommentBox.setVisibility(View.GONE);
+            binding.commentBox.setVisibility(View.VISIBLE);
+        } else {
+            binding.commentBox.setVisibility(View.GONE);
+            binding.noCommentBox.setVisibility(View.VISIBLE);
+        }
         ApiService.apisService.viewComment(ForegroundAudioService.getCurrentPodcast().get_id(), "1").enqueue(new Callback<List<ViewComment>>() {
             @Override
             public void onResponse(Call<List<ViewComment>> call, Response<List<ViewComment>> response) {
@@ -96,5 +115,14 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == REQLogin){
+            ktSuKien();
+            loadComment();
+        }
     }
 }

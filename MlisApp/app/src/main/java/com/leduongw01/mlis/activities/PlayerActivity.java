@@ -21,7 +21,9 @@ import com.leduongw01.mlis.databinding.ActivityPlayerBinding;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.Constant;
+import com.leduongw01.mlis.utils.MyComponent;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class PlayerActivity extends AppCompatActivity {
@@ -47,24 +49,38 @@ public class PlayerActivity extends AppCompatActivity {
             String playlistId = getIntent().getStringExtra("playlistId");
             String favoriteId = getIntent().getStringExtra("favoriteId");
             Integer indexPodcast = getIntent().getIntExtra("index", -1);
-            if (indexPodcast==-1){
-                indexPodcast = BackgroundLoadDataService.getIndexOfPodcastInPlayList(podcastId, playlistId);
-            }
-            if(!Objects.equals(playlistId, null)){
+            if(!Objects.equals(playlistId, "none")){
+                if (indexPodcast == -1){
+                    indexPodcast = BackgroundLoadDataService.getIndexOfPodcastInPlayList(podcastId, playlistId);
+                }
                 Intent intent = new Intent(this, ForegroundAudioService.class);
                 ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
                 ForegroundAudioService.setCurrentPlaylist(BackgroundLoadDataService.getPlaylistById(playlistId));
+                ForegroundAudioService.setCurrentFavorite(null);
                 ForegroundAudioService.setCurrentList(BackgroundLoadDataService.getPodcastInPlaylist(playlistId));
                 ForegroundAudioService.setCurrentAudio(indexPodcast);
-                mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast());
+                Log.d("playlist", "onCreate: ");
+                if (BackgroundLoadDataService.getInstance().checkAuthen()){
+                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), BackgroundLoadDataService.mlisUser.get_id(), playlistId, "none");
+                }
+                else mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), "none", playlistId, "none");
                 startService(intent);
             }
-            else if (favoriteId != null){
+            else if (!favoriteId.equals("none")){
+                if (indexPodcast==-1){
+                    indexPodcast = BackgroundLoadDataService.getIndexOfPodcastInFavorite(podcastId, favoriteId);
+                }
                 Intent intent = new Intent(this, ForegroundAudioService.class);
                 ForegroundAudioService.setCurrentPodcast(BackgroundLoadDataService.getPodcastById(podcastId));
                 ForegroundAudioService.setCurrentFavorite(BackgroundLoadDataService.getFavoriteById(favoriteId));
+                ForegroundAudioService.setCurrentPlaylist(null);
                 ForegroundAudioService.setCurrentList(BackgroundLoadDataService.getPodcastListByFavorite(favoriteId));
                 ForegroundAudioService.setCurrentAudio(indexPodcast);
+                Log.d("favorite", "onCreate: ");
+                if (BackgroundLoadDataService.getInstance().checkAuthen()){
+                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), BackgroundLoadDataService.mlisUser.get_id(), "none", favoriteId);
+                }
+                else mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), "none", "none", favoriteId);
                 startService(intent);
             }
             initSeekBar();
@@ -90,7 +106,7 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void initSeekBar() {
+    void initSeekBar()  {
         binding.seekBarMediaPlayer.setProgress(0);
         binding.seekBarMediaPlayer.setMax(ForegroundAudioService.getMediaPlayer().getDuration());
         binding.tvMediaPlayerDuration.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getDuration()));
@@ -113,14 +129,18 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 //        binding.seekBarMediaPlayer.setP(getResources().getColor(R.color.emerald));
+        final boolean[] f = {true};
         handler = new Handler();
         runnable = new Runnable() {
             @Override
             public void run() {
-                binding.seekBarMediaPlayer.setProgress(ForegroundAudioService.getMediaPlayer().getCurrentPosition());
-                binding.tvCurrentSeek.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getCurrentPosition()));
-                binding.seekBarMediaPlayer.setMax(ForegroundAudioService.getMediaPlayer().getDuration());
-                binding.tvMediaPlayerDuration.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getDuration()));
+                if (ForegroundAudioService.getMediaPlayer().isPlaying() || f[0]){
+                    binding.seekBarMediaPlayer.setProgress(ForegroundAudioService.getMediaPlayer().getCurrentPosition());
+                    binding.tvCurrentSeek.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getCurrentPosition()));
+                    binding.seekBarMediaPlayer.setMax(ForegroundAudioService.getMediaPlayer().getDuration());
+                    binding.tvMediaPlayerDuration.setText(NumberTimeToString(ForegroundAudioService.getMediaPlayer().getDuration()));
+                    f[0] = false;
+                }
                 if(ForegroundAudioService.getMediaPlayer().isPlaying()!= playing) {
                     if (ForegroundAudioService.getMediaPlayer().isPlaying()) {
                         binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_pause_24);
@@ -128,6 +148,12 @@ public class PlayerActivity extends AppCompatActivity {
                         binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_play_arrow_24);
                     }
                     playing = ForegroundAudioService.getMediaPlayer().isPlaying();
+                }
+                if (binding.seekBarMediaPlayer.getProgress() == binding.seekBarMediaPlayer.getMax() && binding.seekBarMediaPlayer.getMax()!=0){
+                    if(ForegroundAudioService.getInstance().nextAudio()){
+                        startFore();
+                        fillData();
+                    }
                 }
                 if (ForegroundAudioService.getCurrentAudio()==0){
                     binding.backSkipMediaPlayer.setClickable(false);
@@ -149,13 +175,6 @@ public class PlayerActivity extends AppCompatActivity {
             }
         };
         handler.postDelayed(runnable, 1000);
-        ForegroundAudioService.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                mediaPlayer.pause();
-                binding.icPauseResumeMediaPlayer.setImageResource(R.drawable.baseline_play_arrow_24);
-            }
-        });
 
     }
     void ktSuKien(){
@@ -207,17 +226,19 @@ public class PlayerActivity extends AppCompatActivity {
         binding.backSkipMediaPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ForegroundAudioService.getInstance().backAudio();
-                startFore();
-                fillData();
+                if(ForegroundAudioService.getInstance().backAudio()) {
+                    startFore();
+                    fillData();
+                }
             }
         });
         binding.nextSkipMediaPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ForegroundAudioService.getInstance().nextAudio();
-                startFore();
-                fillData();
+                if(ForegroundAudioService.getInstance().nextAudio()){
+                    startFore();
+                    fillData();
+                }
             }
         });
     }
@@ -225,7 +246,6 @@ public class PlayerActivity extends AppCompatActivity {
 
     void fillData() {
         binding.tvTenTruyen.setText(ForegroundAudioService.getCurrentPodcast().getName());
-        ;
         binding.tvBoSung.setText(BackgroundLoadDataService.getAuthorOfPodcast(ForegroundAudioService.getCurrentPodcast()));
         runnable.run();
         binding.ivPlayer.setImageBitmap(BackgroundLoadDataService.getBitmapById(ForegroundAudioService.getCurrentPodcast().get_id(), Constant.PODCAST));

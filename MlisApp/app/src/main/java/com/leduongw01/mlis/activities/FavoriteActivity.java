@@ -27,8 +27,12 @@ public class FavoriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_favorite);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        BackgroundLoadDataService.getInstance().loadFavorite();
-        ktRecycle();
+        if (BackgroundLoadDataService.getInstance().checkAuthen()){
+            binding.text1.setText("Danh sách yêu thích của "+ BackgroundLoadDataService.mlisUser.getUsername());
+            BackgroundLoadDataService.getInstance().loadFavorite();
+            ktRecycle();
+        }
+        else onBackPressed();
     }
 
     void ktRecycle() {

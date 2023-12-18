@@ -36,6 +36,7 @@ import com.leduongw01.mlis.utils.Constant;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -165,35 +166,31 @@ public class ForegroundAudioService extends Service {
         setCurrentSeek(0);
         startPodcast(getCurrentPodcast());
     }
-    public void startPodcast(Context context, Podcast podcast){
-        loadMediaPlayerFromUrl(podcast.getUrl());
-        new MlisSqliteDBHelper(context).putPodcastToRecent(podcast);
-    }
+//    public void startPodcast(Context context, Podcast podcast){
+//        loadMediaPlayerFromUrl(podcast.getUrl());
+//        new MlisSqliteDBHelper(context).putPodcastToRecent(podcast);
+//    }
     public void startPodcast(Podcast podcast){
         loadMediaPlayerFromUrl(podcast.getUrl());
     }
 
-//    public void nextAudio() {
-//        if (getCurrentAudio()<getCurrentList().size()-1){
-//            setCurrentAudio(getCurrentAudio()+1);
-//            setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
-//            setCurrentSeek(0);
-//            startPodcast(getCurrentPodcast());
-//        }
-//    }
-    public void nextAudio() {
+    public boolean nextAudio() {
         if (getCurrentAudio()<getCurrentList().size()-1){
             setCurrentAudio(getCurrentAudio()+1);
             setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
             setCurrentSeek(0);
+            return true;
         }
+        return false;
     }
-    public void backAudio() {
+    public boolean backAudio() {
         if (getCurrentAudio()>0){
             setCurrentAudio(getCurrentAudio()-1);
             setCurrentPodcast(getCurrentList().get(getCurrentAudio()));
             setCurrentSeek(0);
+            return true;
         }
+        return false;
     }
 
     private void loadMediaPlayerFromUrl(String url) {
@@ -203,12 +200,6 @@ public class ForegroundAudioService extends Service {
                 getMediaPlayer().setDataSource(url);
                 getMediaPlayer().prepare();
                 getMediaPlayer().start();
-                getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        nextAudio();
-                    }
-                });
             } catch (IOException e) {
                 new DownloadFileFromURL(ForegroundAudioService.this).execute(url);
                 Log.e(Constant.ERROR, "Tai nhac that bai");
@@ -219,15 +210,6 @@ public class ForegroundAudioService extends Service {
             setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
         }
     }
-//    private void loadMediaPlayerFromUrl(String url) {
-//        if (url != null && !url.equals("")) {
-//            setMediaPlayer(new CustomMediaPlayer());
-//            new DownloadFileFromURL().execute(url);
-//        }
-//        else{
-//            setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
-//        }
-//    }
     @SuppressLint({"RemoteViewLayout"})
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -413,13 +395,22 @@ public class ForegroundAudioService extends Service {
             try {
                 URL url = new URL(f_url[0]);
                 URLConnection conection = url.openConnection();
+                File file = new File(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/Download/Mlis");
+                if (file.exists()){
+                    file = new File(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/Download/Mlis");
+                    file.mkdir();
+                }
                 conection.connect();
                 int lenghtOfFile = conection.getContentLength();
                 InputStream input = new BufferedInputStream(url.openStream(),
                         8192);
                 OutputStream output = new FileOutputStream(Environment
                         .getExternalStorageDirectory().toString()
-                        + "/Download/a.kml");
+                        + "/Download/Mlis/media.mlis");
                 byte[] data = new byte[1024];
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
@@ -430,7 +421,7 @@ public class ForegroundAudioService extends Service {
                 output.flush();
                 output.close();
                 input.close();
-                getMediaPlayer().setDataSource(context, Uri.parse(Environment.getExternalStorageDirectory().toString() + "/Download/a.kml"));
+                getMediaPlayer().setDataSource(context, Uri.parse(Environment.getExternalStorageDirectory().toString() + "/Download/Mlis/media.mlis"));
                 getMediaPlayer().prepare();
                 getMediaPlayer().start();
             } catch (Exception e) {

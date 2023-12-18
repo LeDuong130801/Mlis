@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_light"
+        android:background="@color/background"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/dangky"
                 android:textSize="@dimen/_16ssp"
+                android:textColor="@color/normal_text"
                 android:textStyle="bold" />
 
             <EditText
@@ -134,6 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dacotaikhoan"
+                android:textColor="@color/normal_text"
                 android:textSize="@dimen/_12ssp" />
 
             <TextView
@@ -141,6 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_2sdp"
+                android:textColor="@color/normal_text"
                 android:text="@string/dangnhap"
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="bold" />

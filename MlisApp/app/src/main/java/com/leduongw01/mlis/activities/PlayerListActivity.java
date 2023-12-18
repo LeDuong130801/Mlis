@@ -41,7 +41,13 @@ public class PlayerListActivity extends AppCompatActivity {
             public void recyclerViewListClicked(View v, int position) {
                 ForegroundAudioService.setCurrentAudio(position);
                 ForegroundAudioService.setCurrentPodcast(ForegroundAudioService.getCurrentList().get(position));
-                mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast());
+                String userId = BackgroundLoadDataService.getInstance().checkAuthen()? BackgroundLoadDataService.mlisUser.get_id() : "none";
+                if (ForegroundAudioService.getCurrentFavorite() == null){
+                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), userId, "none", ForegroundAudioService.getCurrentPlaylist().get_id());
+                }
+                else{
+                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), userId, ForegroundAudioService.getCurrentFavorite().get_id(), "none");
+                }
                 updateRecyclePlayerList();
             }
         }));

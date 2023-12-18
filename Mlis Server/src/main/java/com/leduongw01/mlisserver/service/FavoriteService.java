@@ -4,6 +4,7 @@ import com.leduongw01.mlisserver.model.Favorite;
 import com.leduongw01.mlisserver.model.MlisUser;
 import com.leduongw01.mlisserver.model.Podcast;
 import com.leduongw01.mlisserver.repository.FavoriteRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Slf4j
 public class FavoriteService {
     @Autowired
     FavoriteRepository favoriteRepository;
@@ -83,9 +85,11 @@ public class FavoriteService {
                 favorite.getPodListId().add(podcastId);
             }
             favorite.getPodListId().add(podcastId);
+            log.info("Favorite "+ favorite.get_id()+" updated");
             return favoriteRepository.save(favorite);
         }
         else {
+            log.warn("Favorite " + favorite.get_id() + " not found, add new");
             favorite.set_id(null);
             favorite.setCreateOn(new Date().getTime()+"");
             List<String> l = new ArrayList<String>();
@@ -100,10 +104,7 @@ public class FavoriteService {
     public Favorite removeToFavorite(String mlisUserId, String podcastId, Favorite favorite){
         if (favoriteRepository.existsFavoriteBy_idAndUserId(favorite.get_id(), mlisUserId)){
             favorite = favoriteRepository.getFavoriteBy_id(favorite.get_id());
-            if (!favorite.getPodListId().contains(podcastId)){
-                favorite.getPodListId().remove(podcastId);
-            }
-            favorite.getPodListId().add(podcastId);
+            favorite.getPodListId().remove(podcastId);
             return favoriteRepository.save(favorite);
         }
         else {

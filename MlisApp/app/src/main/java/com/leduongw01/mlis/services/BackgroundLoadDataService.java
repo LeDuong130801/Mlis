@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -79,9 +80,18 @@ public class BackgroundLoadDataService extends Service {
         }
         return t;
     }
-    public static Integer getIndexOfPodcastInPlayList(String podcastId, String playlistId){
+    public synchronized static Integer getIndexOfPodcastInPlayList(String podcastId, String playlistId){
         List<Podcast> p = getPodcastInPlaylist(playlistId);
         for(int i=0;i<p.size();i++){
+            if (p.get(i).get_id().equals(podcastId)){
+                return i;
+            }
+        }
+        return -1;
+    }
+    public static Integer getIndexOfPodcastInFavorite(String podcastId, String favoriteId){
+        List<Podcast> p = getPodcastInFavorite(favoriteId);
+        for(int i = 0; i< Objects.requireNonNull(p).size(); i++){
             if (p.get(i).get_id().equals(podcastId)){
                 return i;
             }
@@ -179,7 +189,7 @@ public class BackgroundLoadDataService extends Service {
         if (mlisUser==null){
             return false;
         }
-        else if (mlisUser.get_id()==null || mlisUser.get_id().equals("-1")){
+        else if (mlisUser.get_id()==null || mlisUser.get_id().equals("-1") || mlisUser.get_id().equals("none")){
             return false;
         }
         return true;
@@ -260,7 +270,7 @@ public class BackgroundLoadDataService extends Service {
         ));
 
     }
-    public void RealData(){
+    public synchronized void RealData(){
         for (Playlist playlist : getAllPlaylist()){
             getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
             new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());

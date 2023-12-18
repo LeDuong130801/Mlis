@@ -57,6 +57,7 @@
                 android:background="@drawable/edittext_6"
                 android:text=""
                 android:inputType="text"
+                android:hint="@string/binhluan"
                 android:paddingHorizontal="@dimen/_6sdp"
                 android:paddingVertical="@dimen/_8sdp"
                 android:layout_margin="@dimen/_4sdp"/>

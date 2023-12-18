@@ -43,6 +43,7 @@ import retrofit2.Response;
 public class PlaylistDetailActivity extends AppCompatActivity {
     ActivityPlaylistDetailBinding binding;
     List<Podcast> listChaper = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,26 +55,28 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         ktSukien();
         ktRecycle();
     }
-    private void getChap(){
+
+    private void getChap() {
         Intent i = getIntent();
-        String playlistId = i.getStringExtra("playlistId")!=null ?
+        String playlistId = i.getStringExtra("playlistId") != null ?
                 i.getStringExtra("playlistId") : "-1";
         listChaper.clear();
-        if (!playlistId.equals("-1")){
+        if (!playlistId.equals("-1")) {
             Playlist playlist = BackgroundLoadDataService.getPlaylistById(playlistId);
             assert playlist != null;
             binding.tvName.setText(playlist.getName());
             binding.tvAuthor.setText(String.format("Tác giả: %s", playlist.getAuthor()));
             binding.tvInf.setText(playlist.getDetail());
             binding.ivPlaylist.setImageBitmap(BackgroundLoadDataService.getBitmapById(playlistId, Constant.PLAYLIST));
-            for (Podcast podcast : BackgroundLoadDataService.getAllPodcast()){
-                if (podcast.getPlaylistId().equals(playlistId)){
+            for (Podcast podcast : BackgroundLoadDataService.getAllPodcast()) {
+                if (podcast.getPlaylistId().equals(playlistId)) {
                     listChaper.add(podcast);
                 }
             }
         }
     }
-    private void ktSukien(){
+
+    private void ktSukien() {
         binding.icBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,23 +89,23 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                 MyComponent.ToastShort(PlaylistDetailActivity.this, "s");
             }
         });
-        if (listChaper.size()==0){
+        if (listChaper.size() == 0) {
             binding.btListenChap1.setText("Tập truyện này chưa có chương");
             binding.btListenChap1.setClickable(false);
-        }
-        else
-        binding.btListenChap1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(PlaylistDetailActivity.this, PlayerActivity.class);
-                i.putExtra("podcastId", listChaper.get(0).get_id());
-                i.putExtra("playlistId", getIntent().getStringExtra("playlistId"));
-                i.putExtra("index", 0);
-                startActivity(i);
-            }
-        });
+        } else
+            binding.btListenChap1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(PlaylistDetailActivity.this, PlayerActivity.class);
+                    i.putExtra("podcastId", listChaper.get(0).get_id());
+                    i.putExtra("playlistId", getIntent().getStringExtra("playlistId"));
+                    i.putExtra("index", 0);
+                    startActivity(i);
+                }
+            });
     }
-    void ktRecycle(){
+
+    void ktRecycle() {
 
         binding.lvPodcast.setAdapter(new PlaylistDetailAdapter(PlaylistDetailActivity.this, listChaper, new RecyclerViewClickListener() {
             @Override
@@ -119,39 +122,9 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                     @Override
                     public void recyclerViewListClicked(View v, int position) {
                         //favorite
-                        ArrayList<String> tmp = new ArrayList<String>();
-                        tmp.add(listChaper.get(position).get_id());
-                        if (BackgroundLoadDataService.mainFavorite.getPodListId().contains(listChaper.get(position).get_id())){
-                            ApiService.apisService.removePodcastToMainFavorite(BackgroundLoadDataService.mlisUser.get_id(), tmp).enqueue(new Callback<Favorite>() {
-                                @Override
-                                public void onResponse(Call<Favorite> call, Response<Favorite> response) {
-                                    if (response.isSuccessful()){
-                                        BackgroundLoadDataService.getInstance().setMainFavorite(response.body());
-                                        ktRecycle();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<Favorite> call, Throwable t) {
-
-                                }
-                            });
-                        }
-                        else
-                        ApiService.apisService.addPodcastToMainFavorite(BackgroundLoadDataService.mlisUser.get_id(), tmp).enqueue(new Callback<Favorite>() {
-                            @Override
-                            public void onResponse(Call<Favorite> call, @NonNull Response<Favorite> response) {
-                                if (response.isSuccessful()){
-                                    BackgroundLoadDataService.mainFavorite = response.body();
-                                    ktRecycle();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Favorite> call, Throwable t) {
-
-                            }
-                        });
+                        Podcast p = listChaper.get(position);
+                        AoRtoPlaylistDialog dialog = new AoRtoPlaylistDialog(PlaylistDetailActivity.this, p);
+                        dialog.show();
                     }
                 }));
         binding.lvPodcast.setLayoutManager(new LinearLayoutManager(this));

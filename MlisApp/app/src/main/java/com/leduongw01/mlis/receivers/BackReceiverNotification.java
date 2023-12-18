@@ -9,8 +9,9 @@ import com.leduongw01.mlis.services.ForegroundAudioService;
 public class BackReceiverNotification extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        ForegroundAudioService.getInstance().backAudio();
-        Intent i = new Intent(context, ForegroundAudioService.class);
-        context.startService(i);
+        if(ForegroundAudioService.getInstance().backAudio()){
+            Intent i = new Intent(context, ForegroundAudioService.class);
+            context.startService(i);
+        }
     }
 }

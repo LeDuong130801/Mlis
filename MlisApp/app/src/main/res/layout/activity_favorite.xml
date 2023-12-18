@@ -3,28 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.FavoriteActivity">
-    <LinearLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="@color/background">
+
         <TextView
+            android:id="@+id/text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/danhsachyeuthichcua"
+            android:textColor="@color/normal_text"
             android:textSize="@dimen/_16ssp"
-            android:textColor="@color/normal_text"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ScrollView
-            android:layout_margin="@dimen/_4sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:layout_margin="@dimen/_4sdp"
+            app:layout_constraintTop_toBottomOf="@id/text1">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvFavoriteList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </ScrollView>
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/btAddNew"
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="@dimen/_48sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/add24"
+            android:background="@drawable/circle_shape"
+            android:backgroundTint="@color/success"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

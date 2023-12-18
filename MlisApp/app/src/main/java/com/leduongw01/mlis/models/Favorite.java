@@ -13,6 +13,14 @@ public class Favorite {
 
     public Favorite() {
     }
+    public Favorite(String name, String userId) {
+        _id = null;
+        this.name = name;
+        createOn = "0";
+        podListId = new ArrayList<>();
+        this.userId = userId;
+        status = "1";
+    }
 
     public Favorite(String _id, String name, String createOn, List<String> podListId, String userId, String status) {
         this._id = _id;

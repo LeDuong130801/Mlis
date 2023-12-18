@@ -61,6 +61,21 @@ public interface ApiService {
     Call<List<Playlist>> getAllByStatus(
             @Query("contentStatus") String status
     );
+    //favorite
+    @POST("api/favorite/curd")
+    Call<Favorite> createFavorite(@Body Favorite favorite);
+    @POST("api/favorite/addpodcasttofavorite")
+    Call<Favorite> addPodcastToFavorite(
+            @Query("mlisUserId") String mlisUserId,
+            @Query("podcastId") String podcastId,
+            @Body Favorite favorite
+    );
+    @POST("api/favorite/removepodcasttofavorite")
+    Call<Favorite> removePodcastToFavorite(
+            @Query("mlisUserId") String mlisUserId,
+            @Query("podcastId") String podcastId,
+            @Body Favorite favorite
+    );
     @POST("api/favorite/addpodcasttomainfavorite")
     Call<Favorite> addPodcastToMainFavorite(
             @Query("mlisUserId") String mlisUserId,

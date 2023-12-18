@@ -90,7 +90,26 @@ public class FavoriteService {
             favorite.setCreateOn(new Date().getTime()+"");
             List<String> l = new ArrayList<String>();
             if (!podcastId.equals("none"))
-            l.add(podcastId);
+                l.add(podcastId);
+            favorite.setPodListId(l);
+            favorite.setUserId(mlisUserId);
+            favorite.setStatus("1");
+            return favoriteRepository.insert(favorite);
+        }
+    }
+    public Favorite removeToFavorite(String mlisUserId, String podcastId, Favorite favorite){
+        if (favoriteRepository.existsFavoriteBy_idAndUserId(favorite.get_id(), mlisUserId)){
+            favorite = favoriteRepository.getFavoriteBy_id(favorite.get_id());
+            if (!favorite.getPodListId().contains(podcastId)){
+                favorite.getPodListId().remove(podcastId);
+            }
+            favorite.getPodListId().add(podcastId);
+            return favoriteRepository.save(favorite);
+        }
+        else {
+            favorite.set_id(null);
+            favorite.setCreateOn(new Date().getTime()+"");
+            List<String> l = new ArrayList<String>();
             favorite.setPodListId(l);
             favorite.setUserId(mlisUserId);
             favorite.setStatus("1");

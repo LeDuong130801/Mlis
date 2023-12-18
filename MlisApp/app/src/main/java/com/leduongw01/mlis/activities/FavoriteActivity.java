@@ -32,6 +32,13 @@ public class FavoriteActivity extends AppCompatActivity {
     }
 
     void ktRecycle() {
+        binding.btAddNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreateFavoriteDialog dialog = new CreateFavoriteDialog(FavoriteActivity.this);
+                dialog.show();
+            }
+        });
         binding.rcvFavoriteList.setAdapter(new AllFavoriteAdapter(FavoriteActivity.this, BackgroundLoadDataService.getAllFavorite(),
                 new RecyclerViewClickListener() {
                     @Override

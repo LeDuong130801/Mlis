@@ -28,12 +28,13 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
     Context context;
     List<Podcast> podcastList;
 
-    public PlaylistDetailAdapter(Context context, List<Podcast> podcastList, RecyclerViewClickListener clickListener, RecyclerViewClickListener favoriteClickListener){
+    public PlaylistDetailAdapter(Context context, List<Podcast> podcastList, RecyclerViewClickListener clickListener, RecyclerViewClickListener favoriteClickListener) {
         this.context = context;
         this.podcastList = podcastList;
         PlaylistDetailAdapter.playlistDetailClickListener = clickListener;
         PlaylistDetailAdapter.favoriteClickListener = favoriteClickListener;
     }
+
     @NonNull
     @Override
     public PlaylistDetailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -46,15 +47,11 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
     public void onBindViewHolder(@NonNull PlaylistDetailViewHolder holder, int position) {
         holder.getTvName().setText(podcastList.get(position).getName());
         holder.getTvLastUpdate().setText(podcastList.get(position).getUpdateOn());
-        if (BackgroundLoadDataService.mainFavorite!=null)
-            if (BackgroundLoadDataService.getInstance().checkAuthen()){
-                if (BackgroundLoadDataService.mainFavorite.getPodListId().contains(podcastList.get(position).get_id())){
-                    holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_24));
-                }
-                else{
-                    holder.ivFavorite.setImageDrawable(context.getDrawable(R.drawable.outline_favorite_border_24));
-                }
-            }
+        if (BackgroundLoadDataService.getInstance().checkAuthen()) {
+            holder.ivFavorite.setVisibility(View.VISIBLE);
+        } else {
+            holder.ivFavorite.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -84,6 +81,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
             ivFavorite = itemView.findViewById(R.id.isFavorite);
             ivFavorite.setOnClickListener(view -> favoriteClickListener.recyclerViewListClicked(view, getLayoutPosition()));
         }
+
         @Override
         public void onClick(View view) {
             playlistDetailClickListener.recyclerViewListClicked(view, getLayoutPosition());

@@ -18,8 +18,7 @@
                 android:layout_width="@dimen/_36sdp"
                 android:layout_height="@dimen/_36sdp"
                 android:src="@drawable/outline_expand_more_24"
-                android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                android:background="@drawable/button_tran"/>
             <Space
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_1sdp"
@@ -29,8 +28,7 @@
                 android:layout_width="@dimen/_36sdp"
                 android:layout_height="@dimen/_36sdp"
                 android:src="@drawable/baseline_more_vert_24"
-                android:background="@android:color/transparent"
-                app:tint="@color/white" />
+                android:background="@android:color/transparent"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/linerc2"
@@ -139,7 +137,7 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_weight="3"
                 android:src="@drawable/baseline_pause_24"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_tran"
                 android:scaleType="fitCenter"
                 app:tint="@color/normal_text" />
             <ImageButton

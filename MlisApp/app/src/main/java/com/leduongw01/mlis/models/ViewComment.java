@@ -1,13 +1,14 @@
 package com.leduongw01.mlis.models;
 
 public class ViewComment {
-     String _id;
-     String podcastId;
-     String userId;
-     String username;
-     String content;
-     String cmtOn;
-     String status;
+    String _id;
+    String podcastId;
+    String podcastName;
+    String userId;
+    String username;
+    String content;
+    String cmtOn;
+    String status;
 
     public ViewComment() {
     }
@@ -26,6 +27,14 @@ public class ViewComment {
 
     public void setPodcastId(String podcastId) {
         this.podcastId = podcastId;
+    }
+
+    public String getPodcastName() {
+        return podcastName;
+    }
+
+    public void setPodcastName(String podcastName) {
+        this.podcastName = podcastName;
     }
 
     public String getUserId() {

@@ -2,6 +2,7 @@ package com.leduongw01.mlisserver.controller;
 
 import com.leduongw01.mlisserver.model.MlisUser;
 import com.leduongw01.mlisserver.model.StringValue;
+import com.leduongw01.mlisserver.model.ViewMlisUser;
 import com.leduongw01.mlisserver.service.MlisUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,18 @@ public class MlisUserController {
     @GetMapping("/getlistname")
     List<StringValue> getListName(@RequestBody List<String> listId){
         return mlisUserService.getListNameByListId(listId);
+    }
+    @GetMapping("/getviewmlisuser")
+    List<ViewMlisUser> getViewMlisUser(){
+        return mlisUserService.getViewMlisUser();
+    }
+    @DeleteMapping("/deletemlisuser")
+    boolean deleteMlisUser(@RequestParam("userId")String userId){
+        return mlisUserService.deleteUser(userId);
+    }
+    @DeleteMapping("/deletemlisuserandcomment")
+    boolean deleteMlisUserAndComment(@RequestParam("userId")String userId){
+        return mlisUserService.deleteUserAndComment(userId);
     }
 
 }

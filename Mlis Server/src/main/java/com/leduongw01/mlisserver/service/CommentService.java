@@ -4,6 +4,7 @@ import com.leduongw01.mlisserver.model.Comment;
 import com.leduongw01.mlisserver.model.ViewComment;
 import com.leduongw01.mlisserver.repository.CommentRepository;
 import com.leduongw01.mlisserver.repository.MlisUserRepository;
+import com.leduongw01.mlisserver.repository.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ public class CommentService {
     CommentRepository commentRepository;
     @Autowired
     MlisUserRepository mlisUserRepository;
+    @Autowired
+    PodcastRepository podcastRepository;
     public Comment getCommentById(String id){
         return commentRepository.getCommentBy_id(id);
     }
@@ -46,6 +49,10 @@ public class CommentService {
         List<Comment> commentList = getAllCommentByPodcastIdAndStatus(podcastId, status);
         return getViewComments(commentList);
     }
+    public List<ViewComment> getAllViewComment(){
+        List<Comment> commentList = commentRepository.getAllBy_idIsNotNull();
+        return getViewComments(commentList);
+    }
 
     private List<ViewComment> getViewComments(List<Comment> commentList) {
         List<ViewComment> viewComments = new ArrayList<>();
@@ -54,6 +61,10 @@ public class CommentService {
             if (mlisUserRepository.existsMlisUserBy_id(comment.getUserId())){
                 username = mlisUserRepository.getMlisUserBy_id(comment.getUserId()).getUsername();
             }
+            String podcastName = "Truyện đã bị xóa";
+            if (podcastRepository.existsPodcastBy_id(comment.getPodcastId())){
+                podcastName = podcastRepository.getPodcastBy_id(comment.getPodcastId()).getName();
+            }
             ViewComment viewComment = new ViewComment();
             viewComment._id = comment.get_id();
             viewComment.cmtOn = comment.getCmtOn();
@@ -61,6 +72,7 @@ public class CommentService {
             viewComment.userId = comment.getUserId();
             viewComment.status = comment.getStatus();
             viewComment.username = username;
+            viewComment.podcastName = podcastName;
             viewComments.add(viewComment);
         }
         return viewComments;

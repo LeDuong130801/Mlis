@@ -17,4 +17,5 @@ public interface MlisUserRepository extends MongoRepository<MlisUser, String> {
     boolean existsMlisUserByUsernameAndToken(String username, String token);
     boolean getMlisUserByGoogleAuth(String googleAuth);
     List<MlisUser> getAllBy_idIn(List<String> _id);
+    List<MlisUser> getAllBy_idIsNotNull();
 }

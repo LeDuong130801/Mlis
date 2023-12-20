@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Bootstrap CRUD Data Table for Database with Modal Form</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Activate tooltip
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Select/Deselect checkboxes
+            var checkbox = $('table tbody input[type="checkbox"]');
+            $("#selectAll").click(function () {
+                if (this.checked) {
+                    checkbox.each(function () {
+                        this.checked = true;
+                    });
+                } else {
+                    checkbox.each(function () {
+                        this.checked = false;
+                    });
+                }
+            });
+            checkbox.click(function () {
+                if (!this.checked) {
+                    $("#selectAll").prop("checked", false);
+                }
+            });
+            loadAllUser();
+        });
+        let list = [];
+        function loadAllUser() {
+            const request = new XMLHttpRequest();
+            const urlendpoint = "http://localhost:8080/api/mlis/getviewmlisuser";
+            request.onreadystatechange = () => {
+                console.log(request.response);
+                if (request.readyState === 4 && request.status === 200) {
+                    list = JSON.parse(request.response);
+                    const tbody = document.getElementById("tablebody");
+                    let str = "";
+                    for (let i = 0; i < list.length; i++) {
+                        str += createNodeBodyTable(list[i]);
+                    }
+                    tbody.innerHTML = str;
+                }
+            };
+            request.open("GET", urlendpoint, true);
+            request.send();
+        }
+        function createNodeBodyTable(value) {
+            return (`<tr>
+                <td>${shorter(value.username, 20)}</td>
+                <td>${shorter(value.email, 20)}</td>
+                <td>${shorter(value.token, 30)}</td>
+                <td>${shorter(value.numComment, 20)}</td>
+                <td>${shorter(value.gender, 20)}</td>
+                <td>${shorter(value.dateOfBirth, 20)}</td>
+                <td>${value.status === "1" ? "actived" : "deleted"}</td>
+                <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}', '${value.name}', '${value.detail}', '${value.playlistId}')"></i></td>
+                <td><i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i></td>
+                </tr>`);
+        }
+        function shorter(value, index) {
+            if (value.length > index) {
+                value = value.substring(0, index) + "...";
+            }
+            return value;
+        }
+        
+        function openDeleteModal(id){
+            $("#deleteModal").modal({show: true});
+            $("#deleteId").val(id);
+        }
+        function deleteUser(){
+            const deleteId = document.getElementById("deleteId").value;
+            const request = new XMLHttpRequest();
+            const urlendpoint = "http://localhost:8080/api/mlis/deletemlisuser";
+            request.open("DELETE", urlendpoint, true);
+            const formData = new FormData();
+            formData.append("userId", deleteId);
+            request.onreadystatechange = ()=>{
+                if (request.readyState === 4 && request.status === 200) {
+                    loadAllUser();
+                    $("#deleteId").val("");
+                }
+            }
+            request.send(formData);
+        }
+        function deleteUserAmdComment(){
+            const deleteId = document.getElementById("deleteId").value;
+            const request = new XMLHttpRequest();
+            const urlendpoint = "http://localhost:8080/api/mlis/deletemlisuserandcomment";
+            request.open("DELETE", urlendpoint, true);
+            const formData = new FormData();
+            formData.append("userId", deleteId);
+            request.onreadystatechange = ()=>{
+                if (request.readyState === 4 && request.status === 200) {
+                    loadAllUser();
+                    $("#deleteId").val("");
+                }
+            }
+            request.send(formData);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="table-responsive">
+            <div class="table-wrapper">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h2>View <b>Mlis User</b></h2>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="#addModal" class="btn btn-success" data-toggle="modal"><i
+                                    class="material-icons">&#xE147;</i> <span>Tạo Podcast hoặc truyện mới</span></a>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Username</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Current Token</th>
+                            <th scope="col">Number of Comment</th>
+                            <th scope="col">Gender</th>
+                            <th scope="col">Date of Birth</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" colspan="2"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablebody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Modal HTML -->
+    <div id="deleteModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete User</h4>
+                        <input type="text" id="deleteId" hidden>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Delete all comment of this user</p>
+                        <p class="text-warning"><small>This action cannot be undone.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Only delete this user" onclick="deleteUser()">
+                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Delete user and their comments" onclick="deleteUserAmdComment()">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -30,6 +30,10 @@ public class CommentController {
     List<ViewComment> getAllCommentByPodcastIdAndStatus(@RequestParam("podcastId") String podcastId, @RequestParam(value = "status", defaultValue = "1")String status){
         return commentService.getViewCommentByPodcastIdAndStatus(podcastId, status);
     }
+    @GetMapping("/viewAllComment")
+    List<ViewComment> getAllComment(){
+        return commentService.getAllViewComment();
+    }
     @PutMapping("/deleteComment")
     void deleteComment(@RequestParam("commentId")String commentId){
         commentService.deleteComment(commentId);

@@ -1,7 +1,10 @@
 package com.leduongw01.mlisserver.service;
 
+import com.leduongw01.mlisserver.model.Comment;
 import com.leduongw01.mlisserver.model.MlisUser;
 import com.leduongw01.mlisserver.model.StringValue;
+import com.leduongw01.mlisserver.model.ViewMlisUser;
+import com.leduongw01.mlisserver.repository.CommentRepository;
 import com.leduongw01.mlisserver.repository.MlisUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,25 +18,24 @@ import java.util.Random;
 public class MlisUserService {
     @Autowired
     MlisUserRepository mlisUserRepository;
+    @Autowired
+    CommentRepository commentRepository;
     public MlisUser login(String username, String password){
         MlisUser mlisUser = new MlisUser();
-        mlisUser.set_id("-1");
-        mlisUser.setPassword("eeeeeeeee");
         if (mlisUserRepository.existsMlisUserByUsernameAndPassword(username, password)){
             mlisUser = mlisUserRepository.getMlisUserByUsernameAndPassword(username,password);
             mlisUser.setToken((new Date().getTime())+"a"+new Random().nextLong());
             mlisUserRepository.save(mlisUser);
-
         }
+        mlisUser.setPassword("hellocheater");
         return mlisUser;
     }
     public MlisUser loginwithtoken(String username, String token){
         MlisUser mlisUser = new MlisUser();
-        mlisUser.set_id("-1");
-        mlisUser.setPassword("eeeeeeeee");
         if (mlisUserRepository.existsMlisUserByUsernameAndToken(username, token)){
             mlisUser = mlisUserRepository.getMlisUserByUsernameAndToken(username, token);
         }
+        mlisUser.setPassword("hellocheater");
         return mlisUser;
     }
     public boolean register(MlisUser mlisUser){
@@ -44,6 +46,29 @@ public class MlisUserService {
             return false;
         }
         mlisUserRepository.insert(mlisUser);
+        return true;
+    }
+    public boolean deleteUser(String userId){
+        if (mlisUserRepository.existsMlisUserBy_id(userId)){
+            MlisUser mlisUser = mlisUserRepository.getMlisUserBy_id(userId);
+            mlisUser.setToken("-1");
+            mlisUser.setStatus("-1");
+            mlisUserRepository.save(mlisUser);
+        }
+        return true;
+    }
+    public boolean deleteUserAndComment(String userId){
+        if (mlisUserRepository.existsMlisUserBy_id(userId)){
+            MlisUser mlisUser = mlisUserRepository.getMlisUserBy_id(userId);
+            mlisUser.setToken("-1");
+            mlisUser.setStatus("-1");
+            mlisUserRepository.save(mlisUser);
+            List<Comment> commentList = commentRepository.getAllByUserIdAndStatus(userId, "1");
+            for (Comment comment : commentList){
+                comment.setStatus("-1");
+            }
+            commentRepository.saveAll(commentList);
+        }
         return true;
     }
     public String getUsernameById(String userId){
@@ -64,5 +89,21 @@ public class MlisUserService {
             }
         }
         return listMapName;
+    }
+    public List<ViewMlisUser> getViewMlisUser(){
+        List<MlisUser> mlisUsers = mlisUserRepository.getAllBy_idIsNotNull();
+        List<ViewMlisUser> viewMlisUsers = new ArrayList<>();
+        for (MlisUser mlisUser: mlisUsers){
+            ViewMlisUser viewMlisUser = new ViewMlisUser();
+            viewMlisUser._id = mlisUser.get_id();
+            viewMlisUser.username = mlisUser.getUsername();
+            viewMlisUser.email = mlisUser.getEmail();
+            viewMlisUser.token = mlisUser.getToken();
+            viewMlisUser.gender = mlisUser.getGender();
+            viewMlisUser.dateOfBirth = mlisUser.getStatus();
+            viewMlisUser.numOfComment = commentRepository.countCommentByUserId(mlisUser.get_id());
+            viewMlisUsers.add(viewMlisUser);
+        }
+        return viewMlisUsers;
     }
 }

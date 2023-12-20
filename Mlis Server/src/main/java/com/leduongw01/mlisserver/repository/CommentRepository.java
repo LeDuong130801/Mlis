@@ -13,4 +13,6 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
     List<Comment> getAllByStatus(String status);
     List<Comment> getAllByUserIdAndStatus(String mlisUserId, String status);
     Comment getCommentBy_id(String _id);
+    int countCommentByUserId(String userId);
+    List<Comment> getAllBy_idIsNotNull();
 }

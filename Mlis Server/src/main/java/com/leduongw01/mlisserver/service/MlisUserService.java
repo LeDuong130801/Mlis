@@ -100,8 +100,9 @@ public class MlisUserService {
             viewMlisUser.email = mlisUser.getEmail();
             viewMlisUser.token = mlisUser.getToken();
             viewMlisUser.gender = mlisUser.getGender();
-            viewMlisUser.dateOfBirth = mlisUser.getStatus();
+            viewMlisUser.dateOfBirth = mlisUser.getDateOfBirth();
             viewMlisUser.numOfComment = commentRepository.countCommentByUserId(mlisUser.get_id());
+            viewMlisUser.status = mlisUser.getStatus();
             viewMlisUsers.add(viewMlisUser);
         }
         return viewMlisUsers;

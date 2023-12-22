@@ -45,6 +45,7 @@ import com.leduongw01.mlis.utils.Constant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeScreen extends AppCompatActivity {
 
@@ -57,6 +58,8 @@ public class HomeScreen extends AppCompatActivity {
     boolean hide = true;
     Handler handler;
     Runnable runnable;
+    Handler handerView;
+    Runnable runnableView;
     boolean pause = false;
 
     @Override
@@ -116,6 +119,7 @@ public class HomeScreen extends AppCompatActivity {
         binding.rcvMoiCapNhat.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
     private void splitData(){
+        getRecentListenedPodcast();
         List<Playlist> playlistList = BackgroundLoadDataService.getAllPlaylist();
         listMa = new ArrayList<>();
         listKiemHiep = new ArrayList<>();
@@ -252,6 +256,14 @@ public class HomeScreen extends AppCompatActivity {
             }
         };
         handler.postDelayed(runnable, 1000);
+        handerView = new Handler();
+        runnableView = new Runnable() {
+            @Override
+            public void run() {
+                capNhatRecycleView();
+            }
+        };
+        handerView.postDelayed(runnableView, 5000);
     }
 
     void ktSuKien() {
@@ -338,8 +350,14 @@ public class HomeScreen extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         ktDrawer();
         ktSuKien();
+        ktHandler();
         capNhatRecycleView();
     }
 }

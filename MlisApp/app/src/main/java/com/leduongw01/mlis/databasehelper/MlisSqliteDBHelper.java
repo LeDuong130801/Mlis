@@ -65,7 +65,7 @@ public class MlisSqliteDBHelper extends SQLiteOpenHelper {
                 a.playlistId = c.getString(4);
                 boolean y = true;
                 for(LocalRecentPodcast localRecentPodcast : output){
-                    if (localRecentPodcast.id.equals(a.id)){
+                    if (localRecentPodcast.id.equals(a.id) || (a.playlistId ==null && a.favoriteId==null)){
                         y = false;
                         break;
                     }
@@ -88,6 +88,9 @@ public class MlisSqliteDBHelper extends SQLiteOpenHelper {
                 LocalRecentPodcast a = new LocalRecentPodcast();
                 a.id = c.getString(0);
                 a.listenOn = c.getLong(1);
+                a.userId = c.getString(2);
+                a.favoriteId = c.getString(3);
+                a.playlistId = c.getString(4);
                 boolean y = true;
                 for(LocalRecentPodcast localRecentPodcast : output){
                     if (localRecentPodcast.id.equals(a.id)){

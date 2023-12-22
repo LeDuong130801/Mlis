@@ -48,8 +48,14 @@ public class PlayerActivity extends AppCompatActivity {
             String podcastId = getIntent().getStringExtra("podcastId");
             String playlistId = getIntent().getStringExtra("playlistId");
             String favoriteId = getIntent().getStringExtra("favoriteId");
+            if (playlistId == null){
+                playlistId = "none";
+            }
+            if (favoriteId == null){
+                favoriteId = "none";
+            }
             Integer indexPodcast = getIntent().getIntExtra("index", -1);
-            if(!Objects.equals(playlistId, "none")){
+            if(!playlistId.equals("none")){
                 if (indexPodcast == -1){
                     indexPodcast = BackgroundLoadDataService.getIndexOfPodcastInPlayList(podcastId, playlistId);
                 }
@@ -61,9 +67,9 @@ public class PlayerActivity extends AppCompatActivity {
                 ForegroundAudioService.setCurrentAudio(indexPodcast);
                 Log.d("playlist", "onCreate: ");
                 if (BackgroundLoadDataService.getInstance().checkAuthen()){
-                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), BackgroundLoadDataService.mlisUser.get_id(), playlistId, "none");
+                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), BackgroundLoadDataService.mlisUser.get_id(), "none", playlistId);
                 }
-                else mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), "none", playlistId, "none");
+                else mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), "none", "none", playlistId);
                 startService(intent);
             }
             else if (!favoriteId.equals("none")){
@@ -78,10 +84,13 @@ public class PlayerActivity extends AppCompatActivity {
                 ForegroundAudioService.setCurrentAudio(indexPodcast);
                 Log.d("favorite", "onCreate: ");
                 if (BackgroundLoadDataService.getInstance().checkAuthen()){
-                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), BackgroundLoadDataService.mlisUser.get_id(), "none", favoriteId);
+                    mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), BackgroundLoadDataService.mlisUser.get_id(), favoriteId, "none");
                 }
-                else mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), "none", "none", favoriteId);
+                else mlisSqliteDBHelper.putPodcastToRecent(ForegroundAudioService.getCurrentPodcast(), "none", favoriteId, "none");
                 startService(intent);
+            }
+            else{
+                onBackPressed();
             }
             initSeekBar();
             ktSuKien();

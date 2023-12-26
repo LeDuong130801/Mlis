@@ -165,23 +165,24 @@ public class HomeScreen extends AppCompatActivity {
     }
     void ktNavigator(){
         View headerView = binding.navHomeScreen.getHeaderView(0);
-        headerView.findViewById(R.id.goLogin).setOnClickListener(view -> {
-            Intent intent = new Intent(HomeScreen.this, LoginActivity.class);
-            startActivity(intent);
-        });
-        SharedPreferences sharedPreferences = getSharedPreferences(Constant.PREFERENCES_NAME, MODE_PRIVATE);
-
-        String name = sharedPreferences.getString("username", "none").equals("none")?"Chưa đăng nhập": sharedPreferences.getString("username", "none");
-        TextView tvUsername = headerView.findViewById(R.id.tvUsername);
-        tvUsername.setText(name);
-        if (BackgroundLoadDataService.getInstance().checkAuthen()){
-            headerView.findViewById(R.id.goLogin).setVisibility(View.INVISIBLE);
+        Menu menu = binding.navHomeScreen.getMenu();
+        if(BackgroundLoadDataService.getInstance().checkAuthen()){
+            TextView tvUsername = headerView.findViewById(R.id.tvUsername);
+            tvUsername.setText(BackgroundLoadDataService.mlisUser.getUsername());
+            menu.findItem(R.id.itlogin).setVisible(false);
+            menu.findItem(R.id.myaccount).setVisible(true);
+            menu.findItem(R.id.logout).setVisible(true);
+            menu.findItem(R.id.myfavoritelist).setVisible(true);
         }
         else{
-            headerView.findViewById(R.id.goLogin).setVisibility(View.VISIBLE);
+            TextView tvUsername = headerView.findViewById(R.id.tvUsername);
+            tvUsername.setText("Người dùng khách");
+            menu.findItem(R.id.itlogin).setVisible(true);
+            menu.findItem(R.id.myaccount).setVisible(false);
+            menu.findItem(R.id.logout).setVisible(false);
+            menu.findItem(R.id.myfavoritelist).setVisible(false);
         }
-        Menu menu = binding.navHomeScreen.getMenu();
-        menu.findItem(R.id.favoritelist).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.myfavoritelist).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent intent = new Intent(HomeScreen.this, FavoriteActivity.class);
@@ -345,11 +346,6 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
         return true;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

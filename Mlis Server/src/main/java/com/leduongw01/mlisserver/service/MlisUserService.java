@@ -24,7 +24,7 @@ public class MlisUserService {
         MlisUser mlisUser = new MlisUser();
         if (mlisUserRepository.existsMlisUserByUsernameAndPassword(username, password)){
             mlisUser = mlisUserRepository.getMlisUserByUsernameAndPassword(username,password);
-            mlisUser.setToken((new Date().getTime())+"a"+new Random().nextLong());
+            mlisUser.genToken();
             mlisUserRepository.save(mlisUser);
         }
         mlisUser.setPassword("hellocheater");
@@ -106,5 +106,26 @@ public class MlisUserService {
             viewMlisUsers.add(viewMlisUser);
         }
         return viewMlisUsers;
+    }
+    public String changePass(StringValue stringValue){
+        if (mlisUserRepository.existsByUsername(stringValue.getId())){
+            MlisUser mlisUser = mlisUserRepository.getMlisUserByUsername(stringValue.getId());
+            if (mlisUser.getStatus().equals("-1")){
+                return "none";
+            }
+            if (stringValue.getText2().trim().equals("")){
+                return "empty";
+            }
+            if (stringValue.getText1().equals(mlisUser.getPassword())){
+                mlisUser.setPassword(stringValue.getText2());
+                mlisUser.genToken();
+                mlisUserRepository.save(mlisUser);
+                return mlisUser.getToken();
+            }
+            else{
+                return "notMatch";
+            }
+        }
+        return "notFound";
     }
 }

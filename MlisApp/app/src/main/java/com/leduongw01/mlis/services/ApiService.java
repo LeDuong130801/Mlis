@@ -54,6 +54,10 @@ public interface ApiService {
     Call<String> register(
             @Body MlisUser mlisUser
     );
+    @PUT("api/mlis/changepass")
+    Call<String> changePass(
+            @Body StringValue stringValue
+    );
     @GET("api/mlis/getname")
     Call<String> getUsername(@Query("userId") String userId,@Query("pos") int position);
     //playlist

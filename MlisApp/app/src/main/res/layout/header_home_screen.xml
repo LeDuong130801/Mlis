@@ -18,17 +18,5 @@
         android:textStyle="bold"
         android:text=""
         android:gravity="center"/>
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/goLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dangnhap"
-        android:textSize="@dimen/_14ssp"
-        android:textAllCaps="false"
-        android:layout_marginHorizontal="@dimen/_22sdp"
-        android:backgroundTint="@color/success"
-        android:textColor="@color/normal_text"
-        android:layout_gravity="center"
-        />
 
 </LinearLayout>

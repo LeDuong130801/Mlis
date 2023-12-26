@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/favoritelist"
+        android:id="@+id/myfavoritelist"
         android:title="@string/danhsachyeuthích"
+        android:visible="false"
         />
     <item
-        android:id="@+id/setting"
-        android:title="@string/caidat"
+        android:id="@+id/myaccount"
+        android:title="@string/taikhoancuatoi"
+        android:visible="false"
         />
     <item android:id="@+id/logout"
-        android:title="@string/dangxuat"/>
+        android:title="@string/dangxuat"
+        android:visible="false"/>
+    <item
+        android:id="@+id/itlogin"
+        android:title="@string/dangnhap"
+        />
     <item
         android:id="@+id/exit"
         android:title="@string/thoat"/>

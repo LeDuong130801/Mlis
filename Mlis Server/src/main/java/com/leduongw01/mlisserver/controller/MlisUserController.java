@@ -37,6 +37,10 @@ public class MlisUserController {
         }
         return "0";
     }
+    @PutMapping("/changepass")
+    String changePass(@RequestBody StringValue stringValue){
+        return mlisUserService.changePass(stringValue);
+    }
     @GetMapping("/getname")
     String getName(@RequestParam("userId")String userId, @RequestParam("pos") int pos){
         return mlisUserService.getUsernameById(userId);

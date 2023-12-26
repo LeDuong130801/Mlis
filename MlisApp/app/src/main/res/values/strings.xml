@@ -57,4 +57,6 @@
     <string name="khampha">Khám phá</string>
     <string name="themvaodanhsachyeuthich">Thêm vào danh sách yêu thích</string>
     <string name="danhsachtrong">Danh sách trống</string>
+    <string name="taikhoancuatoi">Tài khoản của tôi</string>
+    <string name="doimatkhau">Đổi mật khẩu</string>
 </resources>

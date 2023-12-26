@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+import java.util.Random;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -19,4 +22,8 @@ public class MlisUser {
     private String token;
     private String dateOfBirth;
     private String gender;
+    public void genToken(){
+        Random random = new Random();
+        setToken(Math.abs(random.nextInt())+"active"+new Date().getTime());
+    }
 }

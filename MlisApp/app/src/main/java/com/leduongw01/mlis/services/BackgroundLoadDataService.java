@@ -116,11 +116,19 @@ public class BackgroundLoadDataService extends Service {
 
     public void downloadTask() {
         fakeData();
-        RealData();
-        for (Podcast podcast : getAllPodcast()){
-            getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
-            new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
-        }
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                RealData();
+                for (Podcast podcast : getAllPodcast()){
+                    getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
+                    new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
+                }
+                handler.postDelayed(this, 12000);
+            }
+        };
+        handler.postDelayed(runnable, 0);
     }
     public static Playlist getPlaylistById(String id){
         for (Playlist playlist: allPlaylist){
@@ -283,6 +291,7 @@ public class BackgroundLoadDataService extends Service {
             @Override
             public void onResponse(Call<List<Playlist>> call, Response<List<Playlist>> response) {
                 if (response.isSuccessful()){
+                    assert response.body() != null;
                     allPlaylist.addAll(response.body());
                     for (int i=2;i<allPlaylist.size();i++){
                         getPodcastBitmap().add(new MapImage(allPlaylist.get(i).get_id()+Constant.PLAYLIST, null));
@@ -301,8 +310,10 @@ public class BackgroundLoadDataService extends Service {
                 if (response.isSuccessful()){
                     allPodcast.addAll(response.body());
                     for (int i=3;i<allPodcast.size();i++){
-                        getPodcastBitmap().add(new MapImage(allPodcast.get(i).get_id()+Constant.PODCAST, null));
-                        new DownloadTask(allPodcast.get(i).get_id()+Constant.PODCAST).execute(allPodcast.get(i).getUrlImg());
+                        if (existPodcastBitmapById(allPodcast.get(i).get_id()+Constant.PODCAST)){
+                            getPodcastBitmap().add(new MapImage(allPodcast.get(i).get_id()+Constant.PODCAST, null));
+                            new DownloadTask(allPodcast.get(i).get_id()+Constant.PODCAST).execute(allPodcast.get(i).getUrlImg());
+                        }
                     }
                 }
             }
@@ -313,6 +324,14 @@ public class BackgroundLoadDataService extends Service {
             }
         });
 
+    }
+    private boolean existPodcastBitmapById(String id){
+        for (MapImage mapImage: podcastBitmap){
+            if (mapImage.id.equals(id)){
+                return true;
+            }
+        }
+        return false;
     }
     public void loadFavorite(){
         if (!mlisUser.get_id().equals("-1"))

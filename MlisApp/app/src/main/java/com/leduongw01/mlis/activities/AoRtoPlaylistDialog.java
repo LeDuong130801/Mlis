@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
@@ -83,5 +84,12 @@ public class AoRtoPlaylistDialog extends Dialog {
                     }
                 }));
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        Button button = findViewById(R.id.btCancel);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AoRtoPlaylistDialog.this.dismiss();
+            }
+        });
     }
 }

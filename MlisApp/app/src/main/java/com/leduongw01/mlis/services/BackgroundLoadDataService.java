@@ -121,14 +121,14 @@ public class BackgroundLoadDataService extends Service {
             @Override
             public void run() {
                 RealData();
-                for (Podcast podcast : getAllPodcast()){
-                    getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
-                    new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
-                }
+//                for (Podcast podcast : getAllPodcast()){
+//                    getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
+//                    new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
+//                }
                 handler.postDelayed(this, 12000);
             }
         };
-        handler.postDelayed(runnable, 0);
+        handler.postDelayed(runnable, 1000);
     }
     public static Playlist getPlaylistById(String id){
         for (Playlist playlist: allPlaylist){
@@ -219,83 +219,85 @@ public class BackgroundLoadDataService extends Service {
         if(allFavorite == null){
             allFavorite = new ArrayList<>();
         }
-        allPodcast.add(
-                new Podcast(
-                        "3",
-                        "Thoát khỏi vòng lặp bận rộn - chương 2",
-                        "Chương 2 của thoát khỏi vòng lặp bận rộn",
-                        "1698395338868",
-                        "localhost",
-                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myfiles%2FS%C3%A1ch%20N%C3%B3i%20Tho%C3%A1t%20Kh%E1%BB%8Fi%20V%C3%B2ng%20B%E1%BA%ADn%20R%E1%BB%99n%20-%20Li%E1%BB%85u%20Thu%E1%BA%ADt%20Qu%C3%A2n%20-%20S%C3%A1ch%20N%C3%B3i%20Online_3.mp3?alt=media&token=143c3d2a-9578-4b74-9082-6f634d004d04",
-                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=21321d59-3901-4208-b1d0-197f7ce58805",
-                        "1",
-                        "1"));
-        allPodcast.add(
-                new Podcast(
-                        "1",
-                        "Thoát khỏi vòng bận rộn - Giới thiệu",
-                        "Có phải bạn luôn cảm thấy bản thân cả ngày bận tối mắt tối mũi nhưng đến cuối cùng vẫn không đạt được thành tựu gì?&nbsp;Trong khi đó, lại có rất nhiều người thành công trong cuộc sống, nhìn họ lại chả có vẻ gì là rất bận rộn.&nbsp;Một người muốn công thành danh toại, thì cần phải sống có kế hoạch, nếu khôn",
-                        "1698395117524",
-                        "localhost",
-                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myfiles%2FS%C3%A1ch%20N%C3%B3i%20Tho%C3%A1t%20Kh%E1%BB%8Fi%20V%C3%B2ng%20B%E1%BA%ADn%20R%E1%BB%99n%20-%20Li%E1%BB%85u%20Thu%E1%BA%ADt%20Qu%C3%A2n%20-%20Gi%E1%BB%9Bi%20thi%E1%BB%87u.mp3?alt=media&token=b7066952-864d-49a7-9f16-b144a035edee",
-                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=21321d59-3901-4208-b1d0-197f7ce58805",
-                        "1",
-                        "1"
-                ));
-        allPodcast.add(
-                new Podcast(
-                        "7",
-                        "Test",
-                        "Bruh",
-                        "1698395117524",
-                        "localhost",
-                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myfiles%2FS%C3%A1ch%20N%C3%B3i%20Tho%C3%A1t%20Kh%E1%BB%8Fi%20V%C3%B2ng%20B%E1%BA%ADn%20R%E1%BB%99n%20-%20Li%E1%BB%85u%20Thu%E1%BA%ADt%20Qu%C3%A2n%20-%20Gi%E1%BB%9Bi%20thi%E1%BB%87u.mp3?alt=media&token=b7066952-864d-49a7-9f16-b144a035edee",
-                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=21321d59-3901-4208-b1d0-197f7ce58805",
-                        "6",
-                        "1"
-                ));
-        allPlaylist.add(new Playlist(
-                "1",
-                "Thoát khỏi vòng lặp bận rộn",
-                "Liễu Thuật Quân",
-                "Đời sống",
-                "0",
-                "1225656",
-                "Mô tả à",
-                "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=e8a12b02-9ff1-4ae6-a161-57ff77cc1db7",
-                "1"
-        ));
-        allPlaylist.add(new Playlist(
-                "6",
-                "Test 1 podcast",
-                "local",
-                "Đời sống, truyền thông",
-                "999454",
-                "45545454",
-                "Mô tả à",
-                "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fvov.jpg?alt=media&token=75f2b920-c604-4c3d-9061-fe4c64d99b96",
-                "1"
-        ));
+//        allPodcast.add(
+//                new Podcast(
+//                        "3",
+//                        "Thoát khỏi vòng lặp bận rộn - chương 2",
+//                        "Chương 2 của thoát khỏi vòng lặp bận rộn",
+//                        "1698395338868",
+//                        "localhost",
+//                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myfiles%2FS%C3%A1ch%20N%C3%B3i%20Tho%C3%A1t%20Kh%E1%BB%8Fi%20V%C3%B2ng%20B%E1%BA%ADn%20R%E1%BB%99n%20-%20Li%E1%BB%85u%20Thu%E1%BA%ADt%20Qu%C3%A2n%20-%20S%C3%A1ch%20N%C3%B3i%20Online_3.mp3?alt=media&token=143c3d2a-9578-4b74-9082-6f634d004d04",
+//                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=21321d59-3901-4208-b1d0-197f7ce58805",
+//                        "1",
+//                        "1"));
+//        allPodcast.add(
+//                new Podcast(
+//                        "1",
+//                        "Thoát khỏi vòng bận rộn - Giới thiệu",
+//                        "Có phải bạn luôn cảm thấy bản thân cả ngày bận tối mắt tối mũi nhưng đến cuối cùng vẫn không đạt được thành tựu gì?&nbsp;Trong khi đó, lại có rất nhiều người thành công trong cuộc sống, nhìn họ lại chả có vẻ gì là rất bận rộn.&nbsp;Một người muốn công thành danh toại, thì cần phải sống có kế hoạch, nếu khôn",
+//                        "1698395117524",
+//                        "localhost",
+//                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myfiles%2FS%C3%A1ch%20N%C3%B3i%20Tho%C3%A1t%20Kh%E1%BB%8Fi%20V%C3%B2ng%20B%E1%BA%ADn%20R%E1%BB%99n%20-%20Li%E1%BB%85u%20Thu%E1%BA%ADt%20Qu%C3%A2n%20-%20Gi%E1%BB%9Bi%20thi%E1%BB%87u.mp3?alt=media&token=b7066952-864d-49a7-9f16-b144a035edee",
+//                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=21321d59-3901-4208-b1d0-197f7ce58805",
+//                        "1",
+//                        "1"
+//                ));
+//        allPodcast.add(
+//                new Podcast(
+//                        "7",
+//                        "Test",
+//                        "Bruh",
+//                        "1698395117524",
+//                        "localhost",
+//                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myfiles%2FS%C3%A1ch%20N%C3%B3i%20Tho%C3%A1t%20Kh%E1%BB%8Fi%20V%C3%B2ng%20B%E1%BA%ADn%20R%E1%BB%99n%20-%20Li%E1%BB%85u%20Thu%E1%BA%ADt%20Qu%C3%A2n%20-%20Gi%E1%BB%9Bi%20thi%E1%BB%87u.mp3?alt=media&token=b7066952-864d-49a7-9f16-b144a035edee",
+//                        "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=21321d59-3901-4208-b1d0-197f7ce58805",
+//                        "6",
+//                        "1"
+//                ));
+//        allPlaylist.add(new Playlist(
+//                "1",
+//                "Thoát khỏi vòng lặp bận rộn",
+//                "Liễu Thuật Quân",
+//                "Đời sống",
+//                "0",
+//                "1225656",
+//                "Mô tả à",
+//                "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fthoatkhoivongbanron.jpg?alt=media&token=e8a12b02-9ff1-4ae6-a161-57ff77cc1db7",
+//                "1"
+//        ));
+//        allPlaylist.add(new Playlist(
+//                "6",
+//                "Test 1 podcast",
+//                "local",
+//                "Đời sống, truyền thông",
+//                "999454",
+//                "45545454",
+//                "Mô tả à",
+//                "https://firebasestorage.googleapis.com/v0/b/mlis-18b55.appspot.com/o/myimages%2Fvov.jpg?alt=media&token=75f2b920-c604-4c3d-9061-fe4c64d99b96",
+//                "1"
+//        ));
 
     }
     public synchronized void RealData(){
-        for (Playlist playlist : getAllPlaylist()){
-            getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
-            new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
-        }
-        for (Podcast podcast : getAllPodcast()){
-            getPodcastBitmap().add(new MapImage(podcast.get_id()+Constant.PODCAST, null));
-            new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
-        }
+//        for (Playlist playlist : getAllPlaylist()){
+//            getPodcastBitmap().add(new MapImage(playlist.get_id()+Constant.PLAYLIST, null));
+//            new DownloadTask(playlist.get_id()+Constant.PLAYLIST).execute(playlist.getUrlImg());
+//        }
+//        for (Podcast podcast : getAllPodcast()){
+//            getPodcastBitmap().add(new MapImage(podcast.get_id()+Constant.PODCAST, null));
+//            new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
+//        }
         ApiService.apisService.getAllByStatus("1").enqueue(new Callback<List<Playlist>>() {
             @Override
             public void onResponse(Call<List<Playlist>> call, Response<List<Playlist>> response) {
                 if (response.isSuccessful()){
                     assert response.body() != null;
-                    allPlaylist.addAll(response.body());
-                    for (int i=2;i<allPlaylist.size();i++){
-                        getPodcastBitmap().add(new MapImage(allPlaylist.get(i).get_id()+Constant.PLAYLIST, null));
-                        new DownloadTask(allPlaylist.get(i).get_id()+Constant.PLAYLIST).execute(allPlaylist.get(i).getUrlImg());
+                    allPlaylist = (response.body());
+                    for (int i=0;i<allPlaylist.size();i++) {
+                        if (!existPodcastBitmapById(allPlaylist.get(i).get_id() + Constant.PLAYLIST)) {
+                            getPodcastBitmap().add(new MapImage(allPlaylist.get(i).get_id() + Constant.PLAYLIST, null));
+                            new DownloadTask(allPlaylist.get(i).get_id() + Constant.PLAYLIST).execute(allPlaylist.get(i).getUrlImg());
+                        }
                     }
                 }
             }
@@ -308,9 +310,9 @@ public class BackgroundLoadDataService extends Service {
             @Override
             public void onResponse(Call<ArrayList<Podcast>> call, Response<ArrayList<Podcast>> response) {
                 if (response.isSuccessful()){
-                    allPodcast.addAll(response.body());
-                    for (int i=3;i<allPodcast.size();i++){
-                        if (existPodcastBitmapById(allPodcast.get(i).get_id()+Constant.PODCAST)){
+                    allPodcast = (response.body());
+                    for (int i=0;i<allPodcast.size();i++){
+                        if (!existPodcastBitmapById(allPodcast.get(i).get_id()+Constant.PODCAST)){
                             getPodcastBitmap().add(new MapImage(allPodcast.get(i).get_id()+Constant.PODCAST, null));
                             new DownloadTask(allPodcast.get(i).get_id()+Constant.PODCAST).execute(allPodcast.get(i).getUrlImg());
                         }

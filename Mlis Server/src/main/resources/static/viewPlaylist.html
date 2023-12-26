@@ -4,13 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Bootstrap CRUD Data Table for Database with Modal Form</title>
+    <title>Playlist</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
@@ -107,7 +106,7 @@
             const upe = new Date(0,0,0,0,0,Number(value.updateOn)/1000);
             const upeStr = upe.getDate()+1+"/"+(upe.getMonth()+1)+"/"+(upe.getUTCFullYear()+70);
             return (`<tr>
-                <td>${value._id}</td>
+                <td>${index}</td>
                 <td>${shorter(value.name, 10)}</td>
                 <td>${value.author}</td>
                 <td>${crestr}</td>
@@ -191,24 +190,23 @@
 </head>
 
 <body>
-    <div class="container-xl">
-        <div>
-            <div class="table-wrapper">
-                <div class="table-title">
-                    <div class="row">
-                        <div class="col-sm-6">
+<div class="container">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
                             <h2>View <b>Playlist</b></h2>
                         </div>
                         <div class="col-sm-6">
-                            <a href="#addPlaylistModal" class="btn btn-success" data-toggle="modal"><i
-                                    class="material-icons">&#xE147;</i> <span>Tạo Tập truyện mới</span></a>
+                            <a href="#addPlaylistModal" class="btn btn-success" data-toggle="modal"> <span>Tạo Tập truyện mới</span></a>
                         </div>
                     </div>
                 </div>
                 <table class="table-responsive table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th class="col">Id</th>
+                            <th class="col">No</th>
                             <th class="col">Name</th>
                             <th class="col">Author</th>
                             <th class="col">Create On</th>

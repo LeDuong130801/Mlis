@@ -44,7 +44,7 @@ public class CreateFavoriteDialog extends Dialog {
                         public void onResponse(Call<Favorite> call, Response<Favorite> response) {
                             if (response.isSuccessful()){
                                 BackgroundLoadDataService.getAllFavorite().add(response.body());
-                                onBackPressed();
+                                dismiss();
                             }
                         }
 

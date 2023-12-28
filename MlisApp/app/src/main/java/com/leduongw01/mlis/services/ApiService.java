@@ -19,6 +19,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -65,9 +66,15 @@ public interface ApiService {
     Call<List<Playlist>> getAllByStatus(
             @Query("contentStatus") String status
     );
+    @GET("api/playlist/getbysearch")
+    Call<List<Playlist>> getBySearch(@Query("keyword") String keyword);
     //favorite
     @POST("api/favorite/curd")
     Call<Favorite> createFavorite(@Body Favorite favorite);
+    @DELETE("api/favorite/curd")
+    Call<String> deleteFavorite(@Query("id") String id);
+    @PUT("api/favorite/rename")
+    Call<String> renameFavorite(@Query("id") String id, @Query("newname")String newname);
     @POST("api/favorite/addpodcasttofavorite")
     Call<Favorite> addPodcastToFavorite(
             @Query("mlisUserId") String mlisUserId,

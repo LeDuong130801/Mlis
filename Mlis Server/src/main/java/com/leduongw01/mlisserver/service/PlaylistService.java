@@ -60,6 +60,9 @@ public class PlaylistService {
         }
         else return null;
     }
+    public List<Playlist> getAllByNameContainAndStatus(String keyword, String status){
+        return playlistRepository.getAllByNameContainsOrAuthorContainsOrCategoryContainsAndStatus(keyword, keyword, keyword, status);
+    }
     public List<Playlist> getAllPlayistByStatus(String status){
         return playlistRepository.getAllByStatus(status);
     }

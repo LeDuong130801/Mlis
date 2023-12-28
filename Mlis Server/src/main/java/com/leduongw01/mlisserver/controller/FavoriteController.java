@@ -4,12 +4,14 @@ import com.leduongw01.mlisserver.model.Favorite;
 import com.leduongw01.mlisserver.model.MlisUser;
 import com.leduongw01.mlisserver.model.Podcast;
 import com.leduongw01.mlisserver.service.FavoriteService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/favorite")
 public class FavoriteController {
     @Autowired
@@ -34,6 +36,7 @@ public class FavoriteController {
     }
     @DeleteMapping("/curd")
     String deleteFavorite(@RequestParam("id") String id){
+        log.info("delete"+ id);
         if (favoriteService.deleteFavorite(id)){
             return "DeleteSuccess";
         }

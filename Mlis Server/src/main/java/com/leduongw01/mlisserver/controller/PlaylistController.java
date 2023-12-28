@@ -29,6 +29,11 @@ public class PlaylistController {
     Playlist getPlaylistById(@RequestParam("contentId") String id, @RequestParam("contentStatus") String status){
         return playlistService.getPlaylistByIdAndStatus(id, status);
     }
+    @GetMapping("/getbysearch")
+    List<Playlist> getBySearch(@RequestParam("keyword")String keyword){
+        log.info("search: "+ keyword);
+        return playlistService.getAllByNameContainAndStatus(keyword, "1");
+    }
 
     @GetMapping("/getbyidallowed")
     Playlist getPlayListById(@RequestParam("contentId") String id){

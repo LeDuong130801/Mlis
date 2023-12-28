@@ -28,6 +28,7 @@ import com.leduongw01.mlis.utils.MyComponent;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ public class BackgroundLoadDataService extends Service {
     public static List<Playlist> allPlaylist;
     public static List<Favorite> allFavorite;
     public static List<MapImage> podcastBitmap;
+    public static String keyword;
     public static BackgroundLoadDataService getInstance() {
         return instance;
     }
@@ -112,8 +114,10 @@ public class BackgroundLoadDataService extends Service {
     private BackgroundLoadDataService() {
         downloadTask();
     }
-
-
+    public void searchTask(String word){
+        keyword = word;
+        downloadTask();
+    }
     public void downloadTask() {
         fakeData();
         Handler handler = new Handler();
@@ -125,7 +129,7 @@ public class BackgroundLoadDataService extends Service {
 //                    getPodcastBitmap().add(new MapImage(podcast.get_id()+ Constant.PODCAST, null));
 //                    new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
 //                }
-                handler.postDelayed(this, 12000);
+                handler.postDelayed(this, 30000);
             }
         };
         handler.postDelayed(runnable, 1000);
@@ -287,7 +291,10 @@ public class BackgroundLoadDataService extends Service {
 //            getPodcastBitmap().add(new MapImage(podcast.get_id()+Constant.PODCAST, null));
 //            new DownloadTask(podcast.get_id()+Constant.PODCAST).execute(podcast.getUrlImg());
 //        }
-        ApiService.apisService.getAllByStatus("1").enqueue(new Callback<List<Playlist>>() {
+        if (keyword==null){
+            keyword = "";
+        }
+        ApiService.apisService.getBySearch(keyword).enqueue(new Callback<List<Playlist>>() {
             @Override
             public void onResponse(Call<List<Playlist>> call, Response<List<Playlist>> response) {
                 if (response.isSuccessful()){
@@ -327,7 +334,7 @@ public class BackgroundLoadDataService extends Service {
         });
 
     }
-    private boolean existPodcastBitmapById(String id){
+    public boolean existPodcastBitmapById(String id){
         for (MapImage mapImage: podcastBitmap){
             if (mapImage.id.equals(id)){
                 return true;
@@ -388,7 +395,7 @@ public class BackgroundLoadDataService extends Service {
         return null;
     }
 
-    private class DownloadTask extends AsyncTask<String, Void, MapImage> {
+    public class DownloadTask extends AsyncTask<String, Void, MapImage> {
         String id;
         public DownloadTask(String id) {
             this.id = id;

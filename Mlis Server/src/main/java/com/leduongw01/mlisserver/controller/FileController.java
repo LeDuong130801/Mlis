@@ -23,7 +23,6 @@ public class FileController {
     @GetMapping("/{url}")
     @ResponseBody
     public ResponseEntity<Resource> getImageDynamicType(@PathVariable("url") String url) throws IOException {
-        log.info("get"+url);
         if (!url.contains(".")){
             url+=".mp3";
         }

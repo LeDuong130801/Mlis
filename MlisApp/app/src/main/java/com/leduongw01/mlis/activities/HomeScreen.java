@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,14 +28,13 @@ import com.leduongw01.mlis.adapter.AllPlaylistAdapter;
 import com.leduongw01.mlis.adapter.CateKiemHiepPlaylistAdapter;
 import com.leduongw01.mlis.adapter.CateMaPlaylistAdapter;
 import com.leduongw01.mlis.adapter.MoiCapNhatPlaylistAdapter;
-import com.leduongw01.mlis.adapter.PlaylistAdapter;
 import com.leduongw01.mlis.adapter.PodcastRecentListenedAdapter;
 import com.leduongw01.mlis.databasehelper.MlisSqliteDBHelper;
 import com.leduongw01.mlis.databinding.ActivityHomeScreenBinding;
 import com.leduongw01.mlis.listener.RecyclerViewClickListener;
 import com.leduongw01.mlis.models.LocalRecentPodcast;
 import com.leduongw01.mlis.models.Playlist;
-import com.leduongw01.mlis.models.Podcast;
+import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.services.ForegroundAudioService;
 import com.leduongw01.mlis.utils.MyConfig;
@@ -45,7 +43,10 @@ import com.leduongw01.mlis.utils.Constant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeScreen extends AppCompatActivity {
 
@@ -58,7 +59,7 @@ public class HomeScreen extends AppCompatActivity {
     boolean hide = true;
     Handler handler;
     Runnable runnable;
-    Handler handerView;
+    Handler handlerView;
     Runnable runnableView;
     boolean pause = false;
 
@@ -68,7 +69,6 @@ public class HomeScreen extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
 //        Intent i = new Intent(HomeScreen.this, BackgroundLoadDataService.class);
 //        startService(i);
-        getRecentListenedPodcast();
         ktDrawer();
         ktHandler();
         ktSuKien();
@@ -84,18 +84,6 @@ public class HomeScreen extends AppCompatActivity {
 
         }));
         binding.rcvKhamPha.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(HomeScreen.this, top3Recent, new RecyclerViewClickListener() {
-            @Override
-            public void recyclerViewListClicked(View v, int position) {
-                Intent i = new Intent(HomeScreen.this, PlayerActivity.class);
-                i.putExtra("podcastId", top3Recent.get(position).id);
-                i.putExtra("playlistId", top3Recent.get(position).playlistId);
-                i.putExtra("favoriteId", top3Recent.get(position).favoriteId);
-                i.putExtra("continue", false);
-                startActivity(i);
-            }
-        }));
-        binding.rcvRecent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         binding.rcvCateKiemHiep.setAdapter(new CateKiemHiepPlaylistAdapter(getApplicationContext(), listKiemHiep, (v, position) -> {
             Intent intent = new Intent(this, PlaylistDetailActivity.class);
@@ -117,6 +105,40 @@ public class HomeScreen extends AppCompatActivity {
             startActivity(intent);
         }));
         binding.rcvMoiCapNhat.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        binding.tvMoiCapNhat.setVisibility(listMoiCapNhat.isEmpty()? View.GONE : View.VISIBLE);
+        binding.tvCateKiemHiep.setVisibility(listKiemHiep.isEmpty()? View.GONE : View.VISIBLE);
+        binding.tvCateMa.setVisibility(listMa.isEmpty()? View.GONE : View.VISIBLE);
+        if (BackgroundLoadDataService.keyword==null){
+            BackgroundLoadDataService.keyword="";
+        }
+        if (!top3Recent.isEmpty() && BackgroundLoadDataService.keyword.equals("")){
+            binding.tvRecent.setVisibility(View.VISIBLE);
+            binding.rcvRecent.setAdapter(new PodcastRecentListenedAdapter(HomeScreen.this, top3Recent, new RecyclerViewClickListener() {
+                @Override
+                public void recyclerViewListClicked(View v, int position) {
+                    Intent i = new Intent(HomeScreen.this, PlayerActivity.class);
+                    i.putExtra("podcastId", top3Recent.get(position).id);
+                    i.putExtra("playlistId", top3Recent.get(position).playlistId);
+                    i.putExtra("favoriteId", top3Recent.get(position).favoriteId);
+                    i.putExtra("continue", false);
+                    startActivity(i);
+                }
+            }));
+            binding.rcvRecent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }
+        else{
+            binding.tvRecent.setVisibility(View.GONE);
+            binding.rcvRecent.setAdapter(null);
+        }
+        if (BackgroundLoadDataService.keyword.equals("")){
+            binding.tvKqTimKiem.setVisibility(View.GONE);
+            binding.tvReload.setVisibility(View.GONE);
+        }
+        else{
+            binding.tvKqTimKiem.setText(String.format("Kết quả tìm kiếm cho: \" %s\"", BackgroundLoadDataService.keyword));
+            binding.tvKqTimKiem.setVisibility(View.VISIBLE);
+            binding.tvReload.setVisibility(View.VISIBLE);
+        }
     }
     private void splitData(){
         getRecentListenedPodcast();
@@ -182,11 +204,20 @@ public class HomeScreen extends AppCompatActivity {
             menu.findItem(R.id.logout).setVisible(false);
             menu.findItem(R.id.myfavoritelist).setVisible(false);
         }
+
         menu.findItem(R.id.myfavoritelist).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent intent = new Intent(HomeScreen.this, FavoriteActivity.class);
                 startActivity(intent);
+                return false;
+            }
+        });
+        menu.findItem(R.id.itlogin).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent i = new Intent(HomeScreen.this, LoginActivity.class);
+                startActivity(i);
                 return false;
             }
         });
@@ -257,14 +288,14 @@ public class HomeScreen extends AppCompatActivity {
             }
         };
         handler.postDelayed(runnable, 1000);
-        handerView = new Handler();
+        handlerView = new Handler();
         runnableView = new Runnable() {
             @Override
             public void run() {
                 capNhatRecycleView();
             }
         };
-        handerView.postDelayed(runnableView, 5000);
+        handlerView.postDelayed(runnableView, 3000);
     }
 
     void ktSuKien() {
@@ -280,8 +311,16 @@ public class HomeScreen extends AppCompatActivity {
                 ForegroundAudioService.pauseOrResumeMediaPlayer();
             }
         });
+        binding.tvReload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BackgroundLoadDataService.keyword = "";
+                reload();
+            }
+        });
     }
-    synchronized void getRecentListenedPodcast(){
+    void getRecentListenedPodcast(){
+        top3Recent = new ArrayList<>();
         if (BackgroundLoadDataService.getInstance().checkAuthen()){
             top3Recent = new MlisSqliteDBHelper(getApplicationContext()).get3IdRecent(BackgroundLoadDataService.mlisUser.get_id());
         }
@@ -332,11 +371,12 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
         SearchView searchView = (SearchView) menu.findItem(R.id.searchbar_navigation).getActionView();
-        searchView.setQueryHint("Nhập kênh cần tìm....");
+        searchView.setQueryHint("Nhập tên truyện, tên tác giả hoặc thể loại cần tìm....");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
+                BackgroundLoadDataService.getInstance().searchTask(query);
+                reload();
                 return true;
             }
 
@@ -355,5 +395,27 @@ public class HomeScreen extends AppCompatActivity {
         ktSuKien();
         ktHandler();
         capNhatRecycleView();
+        if (binding.drawerHomeScreen.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerHomeScreen.closeDrawers();
+        }
+    }
+    void reload(){
+        ApiService.apisService.getBySearch(BackgroundLoadDataService.keyword).enqueue(new Callback<List<Playlist>>() {
+            @Override
+            public void onResponse(Call<List<Playlist>> call, Response<List<Playlist>> response) {
+                if (response.isSuccessful()){
+                    assert response.body() != null;
+                    BackgroundLoadDataService.allPlaylist = (response.body());
+                    ktDrawer();
+                    ktSuKien();
+                    ktHandler();
+                    capNhatRecycleView();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Playlist>> call, Throwable t) {
+            }
+        });
     }
 }

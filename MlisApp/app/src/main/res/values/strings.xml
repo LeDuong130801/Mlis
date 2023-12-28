@@ -59,4 +59,8 @@
     <string name="danhsachtrong">Danh sách trống</string>
     <string name="taikhoancuatoi">Tài khoản của tôi</string>
     <string name="doimatkhau">Đổi mật khẩu</string>
+    <string name="nh_n_v_o_y_t_i_l_i_trang_ch_nh">Nhấn vào đây để tải lại trang chính</string>
+    <string name="doiten">Đổi tên</string>
+    <string name="xoa">Xóa</string>
+    <string name="i_t_n_danh_s_ch_y_u_th_ch">Đổi tên danh sách yêu thích</string>
 </resources>

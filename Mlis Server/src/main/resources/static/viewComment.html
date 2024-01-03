@@ -63,14 +63,15 @@
         function createNodeBodyTable(value, index) {
             const cre = new Date(0,0,0,0,0,Number(value.cmtOn)/1000);
             const crestr = cre.getDate()+1+"/"+(cre.getMonth()+1)+"/"+(cre.getUTCFullYear()+70);
+            const deleteStr = `<i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i>`;
             return (`<tr>
                 <td>${index}</td>
                 <td>${shorter(value.podcastName, 50)}</td>
                 <td>${value.username}</td>
                 <td>${crestr}</td>
                 <td>${shorter(value.content, 100)}
-                <td>${value.status}</td>
-                <td><i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i></td>
+                <td>${value.status==="1"? "ok": "Đã xóa"}</td>
+                <td>${value.status==="1"? deleteStr: ""}</td>
                 </tr>`);
         }
         function shorter(value, index){

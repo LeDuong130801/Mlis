@@ -3,6 +3,7 @@ package com.leduongw01.mlisserver.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leduongw01.mlisserver.model.Podcast;
+import com.leduongw01.mlisserver.model.ViewPodcast;
 import com.leduongw01.mlisserver.service.MediaStoragedService;
 import com.leduongw01.mlisserver.service.PodcastService;
 import io.micrometer.core.instrument.util.IOUtils;
@@ -48,15 +49,6 @@ public class PodcastController {
         log.info("dasđâsdá");
         return ResponseEntity.ok().body(fileName);
     }
-//    @GetMapping("/getpodbyauthor")
-//    public List<Podcast> getAllByAuthor(@RequestParam(name = "author") String author){
-//        return podcastService.getAllByAuthor(author);
-//    }
-//    @PostMapping("/addpodcasttofirebase")
-////    public String addPodcastToFirebase(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException, ExecutionException, InterruptedException {
-////        Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);
-////        return podcastService.savePodcastF(podcast);
-////    }
     @GetMapping("/getpodcastwithsl")
     public List<Podcast> getAllPodcastWithSl(@RequestParam(value = "page") Integer page, @RequestParam("quantity") Integer quantity){
         log.info("sl"+page);
@@ -73,7 +65,6 @@ public class PodcastController {
         File file = new File("./storage/files/" + url);
         Path path = Paths.get(file.getAbsolutePath());
         ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-
         return ResponseEntity.ok()
                 .contentLength(file.length())
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
@@ -83,6 +74,10 @@ public class PodcastController {
     public List<Podcast> getAll(){
         return podcastService.getAll();
     }
+    @GetMapping("/getallview")
+    public List<ViewPodcast> getAllView(){
+        return podcastService.getAllViewPodcast();
+    }
     @PostMapping("/updatePodcast")
     public Podcast updatePodcast(@RequestBody Podcast podcast){
         return podcastService.updatePodcast(podcast);
@@ -91,4 +86,6 @@ public class PodcastController {
     public void deletePodcast(@RequestParam("podcastId")String podcastId){
         podcastService.deletePodcast(podcastId);
     }
+    @GetMapping("/count")
+    public String countPodcast(){ return podcastService.countPodcast(); }
 }

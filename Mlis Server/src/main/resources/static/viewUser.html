@@ -49,7 +49,7 @@
                     const tbody = document.getElementById("tablebody");
                     let str = "";
                     for (let i = 0; i < list.length; i++) {
-                        str += createNodeBodyTable(list[i]);
+                        str += createNodeBodyTable(list[i], i);
                     }
                     tbody.innerHTML = str;
                 }
@@ -57,17 +57,19 @@
             request.open("GET", urlendpoint, true);
             request.send();
         }
-        function createNodeBodyTable(value) {
+        function createNodeBodyTable(value, index) {
+            const deleteStr = `<i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i>`;
             return (`<tr>
+                <td>${index}</td>
                 <td>${shorter(value.username, 20)}</td>
                 <td>${shorter(value.email, 20)}</td>
                 <td>${shorter(value.token, 30)}</td>
                 <td>${value.numOfComment}</td>
                 <td>${shorter(value.gender, 20)}</td>
                 <td>${shorter(value.dateOfBirth, 20)}</td>
-                <td>${value.status === "1" ? "actived" : "deleted"}</td>
+                <td>${value.status === "1" ? "ok" : "Đã xóa"}</td>
                 <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}', '${value.name}', '${value.detail}', '${value.playlistId}')"></i></td>
-                <td><i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i></td>
+                <td>${value.status === "1" ? deleteStr : ""}</td>
                 </tr>`);
         }
         function shorter(value, index) {

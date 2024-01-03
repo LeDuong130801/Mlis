@@ -91,7 +91,7 @@ public class MlisUserService {
         return listMapName;
     }
     public List<ViewMlisUser> getViewMlisUser(){
-        List<MlisUser> mlisUsers = mlisUserRepository.getAllBy_idIsNotNull();
+        List<MlisUser> mlisUsers = mlisUserRepository.getAllBy_idIsNotNullOrderByStatusDesc();
         List<ViewMlisUser> viewMlisUsers = new ArrayList<>();
         for (MlisUser mlisUser: mlisUsers){
             ViewMlisUser viewMlisUser = new ViewMlisUser();
@@ -127,5 +127,8 @@ public class MlisUserService {
             }
         }
         return "notFound";
+    }
+    public String countMlisUser(){
+        return mlisUserRepository.countMlisUserByStatus("1")+":"+ mlisUserRepository.countMlisUserByStatus("0");
     }
 }

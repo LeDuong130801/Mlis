@@ -83,4 +83,8 @@ public class PlaylistController {
     Playlist deletePlaylist(@RequestParam("playlistId") String playlistId){
         return playlistService.deletePlaylist(playlistId);
     }
+    @GetMapping("/count")
+    String countPlaylist(){
+        return playlistService.countPlaylist();
+    }
 }

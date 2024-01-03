@@ -100,11 +100,15 @@
             formData.append("playlist", playlist);
             request.send(formData);
         }
+        function cov(value){
+            return value.replace("192.168.1.35", "localhost");
+        }
         function createNodeBodyTable(value, index) {
             const cre = new Date(0,0,0,0,0,Number(value.createOn)/1000);
             const crestr = cre.getDate()+1+"/"+(cre.getMonth()+1)+"/"+(cre.getUTCFullYear()+70);
             const upe = new Date(0,0,0,0,0,Number(value.updateOn)/1000);
             const upeStr = upe.getDate()+1+"/"+(upe.getMonth()+1)+"/"+(upe.getUTCFullYear()+70);
+            const deleteStr = `<i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i>`;
             return (`<tr>
                 <td>${index}</td>
                 <td>${shorter(value.name, 10)}</td>
@@ -112,10 +116,10 @@
                 <td>${crestr}</td>
                 <td>${upeStr}</td>
                 <td>${shorter(value.detail, 20)}</td>
-                <td>${shorter(value.urlImg, 20)}</td>
-                <td>${value.status}</td>
+                <td><img src="${cov(value.urlImg)}" width="100"></td>
+                <td>${value.status==="1"? "ok" : "Đã xóa"}</td>
                 <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}', '${value.name}', '${value.category}', '${value.detail}', '${value.author}')"></i></td>
-                <td><i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i></td>
+                <td>${value.status==="1"? deleteStr: ""}</td>
                 </tr>`);
         }
         function shorter(value, index){

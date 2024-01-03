@@ -50,7 +50,7 @@ public class CommentService {
         return getViewComments(commentList);
     }
     public List<ViewComment> getAllViewComment(){
-        List<Comment> commentList = commentRepository.getAllBy_idIsNotNull();
+        List<Comment> commentList = commentRepository.getAllBy_idIsNotNullOrderByStatusDesc();
         return getViewComments(commentList);
     }
 
@@ -76,5 +76,8 @@ public class CommentService {
             viewComments.add(viewComment);
         }
         return viewComments;
+    }
+    public String countComment(){
+        return commentRepository.countCommentByStatus("1")+":"+ commentRepository.countCommentByStatus("0");
     }
 }

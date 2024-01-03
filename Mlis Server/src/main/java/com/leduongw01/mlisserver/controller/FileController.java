@@ -29,7 +29,6 @@ public class FileController {
         File file = new File("./storage/files/" + url);
         Path path = Paths.get(file.getAbsolutePath());
         ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-
         return ResponseEntity.ok()
                 .contentLength(file.length())
                 .contentType(MediaType.parseMediaType("application/octet-stream"))

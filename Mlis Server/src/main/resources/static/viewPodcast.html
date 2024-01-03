@@ -43,7 +43,7 @@
         function loadAllPodcast() {
             const request = new XMLHttpRequest();
             console.log("ewwe");
-            const urlendpoint = "http://localhost:8080/api/podcast/getall";
+            const urlendpoint = "http://localhost:8080/api/podcast/getallview";
             request.onreadystatechange = () => {
                 console.log(request.response);
                 if (request.readyState === 4 && request.status === 200) {
@@ -52,7 +52,7 @@
                     let str = "";
                     for (let i = 0; i < list.length; i++) {
                         console.log(list[i])
-                        str += createNodeBodyTable(list[i]);
+                        str += createNodeBodyTable(list[i], i);
                     }
                     tbody.innerHTML = str;
                 }
@@ -89,22 +89,18 @@
         function getImageData(e) {
             fileImage = e.target.files[0];
             fileImageName = Math.round(Math.random() * 9999) + fileImage.name;
-            console.log(fileImage, fileImageName);
         }
         function getFileData(e) {
             filePodcast = e.target.files[0];
             fileName = Math.round(Math.random() * 9999) + filePodcast.name;
-            console.log(filePodcast, fileName);
         }
         function geteImageData(e) {
             fileImage = e.target.files[0];
             fileImageName = Math.round(Math.random() * 9999) + fileImage.name;
-            console.log(fileImage, fileImageName);
         }
         function geteFileData(e) {
             filePodcast = e.target.files[0];
             fileName = Math.round(Math.random() * 9999) + filePodcast.name;
-            console.log(filePodcast, fileName);
         }
         function sendNewPodcast() {
             const name = document.getElementById("name").value;
@@ -136,23 +132,27 @@
             formData.append("podcast", podcast);
             request.send(formData);
         }
-        function createNodeBodyTable(value) {
-            const cre = new Date(0, 0, 0, 0, 0, Number(value.createOn) / 1000);
-            const crestr = cre.getDate() + 1 + "/" + (cre.getMonth() + 1) + "/" + (cre.getUTCFullYear() + 70);
+        function cov(value){
+            return value.replace("192.168.1.35", "localhost");
+        }
+        function createNodeBodyTable(value, index) {
+            // const cre = new Date(0, 0, 0, 0, 0, Number(value.createOn) / 1000);
+            // const crestr = cre.getDate() + 1 + "/" + (cre.getMonth() + 1) + "/" + (cre.getUTCFullYear() + 70);
             const upe = new Date(0, 0, 0, 0, 0, Number(value.updateOn) / 1000);
             const upeStr = upe.getDate() + 1 + "/" + (upe.getMonth() + 1) + "/" + (upe.getUTCFullYear() + 70);
+            const deleteStr = `<i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i>`;
             return (`<tr>
-                <td>${value._id}</td>
-                <td>${shorter(value.name, 10)}</td>
+                <td>${index}</td>
+                <td>${shorter(value.name, 30)}</td>
                 <td>${shorter(value.detail, 20)}</td>
-                <td>${crestr}</td>
                 <td>${upeStr}</td>
-                <td>${shorter(value.url, 20)}</td>
-                <td>${shorter(value.urlImg, 20)}</td>
-                <td>${value.playlistId}</td>
-                <td>${value.status === "1" ? "ok" : "not use"}</td>
+                <td><img src="${cov(value.urlImg)}" width="100"></td>
+                <td>${shorter(value.category, 20)}</td>
+                <td>${value.playlist}</td>
+                <td>${value.author}</td>
+                <td>${value.status === "1" ? "ok" : "đã xóa"}</td>
                 <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}', '${value.name}', '${value.detail}', '${value.playlistId}')"></i></td>
-                <td><i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i></td>
+                <td>${value.status === "1" ? deleteStr :""}</td>
                 </tr>`);
         }
         function createNodeOption(value) {
@@ -241,14 +241,14 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Id</th>
+                            <th scope="col">No</th>
                             <th scope="col">Name</th>
                             <th scope="col">Detail</th>
-                            <th scope="col">Create On</th>
                             <th scope="col">Update On</th>
-                            <th scope="col">File Url</th>
-                            <th scope="col">Image Url</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Category</th>
                             <th scope="col">Playlist</th>
+                            <th scope="col">Author</th>
                             <th scope="col">Status</th>
                             <th scope="col" colspan="2"></th>
                         </tr>
@@ -256,18 +256,6 @@
                     <tbody id="tablebody">
                     </tbody>
                 </table>
-                <!-- <div class="clearfix">
-                    <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                    <ul class="pagination">
-                        <li class="page-item disabled"><a href="#">Previous</a></li>
-                        <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                        <li class="page-item"><a href="#" class="page-link">2</a></li>
-                        <li class="page-item"><a href="#" class="page-link">3</a></li>
-                        <li class="page-item"><a href="#" class="page-link">4</a></li>
-                        <li class="page-item"><a href="#" class="page-link">5</a></li>
-                        <li class="page-item"><a href="#" class="page-link">Next</a></li>
-                    </ul>
-                </div> -->
             </div>
         </div>
     </div>

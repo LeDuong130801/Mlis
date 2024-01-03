@@ -39,5 +39,8 @@ public class CommentController {
     void deleteComment(@RequestParam("commentId")String commentId){
         commentService.deleteComment(commentId);
     }
-
+    @GetMapping("/count")
+    String countComment(){
+        return commentService.countComment();
+    }
 }

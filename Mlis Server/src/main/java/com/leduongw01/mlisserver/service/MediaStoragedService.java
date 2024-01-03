@@ -17,12 +17,14 @@ import java.util.Random;
 @Service
 public class MediaStoragedService {
     private final Path fileStorageLocation;
+    int aChar = 97;
+    int zChar = 122;
+    Random r = new Random();
 
     @Autowired
     public MediaStoragedService(Environment env) {
         this.fileStorageLocation = Paths.get(env.getProperty("app.file.upload-dir", "./uploads/files"))
                 .toAbsolutePath().normalize();
-
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
@@ -41,11 +43,9 @@ public class MediaStoragedService {
     }
 
     public String storeFile(Podcast podcast, MultipartFile file) {
-        Random r = new Random();
         String fileName =
-                r.nextLong()+podcast.getName()+podcast.getCreateOn()+file.getName()+"." + getFileExtension(file.getOriginalFilename());
+                generationStr() + podcast.getCreateOn() + getFileExtension(file.getOriginalFilename());
         try {
-            // Check if the filename contains invalid characters
             if (fileName.contains("..")) {
                 throw new RuntimeException(
                         "Duoi file khong xac dinh " + fileName);
@@ -57,12 +57,11 @@ public class MediaStoragedService {
             throw new RuntimeException("Luu file that bai", ex);
         }
     }
+
     public String storeImage(Podcast podcast, MultipartFile image) {
-        Random r = new Random();
         String fileName =
-                r.nextLong()+podcast.getName()+podcast.getCreateOn()+image.getName()+"." + getFileExtension(image.getOriginalFilename());
+                generationStr() + podcast.getCreateOn() + getFileExtension(image.getOriginalFilename());
         try {
-            // Check if the filename contains invalid characters
             if (fileName.contains("..")) {
                 throw new RuntimeException(
                         "Duoi anh khong xac dinh " + fileName);
@@ -74,12 +73,12 @@ public class MediaStoragedService {
             throw new RuntimeException("Luu anh that bai", ex);
         }
     }
+
     public String storeFileImage(MultipartFile image) {
-        Random r = new Random();
+        String createOn = new Date().getTime() + "";
         String fileName =
-                r.nextLong()+image.getName()+"." + getFileExtension(image.getOriginalFilename());
+                generationStr() + createOn + "." + getFileExtension(image.getOriginalFilename());
         try {
-            // Check if the filename contains invalid characters
             if (fileName.contains("..")) {
                 throw new RuntimeException(
                         "Duoi anh khong xac dinh " + fileName);
@@ -90,5 +89,16 @@ public class MediaStoragedService {
         } catch (IOException ex) {
             throw new RuntimeException("Luu anh that bai", ex);
         }
+    }
+
+    public String generationStr() {
+        if (r == null) {
+            r = new Random(new Date().getTime());
+        }
+        int limitStr = Math.abs(r.nextInt()) % 15 + 1;
+        return r.ints(aChar, zChar + 1)
+                .limit(limitStr)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

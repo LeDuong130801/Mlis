@@ -15,4 +15,8 @@ public class TestApiController {
         log.info("get");
         return new StringValue("a", "MlisServer", "haha");
     }
+    @GetMapping("/")
+    public String index(){
+        return "/index.html";
+    }
 }

@@ -10,5 +10,6 @@ public interface PodcastRepository extends MongoRepository<Podcast, String> {
     public boolean existsPodcastBy_id(String id);
 //    List<Podcast> getAllByAuthor(String author);
     List<Podcast> getAllByStatus(String s);
-    List<Podcast> getAllBy_idIsNotNull();
+    List<Podcast> getAllBy_idIsNotNullOrderByStatusDesc();
+    int countPodcastByStatus(String status);
 }

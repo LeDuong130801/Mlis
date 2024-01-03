@@ -61,5 +61,6 @@ public class MlisUserController {
     boolean deleteMlisUserAndComment(@RequestParam("userId")String userId){
         return mlisUserService.deleteUserAndComment(userId);
     }
-
+    @GetMapping("/count")
+    String countMlisUser(){ return mlisUserService.countMlisUser(); }
 }

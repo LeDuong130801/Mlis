@@ -78,6 +78,9 @@ public class PlaylistService {
         return playlists.subList((page-1)*quantity, page*quantity);
     }
     public List<Playlist> getAllPlayist(){
-        return playlistRepository.getAllBy_idIsNotNull();
+        return playlistRepository.getAllBy_idIsNotNullOrderByStatusDesc();
+    }
+    public String countPlaylist(){
+        return playlistRepository.countPlaylistByStatus("1")+":"+ playlistRepository.countPlaylistByStatus("0");
     }
 }

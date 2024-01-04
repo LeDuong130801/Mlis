@@ -12,4 +12,5 @@ public interface PodcastRepository extends MongoRepository<Podcast, String> {
     List<Podcast> getAllByStatus(String s);
     List<Podcast> getAllBy_idIsNotNullOrderByStatusDesc();
     int countPodcastByStatus(String status);
+    int countPodcastByStatusNot(String status);
 }

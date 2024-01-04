@@ -129,6 +129,6 @@ public class MlisUserService {
         return "notFound";
     }
     public String countMlisUser(){
-        return mlisUserRepository.countMlisUserByStatus("1")+":"+ mlisUserRepository.countMlisUserByStatus("0");
+        return mlisUserRepository.countMlisUserByStatus("1")+":"+ mlisUserRepository.countMlisUserByStatusNot("1");
     }
 }

@@ -78,6 +78,6 @@ public class CommentService {
         return viewComments;
     }
     public String countComment(){
-        return commentRepository.countCommentByStatus("1")+":"+ commentRepository.countCommentByStatus("0");
+        return commentRepository.countCommentByStatus("1")+":"+ commentRepository.countCommentByStatusNot("1");
     }
 }

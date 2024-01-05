@@ -19,4 +19,5 @@ public interface MlisUserRepository extends MongoRepository<MlisUser, String> {
     List<MlisUser> getAllBy_idIn(List<String> _id);
     List<MlisUser> getAllBy_idIsNotNullOrderByStatusDesc();
     int countMlisUserByStatus(String status);
+    int countMlisUserByStatusNot(String status);
 }

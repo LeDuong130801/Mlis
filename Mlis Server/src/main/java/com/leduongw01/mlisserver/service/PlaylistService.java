@@ -81,6 +81,6 @@ public class PlaylistService {
         return playlistRepository.getAllBy_idIsNotNullOrderByStatusDesc();
     }
     public String countPlaylist(){
-        return playlistRepository.countPlaylistByStatus("1")+":"+ playlistRepository.countPlaylistByStatus("0");
+        return playlistRepository.countPlaylistByStatus("1")+":"+ playlistRepository.countPlaylistByStatusNot("1");
     }
 }

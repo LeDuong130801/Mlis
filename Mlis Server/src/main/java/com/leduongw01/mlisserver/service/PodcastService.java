@@ -69,7 +69,7 @@ public class PodcastService {
         }
     }
     public String countPodcast(){
-        return podcastRepository.countPodcastByStatus("1")+":"+ podcastRepository.countPodcastByStatus("0");
+        return podcastRepository.countPodcastByStatus("1")+":"+ podcastRepository.countPodcastByStatusNot("1");
     }
     public List<ViewPodcast> getAllViewPodcast(){
         List<Podcast> podcasts = getAll();

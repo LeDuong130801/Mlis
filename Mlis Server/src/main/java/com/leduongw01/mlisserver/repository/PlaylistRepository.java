@@ -16,4 +16,5 @@ public interface PlaylistRepository extends MongoRepository<Playlist, String> {
     List<Playlist> getAllBy_idIsNotNullOrderByStatusDesc();
     List<Playlist> getAllByNameContainsOrAuthorContainsOrCategoryContainsAndStatus(String name, String author, String category, String status);
     int countPlaylistByStatus(String status);
+    int countPlaylistByStatusNot(String status);
 }

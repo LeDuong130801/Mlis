@@ -29,10 +29,15 @@ public class PodcastService {
         return podcastRepository.getPodcastBy_id(id);
         else return new Podcast("-1");
     }
-    public void addPodcast(Podcast podcast){
+    public Podcast addPodcast(Podcast podcast){
         podcast.setCreateOn((new Date()).getTime()+"");
         podcast.setUpdateOn((new Date()).getTime()+"");
-        podcastRepository.insert(podcast);
+        if (playlistRepository.existsAllBy_idAndStatus(podcast.getPlaylistId(), "1")){
+            Playlist playlist = playlistRepository.getPlaylistBy_id(podcast.getPlaylistId());
+            playlist.setUpdateOn(new Date().getTime()+"");
+            playlistRepository.save(playlist);
+        }
+        return podcastRepository.insert(podcast);
     }
     public List<Podcast> getPodcastBySl(Integer page, Integer quantity){
         List<Podcast> all = podcastRepository.getAllByStatus("1");
@@ -51,11 +56,20 @@ public class PodcastService {
     public Podcast updatePodcast(Podcast podcast){
         if (podcastRepository.existsPodcastBy_id(podcast.get_id())){
             Podcast p = podcastRepository.getPodcastBy_id(podcast.get_id());
-            podcast.setUrlImg(p.getUrlImg());
-            podcast.setUrl(p.getUrl());
+            if (podcast.getUrlImg().equals("0")){
+                podcast.setUrlImg(p.getUrlImg());
+            }
+            if (podcast.getUrl().equals("0")){
+                podcast.setUrl(p.getUrl());
+            }
             podcast.setUpdateOn(new Date().getTime()+"");
             podcast.setCreateOn(p.getCreateOn());
             podcast.setStatus(p.getStatus());
+            if (playlistRepository.existsAllBy_idAndStatus(podcast.getPlaylistId(), "1")){
+                Playlist playlist = playlistRepository.getPlaylistBy_id(podcast.getPlaylistId());
+                playlist.setUpdateOn(new Date().getTime()+"");
+                playlistRepository.save(playlist);
+            }
             return podcastRepository.save(podcast);
         }
         return  null;

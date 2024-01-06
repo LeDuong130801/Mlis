@@ -39,15 +39,32 @@ public class PodcastController {
     @PostMapping("/uploadpodcast")
     public ResponseEntity<String> uploadFile(@RequestParam(name = "file", required = false) MultipartFile file,@RequestParam(name = "image", required = false) MultipartFile image, @RequestParam(name = "podcast") String podcaststr) throws JsonProcessingException {
         Podcast podcast = new ObjectMapper().readValue(podcaststr, Podcast.class);
-        Date d = new Date();
-        podcast.setCreateOn(d.getTime()+"");
-        String fileName = mediaStoragedService.storeFile(podcast, file);
-        podcast.setUrl("http:\\\\192.168.1.35:8080\\storage\\files\\"+fileName);
-        String imageName = mediaStoragedService.storeImage(podcast, image);
-        podcast.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
-        podcastService.addPodcast(podcast);
-        log.info("dasđâsdá");
+        Podcast newPod = podcastService.addPodcast(podcast);
+        String fileName = mediaStoragedService.storeFile(newPod, file);
+        newPod.setUrl("http:\\\\192.168.1.35:8080\\storage\\files\\"+fileName);
+        String imageName = mediaStoragedService.storeImage(newPod, image);
+        newPod.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
+        podcastService.updatePodcast(newPod);
         return ResponseEntity.ok().body(fileName);
+    }
+    @PutMapping("/updatefilepodcast")
+    public ResponseEntity<String> updateFile(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam(name = "image", required = false) MultipartFile image, @RequestParam(name = "podcast") String podcastStr){
+        try {
+            Podcast podcast = new ObjectMapper().readValue(podcastStr, Podcast.class);
+            if (file!=null){
+                String fileName = mediaStoragedService.storeFile(podcast, file);
+                podcast.setUrl("http:\\\\192.168.1.35:8080\\storage\\files\\"+fileName);
+            }
+            if (image!=null){
+                String imageName = mediaStoragedService.storeImage(podcast, image);
+                podcast.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
+            }
+            podcastService.updatePodcast(podcast);
+            return ResponseEntity.ok().body("ok");
+        } catch (JsonProcessingException e) {
+            log.error("json ex");
+            return ResponseEntity.badRequest().body("json ex");
+        }
     }
     @GetMapping("/getpodcastwithsl")
     public List<Podcast> getAllPodcastWithSl(@RequestParam(value = "page") Integer page, @RequestParam("quantity") Integer quantity){
@@ -56,19 +73,6 @@ public class PodcastController {
     }
     public ResponseEntity<Podcast> getPodcastById(String id){
         return ResponseEntity.ok().body(podcastService.getPodcastById(id));
-    }
-    @GetMapping(
-            value = "/get-file",
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
-    public ResponseEntity<Resource> downloadDocument(@RequestParam(name = "url") String url) throws IOException {
-        File file = new File("./storage/files/" + url);
-        Path path = Paths.get(file.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-        return ResponseEntity.ok()
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);
     }
     @GetMapping("/getall")
     public List<Podcast> getAll(){

@@ -154,7 +154,6 @@
                 status: "1"
             };
             const request = new XMLHttpRequest();
-            // const formData = new FormData;
             const urlendpoint = "http://localhost:8080/api/playlist/updatePlaylist";
             request.open("POST", urlendpoint, true);
             request.onreadystatechange = () => {
@@ -163,13 +162,11 @@
                     loadAllPlaylist();
                 }
             };
-            // formData.append("fileImage", fileImage);
-            // const playlist = JSON.stringify(data);
-            // formData.append("playlist", data);
-            data = JSON.stringify(data);
-            console.log(data);
-            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            request.send(data);
+            const formData = new FormData;
+            formData.append("image", fileImage);
+            const playlist = JSON.stringify(data);
+            formData.append("playlist", JSON.stringify(data));
+            request.send(formData);
         }
         function openDeleteModal(id){
             $("#deleteModal").modal({show: true});
@@ -227,13 +224,6 @@
                 <div class="clearfix">
                     <div class="hint-text" id="hint-text">Showing <b>0</b> out of <b>0</b> entries</div>
                     <ul class="pagination">
-                        <!-- <li class="page-item disabled"><a href="#">Previous</a></li>
-                        <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                        <li class="page-item"><a href="#" class="page-link">2</a></li>
-                        <li class="page-item"><a href="#" class="page-link">3</a></li>
-                        <li class="page-item"><a href="#" class="page-link">4</a></li>
-                        <li class="page-item"><a href="#" class="page-link">5</a></li>
-                        <li class="page-item"><a href="#" class="page-link">Next</a></li> -->
                     </ul>
                 </div>
             </div>
@@ -268,7 +258,7 @@
                         </div>
                         <div class="form-group">
                             <label>Image</label>
-                            <input class="form-control" type="file" id="imageUrl" onchange="getImageData(event)"
+                            <input type="file" id="imageUrl" onchange="getImageData(event)"
                                 accept="image/png, image/jpeg, image/svg, image/jpg" />
                         </div>
                     </div>
@@ -306,11 +296,11 @@
                             <label>Detail</label>
                             <textarea class="form-control" id="edetail"></textarea>
                         </div>
-                        <!-- <div class="form-group">
+                        <div class="form-group">
                             <label>Image</label>
-                            <input class="form-control" type="file" id="eimageUrl" onchange="getImageData(event)"
+                            <input type="file" id="eimageUrl" onchange="getImageData(event)"
                                 accept="image/png, image/jpeg, image/svg, image/jpg" />
-                        </div> -->
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">

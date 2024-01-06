@@ -66,6 +66,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
             assert playlist != null;
             binding.tvName.setText(playlist.getName());
             binding.tvAuthor.setText(String.format("Tác giả: %s", playlist.getAuthor()));
+            binding.tvLastUpdate.setText(String.format("Cập nhật gần nhất: %s", MyComponent.toDateTimeStr(playlist.getUpdateOn())));
             binding.tvInf.setText(playlist.getDetail());
             binding.ivPlaylist.setImageBitmap(BackgroundLoadDataService.getBitmapById(playlistId, Constant.PLAYLIST));
             for (Podcast podcast : BackgroundLoadDataService.getAllPodcast()) {

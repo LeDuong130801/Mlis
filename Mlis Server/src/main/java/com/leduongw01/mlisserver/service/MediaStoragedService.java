@@ -44,7 +44,7 @@ public class MediaStoragedService {
 
     public String storeFile(Podcast podcast, MultipartFile file) {
         String fileName =
-                generationStr() + podcast.getCreateOn() + getFileExtension(file.getOriginalFilename());
+                generationStr() + podcast.get_id() +"." +getFileExtension(file.getOriginalFilename());
         try {
             if (fileName.contains("..")) {
                 throw new RuntimeException(
@@ -60,7 +60,7 @@ public class MediaStoragedService {
 
     public String storeImage(Podcast podcast, MultipartFile image) {
         String fileName =
-                generationStr() + podcast.getCreateOn() + getFileExtension(image.getOriginalFilename());
+                generationStr() + podcast.get_id() +"."  + getFileExtension(image.getOriginalFilename());
         try {
             if (fileName.contains("..")) {
                 throw new RuntimeException(
@@ -77,7 +77,7 @@ public class MediaStoragedService {
     public String storeFileImage(MultipartFile image) {
         String createOn = new Date().getTime() + "";
         String fileName =
-                generationStr() + createOn + "." + getFileExtension(image.getOriginalFilename());
+                generationStr() + createOn + "playlist." + getFileExtension(image.getOriginalFilename());
         try {
             if (fileName.contains("..")) {
                 throw new RuntimeException(

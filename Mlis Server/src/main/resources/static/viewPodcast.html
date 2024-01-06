@@ -102,11 +102,14 @@
             filePodcast = e.target.files[0];
             fileName = Math.round(Math.random() * 9999) + filePodcast.name;
         }
+        function clearFile(){
+            $("#eFileUrl").val(null);
+            $("#eImageUrl").val(null);
+        }
         function sendNewPodcast() {
             const name = document.getElementById("name").value;
             const detail = document.getElementById("detail").value;
             const playlistId = document.getElementById("playlistId").value;
-            console.log(playlistId);
             const data = {
                 name: name ? name : "No name",
                 detail: detail ? detail : "No detail",
@@ -124,12 +127,45 @@
             request.onreadystatechange = () => {
                 if (request.readyState === 4 && request.status === 200) {
                     console.log(request.responseText);
+                    clearFile();
                 }
             };
             formData.append("file", filePodcast);
             formData.append("image", fileImage);
             const podcast = JSON.stringify(data);
             formData.append("podcast", podcast);
+            request.send(formData);
+        }
+        function updateFilePodcast(){
+            const id = document.getElementById("id").value;
+            const name = document.getElementById("ename").value;
+            const detail = document.getElementById("edetail").value;
+            const playlistId = document.getElementById("eplaylistId").value;
+            let data = {
+                _id: id,
+                name: name ? name : "No name",
+                createOn: "0",
+                updateOn: "0",
+                detail: detail ? detail : "No detail",
+                playlistId: playlistId,
+                url: "0",
+                urlImg: "0",
+                status: "1"
+            };
+            const request = new XMLHttpRequest();
+            const formData = new FormData();
+            const urlendpoint = "http://localhost:8080/api/podcast/updatefilepodcast";
+            request.open("PUT", urlendpoint, true);
+            request.onreadystatechange = () => {
+                if (request.readyState === 4 && request.status === 200) {
+                    console.log(request.responseText);
+                    loadAllPodcast();
+                    clearFile();
+                }
+            };
+            formData.append("file", filePodcast);
+            formData.append("image", fileImage);
+            formData.append("podcast", JSON.stringify(data));
             request.send(formData);
         }
         function cov(value){
@@ -284,12 +320,12 @@
                         </div>
                         <div class="form-group">
                             <label>Image</label>
-                            <input class="form-control" type="file" id="imageUrl" onchange="getImageData(event)"
+                            <input type="file" id="imageUrl" onchange="getImageData(event)"
                                 accept="image/png, image/jpeg, image/svg, image/jpg" />
                         </div>
                         <div class="form-group">
                             <label>File podcast</label>
-                            <input class="form-control" type="file" id="fileUrl" onchange="getFileData(event)"
+                            <input type="file" id="fileUrl" onchange="getFileData(event)"
                                 accept="audio/mp3, audio/m4v" />
                         </div>
                     </div>
@@ -305,7 +341,7 @@
     <div id="editModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form id="formEdit">
                     <div class="modal-header">
                         <h4 class="modal-title">Edit Podcast</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -327,18 +363,18 @@
                         </div>
                         <div class="form-group">
                             <label>Image</label>
-                            <input class="form-control" type="file" id="eimageUrl" onchange="geteImageData(event)"
+                            <input type="file" id="eimageUrl" onchange="geteImageData(event)"
                                 accept="image/png, image/jpeg, image/svg, image/jpg" />
                         </div>
                         <div class="form-group">
                             <label>File podcast</label>
-                            <input class="form-control" type="file" id="efileUrl" onchange="geteFileData(event)"
+                            <input type="file" id="efileUrl" onchange="geteFileData(event)"
                                 accept="audio/mp3, audio/m4v" />
                         </div>
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                        <input type="button" class="btn btn-info" value="Save" data-dismiss="modal" onclick="savePodcast()">
+                        <input type="button" class="btn btn-info" value="Save" data-dismiss="modal" onclick="updateFilePodcast()">
                     </div>
                 </form>
             </div>

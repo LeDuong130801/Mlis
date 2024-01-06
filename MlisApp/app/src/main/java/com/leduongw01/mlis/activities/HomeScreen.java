@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -155,7 +156,7 @@ public class HomeScreen extends AppCompatActivity {
             if (playlist.isKiemHiep()){
                 listKiemHiep.add(playlist);
             }
-            if ((Long.parseLong(playlist.getUpdateOn()) - t) < (Constant.oneday* MyConfig.DAYOFNEW)){
+            if ((t-Long.parseLong(playlist.getUpdateOn())) < (Constant.oneday* MyConfig.DAYOFNEW)){
                 listMoiCapNhat.add(playlist);
             }
         }

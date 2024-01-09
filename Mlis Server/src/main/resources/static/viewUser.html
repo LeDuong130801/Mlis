@@ -68,7 +68,6 @@
                 <td>${shorter(value.gender, 20)}</td>
                 <td>${shorter(value.dateOfBirth, 20)}</td>
                 <td>${value.status === "1" ? "ok" : "Đã xóa"}</td>
-                <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}', '${value.name}', '${value.detail}', '${value.playlistId}')"></i></td>
                 <td>${value.status === "1" ? deleteStr : ""}</td>
                 </tr>`);
         }
@@ -123,7 +122,7 @@
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h2>View <b>Mlis User</b></h2>
+                            <h2><a href="index.html"><span class="material-icons m-2 pt-2">home</span></a>View <b>Mlis User</b></h2>
                         </div>
                         <div class="col-sm-6">
                             <a href="#addModal" class="btn btn-success" data-toggle="modal"><i
@@ -134,6 +133,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th scope="col">No</th>
                             <th scope="col">Username</th>
                             <th scope="col">Email</th>
                             <th scope="col">Current Token</th>

@@ -51,7 +51,6 @@
                     const tbody = document.getElementById("tablebody");
                     let str = "";
                     for (let i = 0; i < list.length; i++) {
-                        console.log(list[i])
                         str += createNodeBodyTable(list[i], i);
                     }
                     tbody.innerHTML = str;
@@ -179,15 +178,15 @@
             const deleteStr = `<i class="fa fa-trash text-danger" aria-hidden="true" onclick="openDeleteModal('${value._id}')"></i>`;
             return (`<tr>
                 <td>${index}</td>
-                <td>${shorter(value.name, 30)}</td>
-                <td>${shorter(value.detail, 20)}</td>
+                <td>${shorter(value.name, 50)}</td>
+                <td>${shorter(value.detail, 30)}</td>
                 <td>${upeStr}</td>
                 <td><img src="${cov(value.urlImg)}" width="100"></td>
                 <td>${shorter(value.category, 20)}</td>
                 <td>${value.playlist}</td>
                 <td>${value.author}</td>
                 <td>${value.status === "1" ? "ok" : "đã xóa"}</td>
-                <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}', '${value.name}', '${value.detail}', '${value.playlistId}')"></i></td>
+                <td><i class="fa fa-pencil-square text-success" aria-hidden="true" onclick="openEditModal('${value._id}')"></i></td>
                 <td>${value.status === "1" ? deleteStr :""}</td>
                 </tr>`);
         }
@@ -204,9 +203,13 @@
         function openEditModal(id, name, detail, playlistId){
             $("#editModal").modal({show: true});
             $("#id").val(id);
-            $("#ename").val(name);
-            $("#edetail").val(detail);
-            $("#eplaylistId").val(playlistId);
+            for (let i=0;i<list.length;i++){
+                if (list[i]._id === id) {
+                    $("#ename").val(list[i].name);
+                    $("#edetail").val(list[i].detail);
+                    $("#eplaylistId").val(list[i].playlistId);
+                }
+            }
         }
         function savePodcast(){
             const id = document.getElementById("id").value;
@@ -266,7 +269,7 @@
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h2>View <b>Podcast</b></h2>
+                            <h2><a href="index.html"><span class="material-icons m-2 pt-2">home</span></a>View <b>Podcast</b></h2>
                         </div>
                         <div class="col-sm-6">
                             <a href="#addModal" class="btn btn-success" data-toggle="modal"><i
@@ -331,7 +334,7 @@
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                        <input type="button" onclick="sendNewPodcast()" class="btn btn-success" value="Add">
+                        <input type="button" onclick="sendNewPodcast()" class="btn btn-success" data-dismiss="modal" value="Add">
                     </div>
                 </form>
             </div>

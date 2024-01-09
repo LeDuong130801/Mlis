@@ -68,10 +68,12 @@ public class PlaylistController {
     }
 
     @PostMapping("/updatePlaylist")
-    Playlist updatePlayList(@RequestParam(name = "image", required = false) MultipartFile file,@RequestParam("playlist") String playlistStr) throws JsonProcessingException {
+    Playlist updatePlayList(@RequestParam(name = "image", required = false) MultipartFile image,@RequestParam("playlist") String playlistStr) throws JsonProcessingException {
         Playlist playlist = new ObjectMapper().readValue(playlistStr, Playlist.class);
-        String imageName = mediaStoragedService.storeFileImage(file);
-        playlist.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
+        if (image!=null){
+            String imageName = mediaStoragedService.storeFileImage(image);
+            playlist.setUrlImg("http:\\\\192.168.1.35:8080\\storage\\files\\"+imageName);
+        }
         return playlistService.updatePlayist(playlist);
     }
     @PostMapping("/createPlaylist")

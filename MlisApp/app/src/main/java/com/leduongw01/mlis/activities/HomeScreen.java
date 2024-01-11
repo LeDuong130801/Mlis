@@ -257,6 +257,14 @@ public class HomeScreen extends AppCompatActivity {
                 return false;
             }
         });
+        menu.findItem(R.id.itSetting).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                IpSettingDialog ipSettingDialog = new IpSettingDialog(HomeScreen.this);
+                ipSettingDialog.show();
+                return false;
+            }
+        });
     }
     void ktHandler() {
         pause = false;

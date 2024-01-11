@@ -18,6 +18,10 @@
         android:title="@string/dangnhap"
         />
     <item
+        android:id="@+id/itSetting"
+        android:title="@string/caidat"
+        />
+    <item
         android:id="@+id/exit"
         android:title="@string/thoat"/>
 </menu>

@@ -1,5 +1,7 @@
 package com.leduongw01.mlis.models;
 
+import com.leduongw01.mlis.utils.MyConfig;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,8 @@ public class Podcast {
     private String playlistId;
     private String status;
 
-    public Podcast() {this._id = "";
+    public Podcast() {
+        this._id = "";
         this.name = "";
         this.detail = "";
         this.createOn = "";
@@ -80,6 +83,9 @@ public class Podcast {
     }
 
     public String getUrl() {
+        if (url.contains("192.168.1.35")) {
+            url = url.replace("192.168.1.35:8080", MyConfig.server());
+        }
         return url;
     }
 
@@ -88,6 +94,9 @@ public class Podcast {
     }
 
     public String getUrlImg() {
+        if (urlImg.contains("192.168.1.35")) {
+            urlImg = urlImg.replace("192.168.1.35:8080", MyConfig.server());
+        }
         return urlImg;
     }
 

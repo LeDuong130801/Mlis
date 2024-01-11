@@ -21,6 +21,7 @@ import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.utils.Constant;
 import com.leduongw01.mlis.utils.MyComponent;
+import com.leduongw01.mlis.utils.MyConfig;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        String servername = MyComponent.getStringRef(getApplicationContext(), "servername");
+        if (servername.equals("none")){
+            MyConfig.serverAddress = "http://192.168.1.35:8080/";
+        }
+        else MyConfig.serverAddress = servername;
         noImg = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
         startService(new Intent(MainActivity.this, BackgroundLoadDataService.class));
         int permission_write_storage = ContextCompat.checkSelfPermission(this,

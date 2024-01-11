@@ -2,6 +2,7 @@ package com.leduongw01.mlis.models;
 
 
 import com.leduongw01.mlis.utils.Constant;
+import com.leduongw01.mlis.utils.MyConfig;
 
 import java.util.Locale;
 
@@ -91,6 +92,9 @@ public class Playlist {
     }
 
     public String getUrlImg() {
+        if (urlImg.contains("192.168.1.35")) {
+            urlImg = urlImg.replace("192.168.1.35:8080", MyConfig.server());
+        }
         return urlImg;
     }
 

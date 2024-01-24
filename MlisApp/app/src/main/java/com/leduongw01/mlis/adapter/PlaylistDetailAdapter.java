@@ -19,6 +19,7 @@ import com.leduongw01.mlis.models.Podcast;
 import com.leduongw01.mlis.services.ApiService;
 import com.leduongw01.mlis.services.BackgroundLoadDataService;
 import com.leduongw01.mlis.utils.Constant;
+import com.leduongw01.mlis.utils.MyComponent;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
     @Override
     public void onBindViewHolder(@NonNull PlaylistDetailViewHolder holder, int position) {
         holder.getTvName().setText(podcastList.get(position).getName());
-        holder.getTvLastUpdate().setText(podcastList.get(position).getUpdateOn());
+        holder.getTvLastUpdate().setText(MyComponent.toDateTimeStr(podcastList.get(position).getUpdateOn()));
         if (BackgroundLoadDataService.getInstance().checkAuthen()) {
             holder.ivFavorite.setVisibility(View.VISIBLE);
         } else {

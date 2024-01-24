@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("/storage/files")
+@RequestMapping("/st")
 public class FileController {
     @GetMapping("/{url}")
     @ResponseBody

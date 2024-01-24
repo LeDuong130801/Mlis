@@ -398,7 +398,7 @@ public class ForegroundAudioService extends Service {
                 File file = new File(Environment
                         .getExternalStorageDirectory().toString()
                         + "/Download/Mlis");
-                if (file.exists()){
+                if (!file.exists()){
                     file = new File(Environment
                         .getExternalStorageDirectory().toString()
                         + "/Download/Mlis");

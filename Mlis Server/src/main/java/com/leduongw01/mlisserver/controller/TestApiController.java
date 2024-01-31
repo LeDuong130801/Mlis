@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class TestApiController {
     @GetMapping("/getkey")
-    public StringValue getKey(){
+    public String getKey(){
         log.info("get");
-        return new StringValue("a", "MlisServer", "haha");
+        return "ok";
     }
     @GetMapping("/")
     public String index(){

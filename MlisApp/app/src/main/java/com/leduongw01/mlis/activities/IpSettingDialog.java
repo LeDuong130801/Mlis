@@ -35,7 +35,9 @@ public class IpSettingDialog extends Dialog {
             public void onClick(View view) {
                 MyComponent.setStringRef(context, "servername", etIp.getText().toString());
                 MyConfig.serverAddress = etIp.getText().toString();
-                dismiss();
+                MyComponent.ToastShort(context, "Hãy khởi động lại ứng dụng");
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(1);
             }
         });
     }

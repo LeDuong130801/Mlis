@@ -48,7 +48,7 @@ import java.util.Objects;
 
 public class ForegroundAudioService extends Service {
     private static final ForegroundAudioService instance = new ForegroundAudioService();
-    private static MediaPlayer mediaPlayer = new MediaPlayer();
+    private static CustomMediaPlayer mediaPlayer = new CustomMediaPlayer();
     private static boolean playing = false;
     private static int timer = -1;
     private static int currentSeek = 0;
@@ -87,10 +87,10 @@ public class ForegroundAudioService extends Service {
     public static Integer getDuration() {
         return mediaPlayer.getDuration();
     }
-    public static MediaPlayer getMediaPlayer(){
+    public static CustomMediaPlayer getMediaPlayer(){
         return mediaPlayer;
     }
-    public static void setMediaPlayer(MediaPlayer newmediaPlayer){
+    public static void setMediaPlayer(CustomMediaPlayer newmediaPlayer){
         mediaPlayer.release();
         mediaPlayer = newmediaPlayer;
     }
@@ -207,7 +207,7 @@ public class ForegroundAudioService extends Service {
             }
         }
         else{
-            setMediaPlayer(CustomMediaPlayer.create(this, R.raw.bgbgbg));
+            setMediaPlayer((CustomMediaPlayer) MediaPlayer.create(this, R.raw.bgbgbg));
         }
     }
     @SuppressLint({"RemoteViewLayout"})
@@ -360,25 +360,7 @@ public class ForegroundAudioService extends Service {
         stopForeground(STOP_FOREGROUND_REMOVE);
         super.onDestroy();
     }
-    static class CustomMediaPlayer extends MediaPlayer {
-        String dataSource;
 
-        @Override
-        public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-            // TODO Auto-generated method stub
-            super.setDataSource(path);
-            dataSource = path;
-        }
-        @Override
-        public void setDataSource(@NonNull Context context, @NonNull Uri uri) throws IOException {
-            super.setDataSource(context, uri);
-
-        }
-
-        public String getDataSource() {
-            return dataSource;
-        }
-    }
     @SuppressLint("StaticFieldLeak")
     class DownloadFileFromURL extends AsyncTask<String, String, String> {
         Context context;
@@ -415,8 +397,8 @@ public class ForegroundAudioService extends Service {
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
                     total += count;
-                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
-                    output.write(data, 0, count);
+//                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                    output.write(data);
                 }
                 output.flush();
                 output.close();

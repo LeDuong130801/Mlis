@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,10 +34,14 @@ public class AccountActivity extends AppCompatActivity {
                 switch (position){
                     case 0:{
                         Log.i("Change pass", "user want change their password");
+                        Intent intent = new Intent(AccountActivity.this, ChangePasswordActivity.class);
+                        startActivity(intent);
                         break;
                     }
                     case 1:{
                         Log.i("Show info", "user want watch their info");
+                        Intent intent = new Intent(AccountActivity.this, AccountInfoActivity.class);
+                        startActivity(intent);
                         break;
                     }
                     default:{

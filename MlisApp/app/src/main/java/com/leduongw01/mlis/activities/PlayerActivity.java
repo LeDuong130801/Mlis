@@ -32,11 +32,13 @@ public class PlayerActivity extends AppCompatActivity {
     Handler handler;
     boolean playing = false;
     MlisSqliteDBHelper mlisSqliteDBHelper = new MlisSqliteDBHelper(this);
+    LoadingDialog loadingDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_player);
         Objects.requireNonNull(getSupportActionBar()).hide();
+        loadingDialog = new LoadingDialog(PlayerActivity.this);
         boolean b= getIntent().getBooleanExtra("continue", false);
         if (b){
             Log.d("continue", "yessssss");
@@ -179,6 +181,12 @@ public class PlayerActivity extends AppCompatActivity {
                 else{
                     binding.nextSkipMediaPlayer.setClickable(true);
                     binding.nextSkipMediaPlayer.setColorFilter(null);
+                }
+                if (ForegroundAudioService.getMediaPlayer().isPreparing()){
+                    loadingDialog.show();
+                }
+                else{
+                    loadingDialog.hide();
                 }
                 handler.postDelayed(runnable, 1000);
             }

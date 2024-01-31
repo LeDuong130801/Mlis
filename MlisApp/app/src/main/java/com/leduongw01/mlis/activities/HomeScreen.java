@@ -214,6 +214,14 @@ public class HomeScreen extends AppCompatActivity {
                 return false;
             }
         });
+        menu.findItem(R.id.myaccount).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent intent = new Intent(HomeScreen.this, AccountActivity.class);
+                startActivity(intent);
+                return false;
+            }
+        });
         menu.findItem(R.id.itlogin).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
